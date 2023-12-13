@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowWing.Entities", "FlowWing.Entities\FlowWing.Entities.csproj", "{B1229A79-7BB5-4E51-B820-924D3DFDFAC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowWing.DataAccess", "FlowWing.DataAccess\FlowWing.DataAccess.csproj", "{28E154F7-BA97-4755-8092-670CAD743651}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1229A79-7BB5-4E51-B820-924D3DFDFAC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1229A79-7BB5-4E51-B820-924D3DFDFAC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1229A79-7BB5-4E51-B820-924D3DFDFAC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1229A79-7BB5-4E51-B820-924D3DFDFAC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28E154F7-BA97-4755-8092-670CAD743651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28E154F7-BA97-4755-8092-670CAD743651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28E154F7-BA97-4755-8092-670CAD743651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28E154F7-BA97-4755-8092-670CAD743651}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F1864C1-4B22-4FE5-BCEF-7833F66801F2}
+	EndGlobalSection
+EndGlobal
