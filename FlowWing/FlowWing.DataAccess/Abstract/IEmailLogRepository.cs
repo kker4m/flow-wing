@@ -13,6 +13,6 @@ namespace FlowWing.DataAccess.Abstract
         Task<IEnumerable<EmailLog>> GetAllEmailLogsAsync();
         Task<EmailLog> CreateEmailLogAsync(EmailLog emailLog);
         Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog);
-        Task<EmailLog> DeleteEmailLogAsync(int id);
+        Task<EmailLog> DeleteEmailLogAsync(EmailLog emailLog);
     }
 }

@@ -31,19 +31,10 @@ namespace FlowWing.DataAccess.Concrete
             return emailLog;
         }
 
-        public async Task<EmailLog> DeleteEmailLogAsync(int id)
+        public async Task<EmailLog> DeleteEmailLogAsync(EmailLog emailLog)
         {
-            // E-posta günlüğünü veritabanından bul
-            var emailLog = await _dbContext.EmailLogs.FindAsync(id);
-
-            // E-posta günlüğünü sil
-            if (emailLog != null)
-            {
-                _dbContext.EmailLogs.Remove(emailLog);
-                await _dbContext.SaveChangesAsync();
-            }
-
-            // E-posta günlüğünü döndür
+            _dbContext.EmailLogs.Remove(emailLog);
+            await _dbContext.SaveChangesAsync();
             return emailLog;
         }
 

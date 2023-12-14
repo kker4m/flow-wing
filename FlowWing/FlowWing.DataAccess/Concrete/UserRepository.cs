@@ -30,19 +30,10 @@ namespace FlowWing.DataAccess.Concrete
             return user;
         }
 
-        public async Task<User> DeleteUserAsync(int id)
+        public async Task<User> DeleteUserAsync(User user)
         {
-            // Kullanıcıyı veritabanından bul
-            var user = await _dbContext.Users.FindAsync(id);
-
-            // Kullanıcıyı sil
-            if (user != null)
-            {
-                _dbContext.Users.Remove(user);
-                await _dbContext.SaveChangesAsync();
-            }
-
-            // Kullanıcıyı döndür
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync();
             return user;
         }
 

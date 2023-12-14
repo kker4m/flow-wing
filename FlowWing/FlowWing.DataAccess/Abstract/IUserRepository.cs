@@ -13,6 +13,6 @@ namespace FlowWing.DataAccess.Abstract
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<User> CreateUserAsync(User user);
         Task<User> UpdateUserAsync(User user);
-        Task<User> DeleteUserAsync(int id);
+        Task<User> DeleteUserAsync(User user);
     }
 }

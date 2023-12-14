@@ -29,19 +29,10 @@ namespace FlowWing.DataAccess.Concrete
             return scheduledEmail;
         }
 
-        public async Task<ScheduledEmail> DeleteScheduledEmailAsync(int id)
+        public async Task<ScheduledEmail> DeleteScheduledEmailAsync(ScheduledEmail scheduledEmail)
         {
-            // Planlanan e-postayı veritabanından bul
-            var scheduledEmail = await _dbContext.ScheduledEmails.FindAsync(id);
-
-            // Planlanan e-postayı sil
-            if (scheduledEmail != null)
-            {
-                _dbContext.ScheduledEmails.Remove(scheduledEmail);
-                await _dbContext.SaveChangesAsync();
-            }
-
-            // Planlanan e-postayı döndür
+            _dbContext.ScheduledEmails.Remove(scheduledEmail);
+            await _dbContext.SaveChangesAsync();
             return scheduledEmail;
         }
 
