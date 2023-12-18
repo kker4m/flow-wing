@@ -21,13 +21,8 @@ namespace FlowWing.DataAccess.Concrete
 
         public async Task<EmailLog> CreateEmailLogAsync(EmailLog emailLog)
         {
-            // E-posta günlüğünü veritabanına ekle
-            _dbContext.EmailLogs.Add(emailLog);
-
-            // Veritabanı değişikliklerini kaydet
+            await _dbContext.EmailLogs.AddAsync(emailLog);
             await _dbContext.SaveChangesAsync();
-
-            // E-posta günlüğünü döndür
             return emailLog;
         }
 
@@ -40,31 +35,46 @@ namespace FlowWing.DataAccess.Concrete
 
         public async Task<IEnumerable<EmailLog>> GetAllEmailLogsAsync()
         {
-            // Tüm e-posta günlüklerini veritabanından getir
-            var emailLogs = await _dbContext.EmailLogs.ToListAsync();
+            return await _dbContext.EmailLogs.ToListAsync();
+        }
 
-            // E-posta günlüklerini döndür
-            return emailLogs;
+        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserIdAsync(int id)
+        {
+            return await _dbContext.EmailLogs.Where(x => x.User.Id == id).ToListAsync();
+        }
+
+        //Test et
+        public async Task<IEnumerable<ScheduledEmail>> GetAllScheduledEmailsByUserIdAsync(int id)
+        {
+            IEnumerable<EmailLog> logs = await _dbContext.EmailLogs
+                .Include(x => x.ScheduledEmail) // ScheduledEmail bağlantısını dahil et
+                .Where(x => x.User.Id == id)
+                .ToListAsync();
+
+            IEnumerable<ScheduledEmail> scheduledEmails = logs.Select(log => log.ScheduledEmail);
+            return scheduledEmails;
         }
 
         public async Task<EmailLog> GetEmailLogByIdAsync(int id)
         {
-            // E-posta günlüğünü veritabanından bul
-            var emailLog = await _dbContext.EmailLogs.FindAsync(id);
+            return await _dbContext.EmailLogs.FindAsync(id);
+        }
 
-            // E-posta günlüğünü döndür
-            return emailLog;
+        public async Task<User> GetUserByEmailLogAsync(EmailLog emailLog)
+        {
+            return await _dbContext.Users.FindAsync(emailLog.User.Id);
+        }
+
+        public async Task<User> GetUserByIdAsync(int id)
+        {
+            int user_id = _dbContext.EmailLogs.FindAsync(id).Result.User.Id;
+            return await _dbContext.Users.FindAsync(user_id);
         }
 
         public async Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog)
         {
-            // E-posta günlüğünü veritabanında güncelle
             _dbContext.EmailLogs.Update(emailLog);
-
-            // Veritabanı değişikliklerini kaydet
             await _dbContext.SaveChangesAsync();
-
-            // E-posta günlüğünü döndür
             return emailLog;
         }
     }

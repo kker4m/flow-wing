@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FlowWing.DataAccess.Migrations
 {
     [DbContext(typeof(FlowWingDbContext))]
-    [Migration("20231213212126_initialCreate")]
-    partial class initialCreate
+    [Migration("20231217100211_initalizeDatabase")]
+    partial class initalizeDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,9 +40,15 @@ namespace FlowWing.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RecipientEmail")
+                    b.Property<bool>("IsScheduled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RecipientsEmail")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("ScheduledEmailId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SenderEmail")
                         .IsRequired()
@@ -55,14 +61,60 @@ namespace FlowWing.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserID")
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("ScheduledEmailId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("EmailLogs");
+                });
+
+            modelBuilder.Entity("FlowWing.Entities.RepeatingMail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EmailSubject")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("EndingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("NextScheduledDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RecipientsEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RepeatInterval")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SenderEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SentEmailBody")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RepeatingMails");
                 });
 
             modelBuilder.Entity("FlowWing.Entities.ScheduledEmail", b =>
@@ -76,27 +128,34 @@ namespace FlowWing.DataAccess.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("EmailBody")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("EmailSubject")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ScheduledDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Status")
+                    b.Property<string>("RecipientsEmail")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("RepeatingMailId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SenderEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("SentDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SentEmailBody")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("RepeatingMailId");
 
                     b.ToTable("ScheduledEmails");
                 });
@@ -119,9 +178,9 @@ namespace FlowWing.DataAccess.Migrations
                     b.Property<DateTime>("LastLoginDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("Password")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -134,31 +193,32 @@ namespace FlowWing.DataAccess.Migrations
 
             modelBuilder.Entity("FlowWing.Entities.EmailLog", b =>
                 {
-                    b.HasOne("FlowWing.Entities.User", "User")
-                        .WithMany("EmailLogs")
-                        .HasForeignKey("UserID")
+                    b.HasOne("FlowWing.Entities.ScheduledEmail", "ScheduledEmail")
+                        .WithMany()
+                        .HasForeignKey("ScheduledEmailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FlowWing.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ScheduledEmail");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("FlowWing.Entities.ScheduledEmail", b =>
                 {
-                    b.HasOne("FlowWing.Entities.User", "User")
-                        .WithMany("ScheduledEmails")
-                        .HasForeignKey("UserId")
+                    b.HasOne("FlowWing.Entities.RepeatingMail", "RepeatingMail")
+                        .WithMany()
+                        .HasForeignKey("RepeatingMailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FlowWing.Entities.User", b =>
-                {
-                    b.Navigation("EmailLogs");
-
-                    b.Navigation("ScheduledEmails");
+                    b.Navigation("RepeatingMail");
                 });
 #pragma warning restore 612, 618
         }

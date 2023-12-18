@@ -20,13 +20,8 @@ namespace FlowWing.DataAccess.Concrete
 
         public async Task<User> CreateUserAsync(User user)
         {
-            // Kullanıcıyı veritabanına ekle
-            _dbContext.Users.Add(user);
-
-            // Veritabanı değişikliklerini kaydet
+            await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
-
-            // Kullanıcıyı döndür
             return user;
         }
 
@@ -37,34 +32,40 @@ namespace FlowWing.DataAccess.Concrete
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByIdAsync(int id)
         {
-            // Tüm kullanıcıları veritabanından getir
-            var users = await _dbContext.Users.ToListAsync();
-
-            // Kullanıcıları döndür
-            return users;
+            return await _dbContext.EmailLogs.Where(x => x.Id == id).ToListAsync();
         }
 
+        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserAsync(User user)
+        {
+            return await _dbContext.EmailLogs.Where(x => x.User == user).ToListAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await _dbContext.Users.ToListAsync();
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+        }
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            // Kullanıcıyı veritabanından bul
-            var user = await _dbContext.Users.FindAsync(id);
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
 
-            // Kullanıcıyı döndür
-            return user;
+        public async Task<User> GetUserByUsernameAsync(string username)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
 
         public async Task<User> UpdateUserAsync(User user)
         {
-            // Kullanıcıyı veritabanında güncelle
             _dbContext.Users.Update(user);
-
-            // Veritabanı değişikliklerini kaydet
             await _dbContext.SaveChangesAsync();
-
-            // Kullanıcıyı döndür
             return user;
         }
     }
