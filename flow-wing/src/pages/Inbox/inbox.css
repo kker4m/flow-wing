@@ -1,0 +1,16 @@
+.inbox-page-content{
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          margin: 20px;
+}
+.inbox-mail-summary span{
+          font-weight: bold;
+          display:inline-block ;
+          width: 60px;
+}
+.inbox-mail-title{
+          display: inline-flex;
+          justify-content: space-between;
+          align-items: stretch;
+}

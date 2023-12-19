@@ -1,0 +1,68 @@
+.home-page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 20px;
+}
+.inbox{
+  display: flex;
+  flex-direction: column;
+}
+.inbox-mail-unopened:hover{
+  border: 0.5px solid;
+  cursor: pointer;
+}
+.inbox-mail-unopened {
+  display: inline-flex;
+  background: #f1f0e8;
+  margin: 5px;
+  border-radius: 10px;
+  min-height: 30px;
+  padding: 10px;
+  border: 0.5px solid white;
+}
+.inbox-mail-opened:hover{
+  border: 0.5px solid;
+  cursor: pointer;
+}
+.inbox-mail-opened {
+  display: inline-flex;
+  background: #F3F8FF;
+  margin: 5px;
+  border-radius: 10px;
+  min-height: 30px;
+  padding: 10px;
+  border: 0.5px solid white;
+}
+.inbox-mail-sender {
+  display: inline-flex;
+  color: black;
+  font-size: 15px;
+  padding: 10px;
+  width: 300px;
+}
+.mail-primary-icon{
+   height: 30px;
+  width: 30px;
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.mail-primary-icon:hover{
+background-color: #D8D9DA;
+}
+.inbox-mail-body{
+  width: 800px;
+}
+.mail-attachment{
+  border: 0.5px solid;
+  border-radius: 15px;
+  padding: 5px;
+  margin: 5px;
+  text-align: center;
+  width: 70px;
+}
+.inbox-sent-time{
+  width: 70px;
+}
