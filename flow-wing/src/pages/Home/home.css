@@ -14,7 +14,7 @@
 }
 .inbox-mail-unopened {
   display: inline-flex;
-  background: #f1f0e8;
+  background: #F3F8FF ;
   margin: 5px;
   border-radius: 10px;
   min-height: 30px;
@@ -27,7 +27,7 @@
 }
 .inbox-mail-opened {
   display: inline-flex;
-  background: #F3F8FF;
+  background: inherit;
   margin: 5px;
   border-radius: 10px;
   min-height: 30px;

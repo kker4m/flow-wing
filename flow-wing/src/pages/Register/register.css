@@ -1,0 +1,24 @@
+
+.register-page-content{
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          margin: auto;
+          border: 1px solid #191970;
+          width: 350px;
+          height: 500px;
+}
+.register-btn{
+          margin: 20px;
+          width: 120px;
+          height: 40px;
+          border: none;
+          background: #C0440E;
+border-radius: 45px;
+color: white;
+font-size: 14px;
+}
+.register-btn:hover{
+          cursor: pointer;
+}

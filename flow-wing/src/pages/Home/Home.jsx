@@ -15,6 +15,7 @@ const Home = ({ index }) => {
     return str;
   };
 
+  // search functions
   const { Search } = Input;
 
 const onSearch = (value, _e, info) => console.log(info?.source, value);
