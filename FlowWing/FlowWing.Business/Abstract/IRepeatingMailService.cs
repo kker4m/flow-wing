@@ -5,16 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlowWing.DataAccess.Abstract
+namespace FlowWing.Business.Abstract
 {
-    public interface IRepeatingMailRepository
+    public interface IRepeatingMailService
     {
         Task<RepeatingMail> CreateRepeatingMailAsync(RepeatingMail repeatingMail);
         Task<RepeatingMail> UpdateRepeatingMailAsync(RepeatingMail repeatingMail);
-        Task<RepeatingMail> DeleteRepeatingMailAsync(RepeatingMail repeatingMail);
+        Task<RepeatingMail> DeleteRepeatingMailAsync(int id);
 
         Task<RepeatingMail> GetRepeatingMailByIdAsync(int id);
         Task<RepeatingMail> GetRepeatingMailBySenderEmailAsync(string senderEmail);
+
         Task<IEnumerable<RepeatingMail>> GetAllRepeatingMailsAsync();
     }
 }

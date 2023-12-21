@@ -18,6 +18,11 @@ namespace FlowWing.DataAccess.Concrete
             _dbContext = dbContext;
         }
 
+        public async Task<IEnumerable<ScheduledEmail>> GetActiveScheduledMailsAsync()
+        {
+            return await _dbContext.ScheduledEmails.Where(x => x.Status == true).ToListAsync();
+        }
+
         public async Task<ScheduledEmail> CreateScheduledEmailAsync(ScheduledEmail scheduledEmail)
         {
             _dbContext.ScheduledEmails.Add(scheduledEmail);

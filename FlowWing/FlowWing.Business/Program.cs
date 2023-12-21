@@ -25,6 +25,8 @@ namespace FlowWing.Business
             builder.RegisterType<EmailLogManager>().As<IEmailLogService>();
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<ScheduledEmailManager>().As<IScheduledEmailService>();
+            builder.RegisterType<RepeatingMailManager>().As<IRepeatingMailService>();
+
 
             var container = builder.Build();
 
@@ -33,6 +35,7 @@ namespace FlowWing.Business
                 var emailLogger = scope.Resolve<IEmailLogService>();
                 var userService = scope.Resolve<IUserService>();
                 var scheduledEmailService = scope.Resolve<IScheduledEmailService>();
+                var repeatingMailService = scope.Resolve<IRepeatingMailService>();
             }
         }
     }

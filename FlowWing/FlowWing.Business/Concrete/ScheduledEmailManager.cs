@@ -24,16 +24,20 @@ namespace FlowWing.Business.Concrete
 
         public async Task<ScheduledEmail> DeleteScheduledEmailAsync(int id)
         {
-            ScheduledEmail email = await _scheduledEmailRepository.GetScheduledEmailByIdAsync(id);
-            if (email == null)
+            ScheduledEmail scheduledEmail = await _scheduledEmailRepository.GetScheduledEmailByIdAsync(id);
+            if (scheduledEmail != null)
             {
-                throw new Exception("Silinmek istenen mail bulunamadi");
+                return await _scheduledEmailRepository.DeleteScheduledEmailAsync(scheduledEmail);
             }
             else
             {
-                await _scheduledEmailRepository.DeleteScheduledEmailAsync(email);
-                return email;
+                   throw new Exception("Scheduled Email not found");
             }
+        }
+
+        public async Task<IEnumerable<ScheduledEmail>> GetActiveScheduledMailsAsync()
+        {
+            return await _scheduledEmailRepository.GetActiveScheduledMailsAsync();
         }
 
         public async Task<IEnumerable<ScheduledEmail>> GetAllScheduledEmailsAsync()
@@ -43,22 +47,23 @@ namespace FlowWing.Business.Concrete
 
         public async Task<ScheduledEmail> GetScheduledEmailByIdAsync(int id)
         {
-            return await _scheduledEmailRepository.GetScheduledEmailByIdAsync(id);
+            if ( id > 0)
+            {
+                if (await _scheduledEmailRepository.GetScheduledEmailByIdAsync(id) == null)
+                {
+                    throw new Exception("Scheduled Email not found");
+                }
+                return await _scheduledEmailRepository.GetScheduledEmailByIdAsync(id);
+            }
+            else
+            {
+                throw new Exception("Id must be greater than 0");
+            }
         }
 
         public async Task<ScheduledEmail> UpdateScheduledEmailAsync(ScheduledEmail scheduledEmail)
         {
-            ScheduledEmail email = await _scheduledEmailRepository.GetScheduledEmailByIdAsync(scheduledEmail.Id);
-            if (email == null)
-            {
-                throw new Exception("Guncellenmek istenen email bulunamadi");
-            }
-            else
-            {
-                await _scheduledEmailRepository.UpdateScheduledEmailAsync(email);
-                return email;
-            }
-        
+            return await _scheduledEmailRepository.UpdateScheduledEmailAsync(scheduledEmail);
         }
     }
 }

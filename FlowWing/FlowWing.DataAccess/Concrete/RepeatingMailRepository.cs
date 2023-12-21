@@ -31,7 +31,7 @@ namespace FlowWing.DataAccess.Concrete
             return repeatingMail;
         }
 
-        public async Task<IEnumerable<RepeatingMail>> GetAllRepeatingMails()
+        public async Task<IEnumerable<RepeatingMail>> GetAllRepeatingMailsAsync()
         {
             return _dbContext.RepeatingMails.ToList();
         }
@@ -41,6 +41,10 @@ namespace FlowWing.DataAccess.Concrete
             return _dbContext.RepeatingMails.FirstOrDefault(x => x.Id == id);
         }
 
+        public async Task<RepeatingMail> GetRepeatingMailBySenderEmailAsync(string senderEmail)
+        {
+            return _dbContext.RepeatingMails.FirstOrDefault(x => x.SenderEmail == senderEmail);
+        }
         public async Task<RepeatingMail> UpdateRepeatingMailAsync(RepeatingMail repeatingMail)
         {
             _dbContext.RepeatingMails.Update(repeatingMail);

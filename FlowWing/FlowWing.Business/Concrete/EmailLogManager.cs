@@ -21,43 +21,59 @@ namespace FlowWing.Business.Concrete
 
         public async Task<EmailLog> CreateEmailLogAsync(EmailLog emailLog)
         {
-            return await _emailLogRepository.CreateEmailLogAsync(emailLog);
+            if (await _emailLogRepository.GetEmailLogByIdAsync(emailLog.Id) == null)
+            {
+                throw new Exception("EmailLog already exists");
+            }
+            else
+            {
+                await _emailLogRepository.CreateEmailLogAsync(emailLog);
+                return emailLog;
+            }
         }
 
         public async Task<EmailLog> DeleteEmailLogAsync(int id)
         {
-            EmailLog log = await _emailLogRepository.GetEmailLogByIdAsync(id);
-            if (log == null)
+            if (await _emailLogRepository.GetEmailLogByIdAsync(id) == null)
             {
-                throw new Exception("Email bulunamadi");
+                throw new Exception("EmailLog does not exist");
             }
             else
             {
-                await _emailLogRepository.DeleteEmailLogAsync(log);
-                return log;
+                var emailLog = await _emailLogRepository.GetEmailLogByIdAsync(id);
+                await _emailLogRepository.DeleteEmailLogAsync(emailLog);
+                return emailLog;
             }
         }
 
         public async Task<IEnumerable<EmailLog>> GetAllEmailLogsAsync()
         {
             return await _emailLogRepository.GetAllEmailLogsAsync();
-
         }
 
         public async Task<EmailLog> GetEmailLogByIdAsync(int id)
-        {
-            EmailLog log = await _emailLogRepository.GetEmailLogByIdAsync(id);
-            if (log  != null)
+        { 
+            if (await _emailLogRepository.GetEmailLogByIdAsync(id) == null)
             {
-                return log;
+                throw new Exception("EmailLog does not exist");
             }
-            throw new Exception("Log bulunamadi");
+            else
+            {
+                return await _emailLogRepository.GetEmailLogByIdAsync(id);
+            }
         }
 
         public async Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog)
         {
-            await _emailLogRepository.UpdateEmailLogAsync(emailLog);
-            return emailLog;
+            if (await _emailLogRepository.GetEmailLogByIdAsync(emailLog.Id) == null)
+            {
+                throw new Exception("EmailLog does not exist");
+            }
+            else
+            {
+                await _emailLogRepository.UpdateEmailLogAsync(emailLog);
+                return emailLog;
+            }
         }
     }
 }
