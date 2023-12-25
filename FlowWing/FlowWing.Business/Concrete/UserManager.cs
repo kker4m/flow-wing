@@ -14,12 +14,16 @@ namespace FlowWing.Business.Concrete
 
         public async Task<User> CreateUserAsync(User user)
         {
-            if (await _userRepository.GetUserByEmailAsync(user.Email) == null | await _userRepository.GetUserByUsernameAsync(user.Username) == null)
+            if (await _userRepository.GetUserByEmailAsync(user.Email) != null | await _userRepository.GetUserByUsernameAsync(user.Username) != null)
             {
                 throw new Exception("User already exists");
             }
             else
             {
+                string hashedPassword = PasswordHasher.HashPassword(user.Password);
+                user.Password = hashedPassword;
+                user.CreationDate = user.CreationDate.ToUniversalTime();
+                user.LastLoginDate = user.LastLoginDate.ToUniversalTime();
                 _userRepository.CreateUserAsync(user);
                 return user;
             }
@@ -37,7 +41,6 @@ namespace FlowWing.Business.Concrete
                 return user;
             }
         }
-
         public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByIdAsync(int id)
         {
             if(await _userRepository.GetUserByIdAsync(id) == null)
@@ -69,51 +72,33 @@ namespace FlowWing.Business.Concrete
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
-            if ( await _userRepository.GetUserByEmailAsync(email) == null)
-            {
-                throw new Exception("User does not exist");
-            }
-            else
-            {
-                return await _userRepository.GetUserByEmailAsync(email);
-            }
+            User user = await _userRepository.GetUserByEmailAsync(email);
+            user.LastLoginDate = DateTime.UtcNow;
+            await _userRepository.UpdateUserAsync(user);
+            return user;
         }
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            if ( await _userRepository.GetUserByIdAsync(id) == null)
-            {
-                throw new Exception("User does not exist");
-            }
-            else
-            {
-                return await _userRepository.GetUserByIdAsync(id);
-            }
+            User user = await _userRepository.GetUserByIdAsync(id);
+            user.LastLoginDate = DateTime.UtcNow;
+            await _userRepository.UpdateUserAsync(user);
+            return user;
         }
 
         public async Task<User> GetUserByUsernameAsync(string username)
         {
-            if ( await _userRepository.GetUserByUsernameAsync(username) == null)
-            {
-                throw new Exception("User does not exist");
-            }
-            else
-            {
-                return await _userRepository.GetUserByUsernameAsync(username);
-            }
+            User user = await _userRepository.GetUserByUsernameAsync(username);
+            user.LastLoginDate = DateTime.UtcNow;
+            await _userRepository.UpdateUserAsync(user);
+            return user;
         }
 
         public async Task<User> UpdateUserAsync(User user)
         {
-            if (await _userRepository.GetUserByIdAsync(user.Id) == null)
-            {
-                throw new Exception("User does not exist");
-            }
-            else
-            {
-                await _userRepository.UpdateUserAsync(user);
-                return user;
-            }
+            User _searchingUser = await _userRepository.GetUserByIdAsync(user.Id);
+            await _userRepository.UpdateUserAsync(_searchingUser);
+            return _searchingUser;
         }
     }
 }

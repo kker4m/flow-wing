@@ -175,9 +175,9 @@ namespace FlowWing.DataAccess.Migrations
                     b.Property<DateTime>("LastLoginDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<byte[]>("Password")
+                    b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .IsRequired()

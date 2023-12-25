@@ -31,7 +31,7 @@ namespace FlowWing.Business.Concrete
             }
             else
             {
-                   throw new Exception("Scheduled Email not found");
+                   return null;
             }
         }
 
@@ -47,18 +47,7 @@ namespace FlowWing.Business.Concrete
 
         public async Task<ScheduledEmail> GetScheduledEmailByIdAsync(int id)
         {
-            if ( id > 0)
-            {
-                if (await _scheduledEmailRepository.GetScheduledEmailByIdAsync(id) == null)
-                {
-                    throw new Exception("Scheduled Email not found");
-                }
-                return await _scheduledEmailRepository.GetScheduledEmailByIdAsync(id);
-            }
-            else
-            {
-                throw new Exception("Id must be greater than 0");
-            }
+            return await _scheduledEmailRepository.GetScheduledEmailByIdAsync(id);
         }
 
         public async Task<ScheduledEmail> UpdateScheduledEmailAsync(ScheduledEmail scheduledEmail)

@@ -24,14 +24,9 @@ namespace FlowWing.Business.Concrete
         public async Task<RepeatingMail> DeleteRepeatingMailAsync(int id)
         {
             RepeatingMail repeatingMail = await _repeatingMailRepository.GetRepeatingMailByIdAsync(id);
-            if (repeatingMail != null)
-            {
-                return await _repeatingMailRepository.DeleteRepeatingMailAsync(repeatingMail);
-            }
-            else
-            {
-                throw new Exception("Repeating Mail not found");
-            }
+            return await _repeatingMailRepository.DeleteRepeatingMailAsync(repeatingMail);
+
+
         }
 
         public async Task<IEnumerable<RepeatingMail>> GetAllRepeatingMailsAsync()
@@ -43,10 +38,6 @@ namespace FlowWing.Business.Concrete
         {
             if (id > 0)
             {
-                if (await _repeatingMailRepository.GetRepeatingMailByIdAsync(id) == null)
-                {
-                    throw new Exception("Repeating Mail not found");
-                }
                 return await _repeatingMailRepository.GetRepeatingMailByIdAsync(id);
             }
             else
@@ -59,10 +50,6 @@ namespace FlowWing.Business.Concrete
         {
             if (senderEmail != null)
             {
-                if (await _repeatingMailRepository.GetRepeatingMailBySenderEmailAsync(senderEmail) == null)
-                {
-                    throw new Exception("Repeating Mail not found");
-                }
                 return await _repeatingMailRepository.GetRepeatingMailBySenderEmailAsync(senderEmail);
             }
             else
@@ -73,18 +60,12 @@ namespace FlowWing.Business.Concrete
 
         public async Task<RepeatingMail> UpdateRepeatingMailAsync(RepeatingMail repeatingMail)
         {
-            if (repeatingMail != null)
+            if (await _repeatingMailRepository.GetRepeatingMailByIdAsync(repeatingMail.Id) == null)
             {
-                if (await _repeatingMailRepository.GetRepeatingMailByIdAsync(repeatingMail.Id) == null)
-                {
-                    throw new Exception("Repeating Mail not found");
-                }
-                return await _repeatingMailRepository.UpdateRepeatingMailAsync(repeatingMail);
+                throw new Exception("Repeating Mail not found");
             }
-            else
-            {
-                throw new Exception("Repeating Mail must not be null");
-            }
+            return await _repeatingMailRepository.UpdateRepeatingMailAsync(repeatingMail);
+ 
         }
     }
 }

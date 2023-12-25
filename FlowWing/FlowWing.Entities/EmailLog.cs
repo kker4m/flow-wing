@@ -11,6 +11,7 @@ namespace FlowWing.Entities
     public class EmailLog
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime SentDateTime { get; set; }

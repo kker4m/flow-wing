@@ -7,6 +7,9 @@ namespace FlowWing.DataAccess
 {
     public class FlowWingDbContext: DbContext
     {
+        public FlowWingDbContext(DbContextOptions<FlowWingDbContext> options) : base(options)
+        {
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder); 

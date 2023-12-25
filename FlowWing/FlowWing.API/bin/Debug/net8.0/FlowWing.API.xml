@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FlowWing.API</name>
+    </assembly>
+    <members>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetAllEmailLogs">
+            <summary>
+            Get All Email Logs
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetEmailLogById(System.Int32)">
+            <summary>
+            Get Email Log By Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.CreateEmailLog(FlowWing.Entities.EmailLog)">
+            <summary>
+            Create an Email Log
+            </summary>
+            <param name="emailLog"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.UpdateEmailLog(FlowWing.Entities.EmailLog)">
+            <summary>
+            Update an Email Log
+            </summary>
+            <param name="emailLog"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.DeleteEmailLog(System.Int32)">
+            <summary>
+            Delete an Email Log
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.GetAllRepeatingMails">
+            <summary>
+            Get All Repeating Mails
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.GetRepeatingMailById(System.Int32)">
+            <summary>
+            Get Repeating Mail By Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.CreateRepeatingMail(FlowWing.Entities.RepeatingMail)">
+            <summary>
+            Create an Repeating Mail
+            </summary>
+            <param name="repeatingMail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.UpdateRepeatingMail(FlowWing.Entities.RepeatingMail)">
+            <summary>
+            Update an Repeating Mail
+            </summary>
+            <param name="repeatingMail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.DeleteRepeatingMail(System.Int32)">
+            <summary>
+            Delete an Repeating Mail
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.GetAllUsers">
+            <summary>
+            Get All Scheduled Emails
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.GetScheduledEmailById(System.Int32)">
+            <summary>
+            Get Scheduled Email By Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.CreateScheduledEmail(FlowWing.Entities.ScheduledEmail)">
+            <summary>
+            Create an Scheduled Email
+            </summary>
+            <param name="scheduledEmail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledEmail(FlowWing.Entities.ScheduledEmail)">
+            <summary>
+            Update an Scheduled Email
+            </summary>
+            <param name="scheduledEmail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.DeleteScheduledEmail(System.Int32)">
+            <summary>
+            Delete an Scheduled Email
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.GetAllUsers">
+            <summary>
+            Get All Users
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.GetUserById(System.Int32)">
+            <summary>
+            Get User By Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.CreateUser(FlowWing.Entities.User)">
+            <summary>
+            Create an User
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.UpdateUser(FlowWing.Entities.User)">
+            <summary>
+            Update an User
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.DeleteUser(System.Int32)">
+            <summary>
+            Delete an User
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
