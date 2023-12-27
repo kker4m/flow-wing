@@ -8,7 +8,7 @@ namespace FlowWing.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors("AllowAllOrigins")]
+    [EnableCors("AllowAll")]
     public class RepeatingMailsController : ControllerBase
     {
         private IRepeatingMailService _repeatingMailService;

@@ -11,7 +11,7 @@ namespace FlowWing.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors("AllowAllOrigins")]
+    [EnableCors("AllowAll")]
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
