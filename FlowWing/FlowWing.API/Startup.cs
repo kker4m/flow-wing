@@ -24,7 +24,16 @@ namespace FlowWing.API
         public void ConfigureServices(IServiceCollection services)
         {
             // Burada bağımlılıkları ekleyin
-        
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
 
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IEmailLogRepository, EmailLogRepository>();
@@ -38,15 +47,15 @@ namespace FlowWing.API
             //services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql("Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;"));
             services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll",
+            builder =>
             {
-                options.AddPolicy("AllowAllOrigins",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                               .AllowAnyMethod()
-                               .AllowAnyHeader();
-                    });
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
             });
+    });
             services.AddSwaggerDocument(config =>
             {
                 config.PostProcess = (doc =>
@@ -73,10 +82,12 @@ namespace FlowWing.API
             }
 
             // app.UseAuthorization();
+            app.UseCors("AllowAll");
             app.UseRouting();
             app.UseOpenApi();
             app.UseSwaggerUi3();
-            app.UseCors("AllowAllOrigins");
+            app.UseCors(options => options.WithOrigins("http://localhost").AllowAnyMethod());
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
