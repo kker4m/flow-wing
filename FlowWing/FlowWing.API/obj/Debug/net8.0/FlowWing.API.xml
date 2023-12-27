@@ -4,6 +4,20 @@
         <name>FlowWing.API</name>
     </assembly>
     <members>
+        <member name="M:FlowWing.API.Controllers.AuthController.SignUp(FlowWing.API.Models.SignUpViewModel)">
+            <summary>
+            Kullanıcı kaydı işlemleri burada gerçekleştirilir
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.AuthController.Login(FlowWing.API.Models.LoginViewModel)">
+            <summary>
+            Kullanıcı giriş işlemleri burada gerçekleştirilir
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.GetAllEmailLogs">
             <summary>
             Get All Email Logs
