@@ -1,5 +1,6 @@
 ﻿using FlowWing.Business.Abstract;
 using FlowWing.Entities;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace FlowWing.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAllOrigins")]
     public class ScheduledEmailsController : ControllerBase
     {
         private IScheduledEmailService _scheduledEmailService;

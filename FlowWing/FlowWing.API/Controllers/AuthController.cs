@@ -6,11 +6,13 @@ using Microsoft.IdentityModel.Tokens;
 using FlowWing.Business.Abstract;
 using FlowWing.Entities;
 using System.Text;
+using Microsoft.AspNetCore.Cors;
 
 namespace FlowWing.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAllOrigins")]
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;

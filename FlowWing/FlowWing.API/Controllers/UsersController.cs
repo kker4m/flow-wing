@@ -2,6 +2,7 @@
 using FlowWing.Business.Concrete;
 using FlowWing.DataAccess.Abstract;
 using FlowWing.Entities;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
@@ -10,6 +11,7 @@ namespace FlowWing.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAllOrigins")]
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
