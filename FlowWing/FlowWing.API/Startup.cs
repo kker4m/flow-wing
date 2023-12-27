@@ -37,6 +37,16 @@ namespace FlowWing.API
             services.AddScoped<IEmailLogService, EmailLogManager>();
             //services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql("Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;"));
             services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
             services.AddSwaggerDocument(config =>
             {
                 config.PostProcess = (doc =>
@@ -66,6 +76,7 @@ namespace FlowWing.API
             app.UseRouting();
             app.UseOpenApi();
             app.UseSwaggerUi3();
+            app.UseCors("AllowAllOrigins");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
