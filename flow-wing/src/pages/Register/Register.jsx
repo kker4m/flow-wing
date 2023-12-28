@@ -1,23 +1,24 @@
-import { Divider, Input } from "antd";
+import { Divider } from "antd";
 import React from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import "./register.css";
 import { TextField } from "@mui/material";
-import { Formik, useFormik } from "formik";
+import { Formik } from "formik";
 import * as Yup from "yup";
+import UserService from "../../services/userService";
 
 const Register = () => {
   let navigate = useNavigate();
 
-  // register handler function
-  // const handleRegister = () => {
-  //   navigate("/login");
-  // };
+  const handleRegister = (values) => {
+    let userService = new UserService();
+    userService.createUser(values).then((response) => console.log(response));
+    navigate("/login");
+  };
 
-  // YUP VALIDATION SCHEMA
   const validationSchema = Yup.object({
-    userName: Yup.string()
+    username: Yup.string()
       .required("Zorunlu alan")
       .min(4, "Kullanıcı adı en az 4 karakterden oluşmalıdır.")
       .max(8, "Kullanıcı adı en fazla 8 karakterden oluşabilir."),
@@ -28,9 +29,6 @@ const Register = () => {
     email: Yup.string()
       .email("Geçersiz e-mail adresi")
       .required("Zorunlu alan"),
-    passwordConfirmation: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Şifreler eşleşmiyor.")
-      .required("Zorunlu alan"),
   });
 
   return (
@@ -40,31 +38,29 @@ const Register = () => {
         <Divider />
         <Formik
           initialValues={{
-            userName: "",
+            username: "",
             password: "",
             email: "",
-            passwordConfirmation: "",
           }}
           validationSchema={validationSchema}
           onSubmit={(values) => {
-            console.log(values);
-            navigate("/login");
+            handleRegister(values);
           }}
         >
           {({ handleSubmit, handleChange, values, errors }) => (
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="input-areas">
-                {" "}
                 <TextField
-                  name="userName"
+                  name="username"
                   id="standard-basic"
-                  label="Kulanıcı Adı"
+                  label="Kullanıcı Adı"
                   variant="standard"
                   onChange={handleChange}
-                  value={values.userName}
+                  value={values.username}
                 />
+                {errors.username && <div className="error-message">{errors.username}</div>}
               </div>
-              {errors.userName && errors.userName}
+
               <div className="input-areas">
                 <TextField
                   id="standard-basic"
@@ -74,12 +70,10 @@ const Register = () => {
                   onChange={handleChange}
                   value={values.email}
                 />
+                {errors.email && <div className="error-message">{errors.email}</div>}
               </div>
 
-              {errors.email ? errors.email : null}
-            
               <div className="input-areas">
-                {" "}
                 <TextField
                   id="standard-basic"
                   name="password"
@@ -89,29 +83,14 @@ const Register = () => {
                   onChange={handleChange}
                   value={values.password}
                 />
+                {errors.password && <div className="error-message">{errors.password}</div>}
               </div>
-              {errors.password && errors.password}
-              <div className="input-areas">
-                {" "}
-                <TextField
-                  id="standard-basic"
-                  label="Şifre Tekrar"
-                  variant="standard"
-                  type="password"
-                  name="passwordConfirmation"
-                  onChange={handleChange}
-                  value={values.passwordConfirmation}
-                />
-              </div>
-              {errors.passwordConfirmation && errors.passwordConfirmation}
-              {/* LINK TO LOGIN PAGE IF USER HAS AN ACCOUNT */}
+
               <div className="register-link">
                 Hesabınız var mı? <Link to="/login">Giriş Yap</Link>
               </div>
 
-              {/* SUBMIT BUTTON */}
-
-              <button className="register-btn" onClick={handleSubmit}>
+              <button className="register-btn" type="submit">
                 Hesap Oluştur
               </button>
             </form>
