@@ -24,7 +24,20 @@ namespace FlowWing.API
         public void ConfigureServices(IServiceCollection services)
         {
             // Burada bağımlılıkları ekleyin
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.WithOrigins(
+                        "http://localhost:5232",
+                        "http://localhost:5232/auth"
+                        )
+                        .AllowAnyMethod()
+                        .SetIsOriginAllowed((origin) => true)
+                        .AllowCredentials()
+                        .AllowAnyHeader();
+                });
+            });
 
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IEmailLogRepository, EmailLogRepository>();
