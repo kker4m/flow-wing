@@ -76,16 +76,16 @@ namespace FlowWing.API
             }
 
             // app.UseAuthorization();
-            app.UseCors(builder => builder
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .SetIsOriginAllowed((host) => true)
-                .AllowCredentials()
-            );
-            app.UseRouting();
             app.UseOpenApi();
             app.UseSwaggerUi3();
+            app.UseRouting();
+            app.UseCors(builder => builder
 
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((origin) => true)
+                .AllowCredentials()
+            );
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
