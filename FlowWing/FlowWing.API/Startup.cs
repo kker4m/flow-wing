@@ -24,18 +24,14 @@ namespace FlowWing.API
         public void ConfigureServices(IServiceCollection services)
         {
             // Burada bağımlılıkları ekleyin
+            //Add Cors and allow all the connections
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", builder =>
                 {
-                    builder.WithOrigins(
-                        "http://localhost:5232",
-                        "http://localhost:5232/auth"
-                        )
-                        .AllowAnyMethod()
-                        .SetIsOriginAllowed((origin) => true)
-                        .AllowCredentials()
-                        .AllowAnyHeader();
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
                 });
             });
 
@@ -79,13 +75,7 @@ namespace FlowWing.API
             app.UseOpenApi();
             app.UseSwaggerUi3();
             app.UseRouting();
-            app.UseCors(builder => builder
-
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .SetIsOriginAllowed((origin) => true)
-                .AllowCredentials()
-            );
+            app.UseCors("AllowAll");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FlowWing.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c46a100c239fdd2f498037f01173c4714ed910d0")]
 [assembly: System.Reflection.AssemblyProductAttribute("FlowWing.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FlowWing.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
