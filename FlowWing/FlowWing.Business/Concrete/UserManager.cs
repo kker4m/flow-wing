@@ -73,6 +73,10 @@ namespace FlowWing.Business.Concrete
         public async Task<User> GetUserByEmailAsync(string email)
         {
             User user = await _userRepository.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                return null;
+            }
             user.LastLoginDate = DateTime.UtcNow;
             await _userRepository.UpdateUserAsync(user);
             return user;
