@@ -6,17 +6,25 @@ import "./register.css";
 import { TextField } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import UserService from "../../services/userService";
+import { useDispatch, useSelector } from "react-redux";
+import alertify from "alertifyjs";
+import { registerUser } from "../../Redux/authSlice";
 
 const Register = () => {
   let navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  // redux state
+  const { loading, error } = useSelector((state) => state.user);
+
+  // REGISTER FUNCTION
   const handleRegister = (values) => {
-    let userService = new UserService();
-    userService.createUser(values).then((response) => console.log(response));
-    navigate("/login");
+    dispatch(registerUser(values)).then((result) => {
+      if (result.payload) {
+        navigate("/login");
+      }
+    });
   };
-
   const validationSchema = Yup.object({
     username: Yup.string()
       .required("Zorunlu alan")
@@ -58,7 +66,9 @@ const Register = () => {
                   onChange={handleChange}
                   value={values.username}
                 />
-                {errors.username && <div className="error-message">{errors.username}</div>}
+                {errors.username && (
+                  <div className="error-message">{errors.username}</div>
+                )}
               </div>
 
               <div className="input-areas">
@@ -70,7 +80,9 @@ const Register = () => {
                   onChange={handleChange}
                   value={values.email}
                 />
-                {errors.email && <div className="error-message">{errors.email}</div>}
+                {errors.email && (
+                  <div className="error-message">{errors.email}</div>
+                )}
               </div>
 
               <div className="input-areas">
@@ -83,7 +95,9 @@ const Register = () => {
                   onChange={handleChange}
                   value={values.password}
                 />
-                {errors.password && <div className="error-message">{errors.password}</div>}
+                {errors.password && (
+                  <div className="error-message">{errors.password}</div>
+                )}
               </div>
 
               <div className="register-link">

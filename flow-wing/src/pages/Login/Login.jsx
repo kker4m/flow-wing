@@ -8,19 +8,24 @@ import { Link } from "react-router-dom";
 import { TextField } from "@mui/material";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
+import UserService from "../../services/userService";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../Redux/authSlice";
 
 const Login = () => {
   let navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  // redux state
+  const { loading, error } = useSelector((state) => state.user);
   // login handler function
-  const handleLogin = () => {
-    navigate("/home");
+  const handleLogin = (values) => {
+    dispatch(loginUser(values)).then((result) => {
+      if (result.payload) {
+        navigate("/home");
+      }
+    });
   };
   const validationSchema = Yup.object({
-    userName: Yup.string()
-      .required("Zorunlu alan")
-      .min(4, "Kullanıcı adı en az 4 karakterden oluşmalıdır.")
-      .max(8, "Kullanıcı adı en fazla 8 karakterden oluşabilir."),
     password: Yup.string()
       .required("Zorunlu alan")
       .min(4, "Şifre en az 4 karakter içermelidir")
@@ -28,42 +33,27 @@ const Login = () => {
     email: Yup.string()
       .email("Geçersiz e-mail adresi")
       .required("Zorunlu alan"),
-
   });
 
   return (
     <>
       <Header />
       <div className="login-page-content">
-    
         <p>Hoş Geldiniz</p>
         <Divider />
         <Formik
           initialValues={{
-            userName: "",
             password: "",
             email: "",
           }}
           validationSchema={validationSchema}
           onSubmit={(values) => {
             console.log(values);
-            navigate("/login");
+            handleLogin(values);
           }}
         >
           {({ handleSubmit, handleChange, values, errors }) => (
             <form>
-              <div className="input-areas">
-                {" "}
-                <TextField
-                  name="userName"
-                  id="standard-basic"
-                  label="Kulanıcı Adı"
-                  variant="standard"
-                  onChange={handleChange}
-                  value={values.userName}
-                />
-              </div>
-              {errors.userName && errors.userName}
               <div className="input-areas">
                 <TextField
                   id="standard-basic"
@@ -76,7 +66,7 @@ const Login = () => {
               </div>
 
               {errors.email ? errors.email : null}
-             
+
               <div className="input-areas">
                 {" "}
                 <TextField
@@ -90,22 +80,25 @@ const Login = () => {
                 />
               </div>
               {errors.password && errors.password}
-             
+
               {/* LINK TO REGISTER PAGE IF USER DOESN'T HAVE AN ACCOUNT */}
-              <div  className="register-link">
-          Hesabınız yok mu? <Link to="/register">Kayıt Ol</Link>
-        </div>
+              <div className="register-link">
+                Hesabınız yok mu? <Link to="/register">Kayıt Ol</Link>
+              </div>
 
               {/* SUBMIT BUTTON */}
 
               <button className="sign-in-btn" onClick={handleSubmit}>
-              Giriş Yap
+                {loading ? (
+                  <span className="loading loading-dots loading-lg"></span>
+                ) : (
+                  "Giriş Yap"
+                )}
               </button>
+              {error && <div>{error}</div>}
             </form>
           )}
         </Formik>
-      
-      
       </div>
     </>
   );
