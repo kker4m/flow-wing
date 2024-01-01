@@ -36,9 +36,9 @@ const Login = () => {
   });
 
   return (
-    <>
-      <Header />
-      <div className="login-page-content">
+    <div className="login-page-content">
+   
+      <div className="login-page-form">
         <p>Hoş Geldiniz</p>
         <Divider />
         <Formik
@@ -65,7 +65,9 @@ const Login = () => {
                 />
               </div>
 
-              {errors.email ? errors.email : null}
+              {errors.email && (
+                <div className="error-message">{errors.email}</div>
+              )}
 
               <div className="input-areas">
                 {" "}
@@ -79,7 +81,9 @@ const Login = () => {
                   value={values.password}
                 />
               </div>
-              {errors.password && errors.password}
+              {errors.password && (
+                <div className="error-message">{errors.password}</div>
+              )}
 
               {/* LINK TO REGISTER PAGE IF USER DOESN'T HAVE AN ACCOUNT */}
               <div className="register-link">
@@ -100,7 +104,7 @@ const Login = () => {
           )}
         </Formik>
       </div>
-    </>
+    </div>
   );
 };
 

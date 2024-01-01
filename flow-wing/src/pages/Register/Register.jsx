@@ -40,8 +40,8 @@ const Register = () => {
   });
 
   return (
-    <>
-      <div className="register-page-content">
+    <div className="register-page-content">
+      <div className="register-page-form">
         <p>Hoş Geldiniz</p>
         <Divider />
         <Formik
@@ -66,11 +66,10 @@ const Register = () => {
                   onChange={handleChange}
                   value={values.username}
                 />
-                {errors.username && (
-                  <div className="error-message">{errors.username}</div>
-                )}
               </div>
-
+              {errors.username && (
+                <div className="error-message">{errors.username}</div>
+              )}
               <div className="input-areas">
                 <TextField
                   id="standard-basic"
@@ -80,11 +79,10 @@ const Register = () => {
                   onChange={handleChange}
                   value={values.email}
                 />
-                {errors.email && (
-                  <div className="error-message">{errors.email}</div>
-                )}
               </div>
-
+              {errors.email && (
+                <div className="error-message">{errors.email}</div>
+              )}
               <div className="input-areas">
                 <TextField
                   id="standard-basic"
@@ -95,11 +93,10 @@ const Register = () => {
                   onChange={handleChange}
                   value={values.password}
                 />
-                {errors.password && (
-                  <div className="error-message">{errors.password}</div>
-                )}
               </div>
-
+              {errors.password && (
+                <div className="error-message">{errors.password}</div>
+              )}
               <div className="register-link">
                 Hesabınız var mı? <Link to="/login">Giriş Yap</Link>
               </div>
@@ -111,7 +108,7 @@ const Register = () => {
           )}
         </Formik>
       </div>
-    </>
+    </div>
   );
 };
 

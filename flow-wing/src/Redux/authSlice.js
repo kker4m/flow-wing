@@ -31,6 +31,11 @@ const authSlice = createSlice({
     loading: false,
     error: null,
   },
+  reducers:{
+    logout: (state) => {
+      state.user = null
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {

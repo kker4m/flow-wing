@@ -3,7 +3,7 @@ import "./home.css";
 import data from "../../data.json";
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
-import { Input } from "antd";
+import { Divider, Input } from "antd";
 import Header from "../../components/Header";
 
 const Home = ({ index }) => {
@@ -15,23 +15,11 @@ const Home = ({ index }) => {
     return str;
   };
 
-  // search functions
-  const { Search } = Input;
 
-  const onSearch = (value, _e, info) => console.log(info?.source, value);
 
   return (
     <div className="home-page-content">
-    <Header/>
-      <div className="search-section">
-        <Search
-          placeholder="Postalarda arayın"
-          onSearch={onSearch}
-          style={{
-            width: 200,
-          }}
-        />
-      </div>
+
       <div className="inbox">
         {data.map((item, index) =>
           item.isOpened ? (
@@ -48,15 +36,11 @@ const Home = ({ index }) => {
                 <div className="inbox-mail-body">
                   {excerpt(item.body, 120)}
 
-                  {item.attachment && (
-                    <div className="mail-attachment">
-                      {" "}
-                      {excerpt(item.attachment, 10)}
-                    </div>
-                  )}
+                 
+                
                 </div>
                 <div className="inbox-sent-time">{item.sentTime}</div>
-              </div>
+              </div><Divider/>
             </Link>
           ) : (
             <Link to={`/inbox/${index}`} key={index}>
@@ -71,16 +55,13 @@ const Home = ({ index }) => {
                 </div>
                 <div className="inbox-mail-body">
                   {excerpt(item.body, 120)}
-
-                  {item.attachment && (
-                    <div className="mail-attachment"> {item.attachment}</div>
-                  )}
                 </div>
                 <div className="inbox-sent-time">{item.sentTime}</div>
-              </div>
+              </div>  <Divider/>
             </Link>
           )
         )}
+     
       </div>
     </div>
   );

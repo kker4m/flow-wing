@@ -1,0 +1,59 @@
+.header-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-right: 5%;
+          border-bottom: 1px solid;
+          margin-bottom: 20px;
+        }
+        
+        .logo-section,
+        .user-section,
+        .search-section {
+          margin: 0 15px;
+          display: flex;
+          flex-direction: row;
+          align-items: center; /* Align items vertically centered */
+        }
+        
+        .user-icon {
+          background: #75ADE1;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%; /* Make border-radius 50% for a perfect circle */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 15px;
+        }
+        
+        .logo-img {
+          width: 100px;
+          height: 100px;
+        }
+        
+        .user-name {
+          margin-left: 10px; /* Add some margin between user-icon and user-name */
+        }
+        
+        @media screen and (max-width: 768px) {
+          .header-content {
+            flex-direction: column;
+            align-items: stretch;
+          }
+        
+          .logo-section,
+          .user-section,
+          .search-section {
+            margin: 15px 0;
+          }
+        
+          .user-icon {
+            margin: 0; /* Reset margin for small screens */
+          }
+        
+          .user-name {
+            margin-left: 0; /* Reset margin for small screens */
+          }
+        }
+        

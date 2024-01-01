@@ -2,3 +2,48 @@
 
   margin: 20px;
 }
+.compose-attachments{
+  
+  display: flex;
+  align-self: flex-start;
+  justify-content: start;
+}
+.compose-btns{
+display: flex;
+align-self: flex-end;
+justify-content: end;
+padding: 20px;
+}
+.send-btn{
+
+  margin: 20px;
+  width: 100px;
+  height: 40px;
+  border: none;
+  background: #598C46;
+  border-radius: 45px;
+  color: white;
+  font-size: 14px;
+
+}
+.send-btn:hover {
+  cursor: pointer;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.2), /* Use a slightly darker shade of black */
+    0 17px 50px 0 rgba(0, 0, 0, 0.14);
+}
+.delete-btn{
+
+  margin: 20px;
+  width: 100px;
+  height: 40px;
+  border: none;
+  background: #d71313;
+  border-radius: 45px;
+  color: white;
+  font-size: 14px;
+}
+.delete-btn:hover{
+  cursor: pointer;
+  box-shadow: 0 12px 16px 0 rgba(215, 19, 19, 0.24),
+    0 17px 50px 0 rgba(215, 19, 19, 0.19);
+}
