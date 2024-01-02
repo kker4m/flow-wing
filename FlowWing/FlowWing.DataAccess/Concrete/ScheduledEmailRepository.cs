@@ -18,9 +18,9 @@ namespace FlowWing.DataAccess.Concrete
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<ScheduledEmail>> GetActiveScheduledMailsAsync()
+        public async Task<IEnumerable<ScheduledEmail>> GetRepeatingScheduledMailsAsync()
         {
-            return await _dbContext.ScheduledEmails.Where(x => x.Status == true).ToListAsync();
+            return await _dbContext.ScheduledEmails.Where(x => x.IsRepeating).ToListAsync();
         }
 
         public async Task<ScheduledEmail> CreateScheduledEmailAsync(ScheduledEmail scheduledEmail)
@@ -41,12 +41,7 @@ namespace FlowWing.DataAccess.Concrete
         {
             return await _dbContext.ScheduledEmails.ToListAsync();
         }
-
-        public async Task<RepeatingMail> GetRepeatingMailByIdAsync(int id)
-        {
-            var scheduledEmail = await _dbContext.ScheduledEmails.FindAsync(id);
-            return await _dbContext.RepeatingMails.FindAsync(scheduledEmail.RepeatingMail.Id);
-        }
+        
 
         public async Task<ScheduledEmail> GetScheduledEmailByIdAsync(int id)
         {

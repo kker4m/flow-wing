@@ -9,7 +9,7 @@ namespace FlowWing.Business.Abstract
 {
     public interface IScheduledEmailService
     {
-        Task<IEnumerable<ScheduledEmail>> GetActiveScheduledMailsAsync();
+        Task<IEnumerable<ScheduledEmail>> GetRepeatingScheduledMailsAsync();
         Task<ScheduledEmail> GetScheduledEmailByIdAsync(int id);
         Task<IEnumerable<ScheduledEmail>> GetAllScheduledEmailsAsync();
         Task<ScheduledEmail> CreateScheduledEmailAsync(ScheduledEmail scheduledEmail);

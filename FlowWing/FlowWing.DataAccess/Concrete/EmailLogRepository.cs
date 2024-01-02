@@ -37,38 +37,16 @@ namespace FlowWing.DataAccess.Concrete
         {
             return await _dbContext.EmailLogs.ToListAsync();
         }
-
-        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserIdAsync(int id)
-        {
-            return await _dbContext.EmailLogs.Where(x => x.User.Id == id).ToListAsync();
-        }
-
-        //Test et
-        public async Task<IEnumerable<ScheduledEmail>> GetAllScheduledEmailsByUserIdAsync(int id)
-        {
-            IEnumerable<EmailLog> logs = await _dbContext.EmailLogs
-                .Include(x => x.ScheduledEmail) // ScheduledEmail bağlantısını dahil et
-                .Where(x => x.User.Id == id)
-                .ToListAsync();
-
-            IEnumerable<ScheduledEmail> scheduledEmails = logs.Select(log => log.ScheduledEmail);
-            return scheduledEmails;
-        }
-
+        
         public async Task<EmailLog> GetEmailLogByIdAsync(int id)
         {
             return await _dbContext.EmailLogs.FindAsync(id);
         }
-
-        public async Task<User> GetUserByEmailLogAsync(EmailLog emailLog)
+        
+        public async Task<IEnumerable<EmailLog>> GetEmailLogsByUserIdAsync(int userId)
         {
-            return await _dbContext.Users.FindAsync(emailLog.User.Id);
-        }
-
-        public async Task<User> GetUserByIdAsync(int id)
-        {
-            int user_id = _dbContext.EmailLogs.FindAsync(id).Result.User.Id;
-            return await _dbContext.Users.FindAsync(user_id);
+            //Return all the email logs that user have as a list
+            return await _dbContext.EmailLogs.Where(x => x.UserId == userId).ToListAsync();
         }
 
         public async Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog)

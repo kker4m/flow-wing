@@ -47,7 +47,7 @@ namespace FlowWing.API.Controllers
                 await _userService.CreateUserAsync(newUser);
 
                 // Kullanıcı başarıyla kaydedildiğinde JWT oluşturulabilir
-                string token = JwtHelper.GenerateJwtToken(model.Email, SecretKey, 60); // Örnek: 60 gun geçerli bir token oluşturuyoruz.
+                string token = JwtHelper.GenerateJwtToken(newUser.Id, model.Email, SecretKey, 15); // Örnek: 60 gun geçerli bir token oluşturuyoruz.
 
                 return Ok(new { Token = token });
             }
@@ -69,28 +69,19 @@ namespace FlowWing.API.Controllers
             User user = await _userService.GetUserByEmailAsync(model.Email);
             if (user == null)
             {
-                return BadRequest("Invalid email or password");
+                return BadRequest("Yanlis email veya sifre");
             }
-
             String password = PasswordHasher.HashPassword(model.Password);
 
             if (model.Email == user.Email && password == user.Password)
             {
-                string token = JwtHelper.GenerateJwtToken(model.Email, SecretKey, 60); // Örnek: 60 gun geçerli bir token oluşturuyoruz.
-
-                Response.Cookies.Append("access_token", token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true, // HTTPS üzerinde çalıştığınızda true olarak ayarlanmalıdır.
-                    SameSite = SameSiteMode.Strict, // Güvenlik için SameSiteMode kullanılabilir.
-                    Expires = DateTime.UtcNow.AddDays(15) // Örnek: Tokenin geçerlilik süresi 15 gün.
-                });
+                string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, SecretKey, 1); // Örnek: 1 gun geçerli bir token oluşturuyoruz.
+                return Ok(new { Token = token , Message = "Giriş Başarılı"});
                 
-                return Ok(new { Token = token });
             }
             else
             {
-                return BadRequest("Invalid email or password");
+                return BadRequest("Yanlis email veya sifre");
             }
         }
     }

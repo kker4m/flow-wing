@@ -31,14 +31,14 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:FlowWing.API.Controllers.EmailLogsController.CreateEmailLog(FlowWing.Entities.EmailLog)">
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.CreateEmailLog(FlowWing.API.Models.EmailLogModel)">
             <summary>
             Create an Email Log
             </summary>
             <param name="emailLog"></param>
             <returns></returns>
         </member>
-        <member name="M:FlowWing.API.Controllers.EmailLogsController.UpdateEmailLog(FlowWing.Entities.EmailLog)">
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.UpdateEmailLog(FlowWing.API.Models.EmailLogModel,System.Int32)">
             <summary>
             Update an Email Log
             </summary>
@@ -52,41 +52,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.GetAllRepeatingMails">
-            <summary>
-            Get All Repeating Mails
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.GetRepeatingMailById(System.Int32)">
-            <summary>
-            Get Repeating Mail By Id
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.CreateRepeatingMail(FlowWing.Entities.RepeatingMail)">
-            <summary>
-            Create an Repeating Mail
-            </summary>
-            <param name="repeatingMail"></param>
-            <returns></returns>
-        </member>
-        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.UpdateRepeatingMail(FlowWing.Entities.RepeatingMail)">
-            <summary>
-            Update an Repeating Mail
-            </summary>
-            <param name="repeatingMail"></param>
-            <returns></returns>
-        </member>
-        <member name="M:FlowWing.API.Controllers.RepeatingMailsController.DeleteRepeatingMail(System.Int32)">
-            <summary>
-            Delete an Repeating Mail
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.GetAllUsers">
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.GetAllScheduledEmails">
             <summary>
             Get All Scheduled Emails
             </summary>
@@ -99,7 +65,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.CreateScheduledEmail(FlowWing.Entities.ScheduledEmail)">
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.CreateScheduledEmail(FlowWing.API.Models.ScheduledEmailLogModel)">
             <summary>
             Create an Scheduled Email
             </summary>
@@ -131,6 +97,12 @@
             Get User By Id
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.GetUserLogs">
+            <summary>
+            Authorize olmus user'in user loglarini getiren method
+            </summary>
             <returns></returns>
         </member>
         <member name="M:FlowWing.API.Controllers.UsersController.CreateUser(FlowWing.Entities.User)">

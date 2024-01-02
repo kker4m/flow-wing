@@ -41,29 +41,7 @@ namespace FlowWing.Business.Concrete
                 return user;
             }
         }
-        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByIdAsync(int id)
-        {
-            if(await _userRepository.GetUserByIdAsync(id) == null)
-            {
-                throw new Exception("User does not exist");
-            }
-            else
-            {
-                return await _userRepository.GetAllEmailLogsByIdAsync(id);
-            }
-        }
-
-        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserAsync(User user)
-        {
-            if (await _userRepository.GetUserByIdAsync(user.Id) == null)
-            {
-                throw new Exception("User does not exist");
-            }
-            else
-            {
-                return await _userRepository.GetAllEmailLogsByIdAsync(user.Id);
-            }
-        }
+        
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {

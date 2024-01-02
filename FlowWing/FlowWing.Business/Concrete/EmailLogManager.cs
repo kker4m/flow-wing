@@ -55,7 +55,11 @@ namespace FlowWing.Business.Concrete
         { 
           return await _emailLogRepository.GetEmailLogByIdAsync(id);
         }
-
+        
+        public async Task<IEnumerable<EmailLog>> GetEmailLogsByUserIdAsync(int userId)
+        {
+            return await _emailLogRepository.GetEmailLogsByUserIdAsync(userId);
+        }
         public async Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog)
         {
             if (await _emailLogRepository.GetEmailLogByIdAsync(emailLog.Id) == null)

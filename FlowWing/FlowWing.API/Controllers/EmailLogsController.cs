@@ -1,5 +1,8 @@
 ﻿using FlowWing.Business.Abstract;
 using FlowWing.Entities;
+using FlowWing.API.Helpers;
+using FlowWing.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +15,14 @@ namespace FlowWing.API.Controllers
     public class EmailLogsController : ControllerBase
     {
         private IEmailLogService _emailLogService;
+        private IUserService _userService;
 
-        public EmailLogsController(IEmailLogService emailLogService)
+        public EmailLogsController(IEmailLogService emailLogService, IUserService userService)
         {
             _emailLogService = emailLogService;
+            _userService = userService;
         }
+
         /// <summary>
         /// Get All Email Logs
         /// </summary>
@@ -50,10 +56,30 @@ namespace FlowWing.API.Controllers
         /// <param name="emailLog"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateEmailLog([FromBody] EmailLog emailLog)
+        [Authorize]
+        public async Task<IActionResult> CreateEmailLog([FromBody] EmailLogModel emailLogModel)
         {
-            var createdEmailLog = await _emailLogService.CreateEmailLogAsync(emailLog);
-            return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (JwtHelper.TokenIsValid(token,"FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"))
+            {
+                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                
+                EmailLog NewEmailLog = new EmailLog
+                {
+                    UserId = int.Parse(UserId),
+                    CreationDate = DateTime.UtcNow,
+                    RecipientsEmail = emailLogModel.RecipientsEmail,
+                    SenderEmail = UserEmail,
+                    EmailSubject = emailLogModel.EmailSubject,
+                    SentEmailBody = emailLogModel.EmailBody,
+                    Status = false,
+                    IsScheduled = false,
+                };
+            
+                var createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
+                return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
+            }
+            return Unauthorized(); 
         }
 
         /// <summary>
@@ -62,10 +88,39 @@ namespace FlowWing.API.Controllers
         /// <param name="emailLog"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> UpdateEmailLog([FromBody] EmailLog emailLog)
+        [Authorize]
+        public async Task<IActionResult> UpdateEmailLog([FromBody] EmailLogModel emailLogModel, int EmailLogId)
         {
-            var updatedEmailLog = await _emailLogService.UpdateEmailLogAsync(emailLog);
-            return Ok(updatedEmailLog);
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (JwtHelper.TokenIsValid(token, "FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"))
+            {
+                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                
+                //get email log by emaillogId
+                var emailLog = await _emailLogService.GetEmailLogByIdAsync(EmailLogId);
+                
+                //get user's email logs and check if the email log exists
+                var user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+                var userLogs = await _emailLogService.GetEmailLogsByUserIdAsync(user.Id);
+                if (!userLogs.Contains(emailLog))
+                {
+                    //return 404
+                    return NotFound();
+                }
+                
+                
+                //update email log
+                emailLog.RecipientsEmail = emailLogModel.RecipientsEmail;
+                emailLog.EmailSubject = emailLogModel.EmailSubject;
+                emailLog.SentEmailBody = emailLogModel.EmailBody;
+                emailLog.Status = false;
+                emailLog.IsScheduled = false;
+                _emailLogService.UpdateEmailLogAsync(emailLog);
+                
+                return CreatedAtAction(nameof(UpdateEmailLog), new { id = emailLog.Id }, emailLog);
+            }
+
+            return Unauthorized();
         }
 
         /// <summary>

@@ -13,8 +13,12 @@ namespace FlowWing.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [Required]
+        public int UserId { get; set; }
+        [Required]
         public DateTime CreationDate { get; set; }
-        public DateTime SentDateTime { get; set; }
+        
+        public DateTime? SentDateTime { get; set; }
         [Required]
         public string RecipientsEmail { get; set; }
         [Required]
@@ -22,12 +26,14 @@ namespace FlowWing.Entities
         [Required]
         public string EmailSubject { get; set; }
         [Required]
-        public string SentEmailBody { get; set; }      
+        public string SentEmailBody { get; set; }
+        [Required]
         public bool Status { get; set; }
+        [Required]
         public bool IsScheduled { get; set; }
-
+        
+        [ForeignKey("UserId")] 
         public virtual User User { get; set; }
-        public virtual ScheduledEmail ScheduledEmail { get; set; }
 
     }
 }

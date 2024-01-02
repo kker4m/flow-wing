@@ -6887,40 +6887,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\linux\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/kker4m/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj",
+      "projectUniqueName": "/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.DataAccess/FlowWing.DataAccess.csproj",
       "projectName": "FlowWing.DataAccess",
-      "projectPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj",
-      "packagesPath": "C:\\Users\\linux\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\obj\\",
+      "projectPath": "/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.DataAccess/FlowWing.DataAccess.csproj",
+      "packagesPath": "/Users/kker4m/.nuget/packages/",
+      "outputPath": "/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.DataAccess/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\linux\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/kker4m/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {
-              "projectPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj"
+            "/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.Entities/FlowWing.Entities.csproj": {
+              "projectPath": "/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.Entities/FlowWing.Entities.csproj"
             }
           }
         }
@@ -6984,7 +6976,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

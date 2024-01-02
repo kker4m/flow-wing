@@ -35,9 +35,9 @@ namespace FlowWing.Business.Concrete
             }
         }
 
-        public async Task<IEnumerable<ScheduledEmail>> GetActiveScheduledMailsAsync()
+        public async Task<IEnumerable<ScheduledEmail>> GetRepeatingScheduledMailsAsync()
         {
-            return await _scheduledEmailRepository.GetActiveScheduledMailsAsync();
+            return await _scheduledEmailRepository.GetRepeatingScheduledMailsAsync();
         }
 
         public async Task<IEnumerable<ScheduledEmail>> GetAllScheduledEmailsAsync()

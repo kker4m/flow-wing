@@ -1,17 +1,20 @@
 ﻿using FlowWing.Business.Abstract;
 using FlowWing.Business.Concrete;
 using FlowWing.DataAccess.Abstract;
+using FlowWing.API.Helpers;
 using FlowWing.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlowWing.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowAll")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
@@ -30,6 +33,7 @@ namespace FlowWing.API.Controllers
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
+        
 
         /// <summary>
         /// Get User By Id
@@ -46,7 +50,30 @@ namespace FlowWing.API.Controllers
             }
             return Ok(user);
         }
-
+        
+        /// <summary>
+        /// Authorize olmus user'in user loglarini getiren method
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("logs")]
+        public async Task<IActionResult> GetUserLogs()
+        {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (JwtHelper.TokenIsValid(token,secretKey:"FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"))
+            {
+                var user = await _userService.GetUserByEmailAsync(User.Identity.Name);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                //var logs = await _userService.GetAllEmailLogsByUserAsync(user);
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
         /// <summary>
         /// Create an User
         /// </summary>

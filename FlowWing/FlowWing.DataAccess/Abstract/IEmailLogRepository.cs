@@ -14,11 +14,8 @@ namespace FlowWing.DataAccess.Abstract
         Task<EmailLog> DeleteEmailLogAsync(EmailLog emailLog);
 
         Task<EmailLog> GetEmailLogByIdAsync(int id);
-        Task<User> GetUserByIdAsync(int id);
-        Task<User> GetUserByEmailLogAsync(EmailLog emailLog);
 
         Task<IEnumerable<EmailLog>> GetAllEmailLogsAsync();
-        Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserIdAsync(int id);
-        Task<IEnumerable<ScheduledEmail>> GetAllScheduledEmailsByUserIdAsync(int id);
+        Task<IEnumerable<EmailLog>> GetEmailLogsByUserIdAsync(int userId);
     }
 }

@@ -14,17 +14,19 @@ namespace FlowWing.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public DateTime CreationDate { get; set; }
-        public DateTime SentDateTime { get; set; }
         [Required]
-        public string RecipientsEmail { get; set; }
+        public int EmailLogId { get; set; }
+        
         [Required]
-        public string SenderEmail { get; set; }
-        [Required]
-        public string EmailSubject { get; set; }
-        [Required]
-        public string SentEmailBody { get; set; }
-        public bool Status { get; set; }
-        public virtual RepeatingMail RepeatingMail { get; set; }
+        public bool IsRepeating { get; set; }
+        
+        public DateTime? LastSendingDate { get; set; }
+        public DateTime? NextSendingDate { get; set; }
+        public DateTime? RepeatInterval { get; set; }
+        public DateTime? RepeatEndDate { get; set; }
+        
+        [ForeignKey("EmailLogId")] 
+        public virtual EmailLog EmailLog { get; set; }
+        
     }
 }

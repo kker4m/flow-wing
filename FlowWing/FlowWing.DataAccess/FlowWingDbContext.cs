@@ -10,6 +10,7 @@ namespace FlowWing.DataAccess
         public FlowWingDbContext(DbContextOptions<FlowWingDbContext> options) : base(options)
         {
         }
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder); 
@@ -18,6 +19,5 @@ namespace FlowWing.DataAccess
         public DbSet<EmailLog> EmailLogs { get; set; }
         public DbSet<ScheduledEmail> ScheduledEmails { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<RepeatingMail> RepeatingMails { get; set; }
     }
 }

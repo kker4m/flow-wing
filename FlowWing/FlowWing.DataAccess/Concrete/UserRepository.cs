@@ -31,17 +31,7 @@ namespace FlowWing.DataAccess.Concrete
             await _dbContext.SaveChangesAsync();
             return user;
         }
-
-        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByIdAsync(int id)
-        {
-            return await _dbContext.EmailLogs.Where(x => x.Id == id).ToListAsync();
-        }
-
-        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserAsync(User user)
-        {
-            return await _dbContext.EmailLogs.Where(x => x.User == user).ToListAsync();
-        }
-
+        
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             return await _dbContext.Users.ToListAsync();
@@ -62,6 +52,10 @@ namespace FlowWing.DataAccess.Concrete
             return await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
 
+        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserAsync(User user)
+        {
+            return await _dbContext.EmailLogs.Where(x => x.UserId == user.Id).ToListAsync();
+        }
         public async Task<User> UpdateUserAsync(User user)
         {
             _dbContext.Users.Update(user);
