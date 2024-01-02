@@ -76,8 +76,14 @@ namespace FlowWing.API.Controllers
             if (model.Email == user.Email && password == user.Password)
             {
                 string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, SecretKey, 1); // Örnek: 1 gun geçerli bir token oluşturuyoruz.
-                return Ok(new { Token = token , Message = "Giriş Başarılı"});
-                
+                UserResponseModel response = new UserResponseModel
+                {
+                    Email = user.Email,
+                    Username = user.Username,
+                    Token = token
+                };
+                return Ok(response);
+
             }
             else
             {
