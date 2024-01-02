@@ -29,6 +29,8 @@ namespace FlowWing.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
             // Burada bağımlılıkları ekleyin
             //Add Cors and allow all the connections
             services.AddCors(options =>
@@ -82,8 +84,8 @@ namespace FlowWing.API
                         Email = "keremmertizmir39@gmail.com"
                         
                     },
-                    
                 });
+                c.IncludeXmlComments(xmlPath);
 
                 // JWT yetkilendirme ekle
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
