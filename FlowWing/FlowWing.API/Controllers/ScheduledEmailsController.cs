@@ -11,15 +11,16 @@ namespace FlowWing.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     [EnableCors("AllowAll")]
     public class ScheduledEmailsController : ControllerBase
     {
         private IScheduledEmailService _scheduledEmailService;
+        private IEmailLogService _emailLogService;
 
-        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService)
+        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService)
         {
             _scheduledEmailService = scheduledEmailService;
+            _emailLogService = emailLogService;
         }
 
         /// <summary>
@@ -55,33 +56,38 @@ namespace FlowWing.API.Controllers
         /// <param name="scheduledEmail"></param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateScheduledEmail([FromBody] ScheduledEmailLogModel scheduledEmail)
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (JwtHelper.TokenIsValid(token,"FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-                var NewScheduledEmailLog = new ScheduledEmail
+
+                EmailLog newEmailLog = new EmailLog
                 {
-                    IsRepeating = false,
-                    NextSendingDate = scheduledEmail.NextSendingDate
-                };
-                
-                var NewEmailLog = new EmailLog
-                {
+                    UserId = int.Parse(UserId),
                     CreationDate = DateTime.UtcNow,
-                    RecipientsEmail = scheduledEmail.EmailLog.RecipientsEmail,
+                    SentDateTime = scheduledEmail.SentDateTime,
+                    RecipientsEmail = scheduledEmail.RecipientsEmail,
                     SenderEmail = UserEmail,
-                    EmailSubject = scheduledEmail.EmailLog.EmailSubject,
-                    SentEmailBody = scheduledEmail.EmailLog.EmailBody,
+                    EmailSubject = scheduledEmail.EmailSubject,
+                    SentEmailBody = scheduledEmail.EmailBody,
                     Status = false,
-                    IsScheduled = true,
-                    //ScheduledEmail = NewScheduledEmailLog
+                    IsScheduled = true
                 };
-                
-                var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(NewScheduledEmailLog);
-                
-                
+
+                var createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
+
+                ScheduledEmail newScheduledEmail = new ScheduledEmail
+                {
+                    EmailLogId = createdEmailLog.Id,
+                    IsRepeating = false,
+                    NextSendingDate = scheduledEmail.SentDateTime,
+                };
+
+                var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledEmail);
+
                 return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
             }
             return Unauthorized(); 
