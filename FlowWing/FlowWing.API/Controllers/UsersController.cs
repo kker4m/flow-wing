@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 
 namespace FlowWing.API.Controllers
 {
@@ -18,11 +19,17 @@ namespace FlowWing.API.Controllers
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
+        private IEmailLogService _emailLogService;
+        private AppSettings _appSettings;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IEmailLogService emailLogService, IOptions<AppSettings> appSettings)
         {
             _userService = userService;
+            _emailLogService = emailLogService;
+            _appSettings = appSettings.Value;
         }
+
+        
         /// <summary>
         /// Get All Users
         /// </summary>
@@ -59,15 +66,16 @@ namespace FlowWing.API.Controllers
         public async Task<IActionResult> GetUserLogs()
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token,secretKey:"FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"))
+            if (JwtHelper.TokenIsValid(token,secretKey:_appSettings.SecretKey))
             {
-                var user = await _userService.GetUserByEmailAsync(User.Identity.Name);
+                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                var user = await _userService.GetUserByEmailAsync(UserEmail);
                 if (user == null)
                 {
                     return NotFound();
                 }
-                //var logs = await _userService.GetAllEmailLogsByUserAsync(user);
-                return Ok();
+                var logs = await _emailLogService.GetEmailLogsByUserIdAsync(int.Parse(UserId));
+                return Ok(logs);
             }
             else
             {

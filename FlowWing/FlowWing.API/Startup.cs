@@ -42,7 +42,7 @@ namespace FlowWing.API
                     .AllowAnyHeader();
                 });
             });
-            
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IEmailLogRepository, EmailLogRepository>();
             services.AddScoped<IScheduledEmailRepository, ScheduledEmailRepository>();
@@ -55,7 +55,7 @@ namespace FlowWing.API
             services.AddControllers();
             
             // JWT Authentication ekle
-            var key = Encoding.ASCII.GetBytes("FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"); // Secret key al
+            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:SecretKey").Value);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -116,6 +116,10 @@ namespace FlowWing.API
 
         }
 
+        private void RunOnStartup()
+        {
+            
+        }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

@@ -6,6 +6,7 @@ using FlowWing.API.Helpers;
 using FlowWing.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace FlowWing.API.Controllers
 {
@@ -16,11 +17,13 @@ namespace FlowWing.API.Controllers
     {
         private IScheduledEmailService _scheduledEmailService;
         private IEmailLogService _emailLogService;
+        private AppSettings _appSettings;
 
-        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService)
+        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IOptions<AppSettings> appSettings)
         {
             _scheduledEmailService = scheduledEmailService;
             _emailLogService = emailLogService;
+            _appSettings = appSettings.Value;
         }
 
         /// <summary>
@@ -28,6 +31,7 @@ namespace FlowWing.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllScheduledEmails()
         {
             var scheduledEmails = await _scheduledEmailService.GetAllScheduledEmailsAsync();
@@ -55,12 +59,12 @@ namespace FlowWing.API.Controllers
         /// </summary>
         /// <param name="scheduledEmail"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("CreateScheduledEmail")]
         [Authorize]
         public async Task<IActionResult> CreateScheduledEmail([FromBody] ScheduledEmailLogModel scheduledEmail)
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token,"FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"))
+            if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
 
@@ -88,6 +92,51 @@ namespace FlowWing.API.Controllers
 
                 var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledEmail);
 
+                return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
+            }
+            return Unauthorized(); 
+        }
+        
+        /// <summary>
+        /// Create an Repeating scheduled email
+        /// </summary>
+        /// <param name="repeatingEmail"></param>
+        /// <returns></returns>
+        [HttpPost("CreateScheduledRepeatingEmail")]
+        [Authorize]
+        public async Task<IActionResult> CreateScheduledRepeatingEmail([FromBody] ScheduledRepeatingEmailModel scheduledRepeatingEmailModel)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
+            {
+                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+
+                EmailLog newEmailLog = new EmailLog
+                {
+                    UserId = int.Parse(UserId),
+                    CreationDate = DateTime.UtcNow,
+                    SentDateTime = scheduledRepeatingEmailModel.NextSendingDate,
+                    RecipientsEmail = scheduledRepeatingEmailModel.RecipientsEmail,
+                    SenderEmail = UserEmail,
+                    EmailSubject = scheduledRepeatingEmailModel.EmailSubject,
+                    SentEmailBody = scheduledRepeatingEmailModel.EmailBody,
+                    Status = false,
+                    IsScheduled = true
+                };
+                
+                var createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
+                
+                ScheduledEmail newScheduledRepeatingEmail = new ScheduledEmail
+                {
+                    EmailLogId = createdEmailLog.Id,
+                    IsRepeating = true,
+                    NextSendingDate = scheduledRepeatingEmailModel.NextSendingDate,
+                    RepeatInterval = scheduledRepeatingEmailModel.RepeatInterval,
+                    RepeatEndDate = scheduledRepeatingEmailModel.RepeatEndDate
+                };
+                
+                var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledRepeatingEmail);
+                
                 return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
             }
             return Unauthorized(); 

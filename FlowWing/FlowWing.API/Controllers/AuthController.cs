@@ -7,6 +7,7 @@ using FlowWing.Business.Abstract;
 using FlowWing.Entities;
 using System.Text;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Options;
 
 namespace FlowWing.API.Controllers
 {
@@ -16,11 +17,11 @@ namespace FlowWing.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
-        private const string SecretKey = "FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey";
-
-        public AuthController(IUserService userService)
+        private readonly AppSettings _appSettings;
+        public AuthController(IUserService userService,IOptions<AppSettings> appSettings)
         {
             _userService = userService;
+            _appSettings = appSettings.Value;
         }
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace FlowWing.API.Controllers
                 await _userService.CreateUserAsync(newUser);
 
                 // Kullanıcı başarıyla kaydedildiğinde JWT oluşturulabilir
-                string token = JwtHelper.GenerateJwtToken(newUser.Id, model.Email, SecretKey, 15); // Örnek: 60 gun geçerli bir token oluşturuyoruz.
+                string token = JwtHelper.GenerateJwtToken(newUser.Id, model.Email, _appSettings.SecretKey, 15); // Örnek: 60 gun geçerli bir token oluşturuyoruz.
 
                 return Ok(new { Token = token });
             }
@@ -75,13 +76,22 @@ namespace FlowWing.API.Controllers
 
             if (model.Email == user.Email && password == user.Password)
             {
-                string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, SecretKey, 1); // Örnek: 1 gun geçerli bir token oluşturuyoruz.
+                string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, _appSettings.SecretKey, 1); // Örnek: 1 gun geçerli bir token oluşturuyoruz.
                 UserResponseModel response = new UserResponseModel
                 {
+                    Message = "Giris Basarili",
                     Email = user.Email,
                     Username = user.Username,
                     Token = token
                 };
+                
+                Response.Cookies.Append("AuthToken", token, new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = false,
+                    SameSite = SameSiteMode.Strict
+                });
+                
                 return Ok(response);
 
             }

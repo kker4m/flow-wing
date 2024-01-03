@@ -15,7 +15,6 @@ namespace FlowWing.Business.Abstract
 
         Task<User> GetUserByIdAsync(int id);
         Task<User> GetUserByEmailAsync(string email);
-
         Task<IEnumerable<User>> GetAllUsersAsync();
         
     }

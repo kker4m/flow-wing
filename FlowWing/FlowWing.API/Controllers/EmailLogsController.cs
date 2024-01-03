@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
+using Microsoft.Extensions.Options;
 
 namespace FlowWing.API.Controllers
 {
@@ -16,11 +18,13 @@ namespace FlowWing.API.Controllers
     {
         private IEmailLogService _emailLogService;
         private IUserService _userService;
+        private readonly AppSettings _appSettings;
 
-        public EmailLogsController(IEmailLogService emailLogService, IUserService userService)
+        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings)
         {
             _emailLogService = emailLogService;
             _userService = userService;
+            _appSettings = appSettings.Value;
         }
 
         /// <summary>
@@ -56,11 +60,11 @@ namespace FlowWing.API.Controllers
         /// <param name="emailLog"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> CreateEmailLog([FromBody] EmailLogModel emailLogModel)
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token,"FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"))
+            
+            if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 
@@ -68,11 +72,12 @@ namespace FlowWing.API.Controllers
                 {
                     UserId = int.Parse(UserId),
                     CreationDate = DateTime.UtcNow,
+                    SentDateTime = DateTime.UtcNow,
                     RecipientsEmail = emailLogModel.RecipientsEmail,
                     SenderEmail = UserEmail,
                     EmailSubject = emailLogModel.EmailSubject,
                     SentEmailBody = emailLogModel.EmailBody,
-                    Status = false,
+                    Status = true,
                     IsScheduled = false,
                 };
             
@@ -92,7 +97,7 @@ namespace FlowWing.API.Controllers
         public async Task<IActionResult> UpdateEmailLog([FromBody] EmailLogModel emailLogModel, int EmailLogId)
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token, "FlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKeyFlowWingSecretKey"))
+            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 

@@ -511,3 +511,6 @@ C:/Users/linux/OneDrive/Documents/GitHub/flow-wing/FlowWing/FlowWing.API/bin/Deb
 /Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/obj/Debug/net8.0/FlowWing.API.xml
+/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/BouncyCastle.Cryptography.dll
+/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/MailKit.dll
+/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/MimeKit.dll

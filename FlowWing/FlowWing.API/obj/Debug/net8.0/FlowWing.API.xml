@@ -72,6 +72,13 @@
             <param name="scheduledEmail"></param>
             <returns></returns>
         </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.CreateScheduledRepeatingEmail(FlowWing.API.Models.ScheduledRepeatingEmailModel)">
+            <summary>
+            Create an Repeating scheduled email
+            </summary>
+            <param name="repeatingEmail"></param>
+            <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledEmail(FlowWing.Entities.ScheduledEmail)">
             <summary>
             Update an Scheduled Email
