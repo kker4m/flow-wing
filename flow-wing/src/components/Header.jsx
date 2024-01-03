@@ -2,9 +2,10 @@ import React from "react";
 import "./header.css";
 import { Input } from "antd";
 import { Icon } from "@iconify/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Divider } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { logoutUser } from "../Redux/authSlice";
 
 // search functions
 const { Search } = Input;
@@ -12,6 +13,15 @@ const { Search } = Input;
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const Header = () => {
+    // Use the useDispatch hook to get the dispatch function
+    const dispatch = useDispatch();
+const navigate = useNavigate()
+    // Logout function
+    const handleLogout = () => {
+      // Çıkış yap eylemini tetikle
+      dispatch(logoutUser());
+      navigate("/login")
+    };
   // Use the useSelector hook to get the user from the Redux store
   const user = useSelector((state) => state.user.user);
 
@@ -25,14 +35,14 @@ const Header = () => {
         />
       </div>
 
-      <div className="go-to-home-btn">
+      {/* <div className="go-to-home-btn">
         <Link to="/home">
           {" "}
           <button className="home-btn">
             <Icon icon="teenyicons:home-outline" width="30" />
           </button>
         </Link>
-      </div>
+      </div> */}
       <div className="search-section">
         <Search
           placeholder="Postalarda arayın"
@@ -51,6 +61,9 @@ const Header = () => {
         ) : (
           <div>Kullanıcı yok</div>
         )}
+        <button className="logout-btn" onClick={handleLogout}>
+        Çıkış Yap
+        </button>
       </div>
       <Divider />
     </div>

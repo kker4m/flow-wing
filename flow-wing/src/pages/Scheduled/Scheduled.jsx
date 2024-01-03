@@ -33,6 +33,7 @@ const Scheduled = () => {
   };
   return (
     <div className="compose-page-content">
+    <h2>Planlanmış Mailler</h2>
       <div className="schedule-time">
         <Select
           style={{

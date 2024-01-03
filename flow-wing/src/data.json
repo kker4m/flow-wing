@@ -11,6 +11,7 @@
           "title": "Mail",
           "body": "meraba",
           "attachment": "file.docx",
+          "attachment": "file.docx",
           "sentTime": "10/12/2023",  "isOpened":true
         }, {"id":2,
           "sender": "test@gmail.com",

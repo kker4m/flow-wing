@@ -2,7 +2,8 @@ import React from 'react'
 
 const Sent = () => {
   return (
-    <div>Sent</div>
+    <div>
+      <h2>Gönderilmiş Mailler</h2></div>
   )
 }
 

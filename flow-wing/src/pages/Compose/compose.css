@@ -16,8 +16,7 @@ textarea{ width: 100%;
 }
 .compose-attachments {
   display: flex;
-  align-self: flex-start;
-  justify-content: start;
+height: fit-content;
 }
 .compose-btns {
   display: flex;
@@ -56,7 +55,7 @@ textarea{ width: 100%;
     0 17px 50px 0 rgba(215, 19, 19, 0.19);
 }
 .compose .mail-body{
-  margin-top: 10px;
+  margin-top: 50px;
 }
 .ql-toolbar {
   position: sticky;

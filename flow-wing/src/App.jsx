@@ -8,6 +8,7 @@ import Sent from "./pages/Sent/Sent";
 import Scheduled from "./pages/Scheduled/Scheduled";
 import Compose from "./pages/Compose/Compose";
 import Inbox from "./pages/Inbox/Inbox";
+import Trash from "./pages/Trash/Trash";
 
 function App() {
   return (
@@ -51,6 +52,14 @@ function App() {
           element={
             <_Layout>
               <Inbox />{" "}
+            </_Layout>
+          }
+        />
+           <Route
+         path="/trash"
+          element={
+            <_Layout>
+              <Trash />{" "}
             </_Layout>
           }
         />

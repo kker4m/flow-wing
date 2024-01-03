@@ -33,6 +33,11 @@ const items = [
     "4",
     <Icon icon="streamline:chat-bubble-square-write" />
   ),
+  getItem(
+    <Link to="/trash">Çöp Kutusu</Link>,
+    "5",
+    <Icon icon="bi:trash" />
+  ),
 ];
 const Sidebar = () => {
   const location = useLocation();
@@ -71,7 +76,7 @@ const Sidebar = () => {
         items={items}
         selectedKeys={[localStorage.getItem("selectedKey") || "1"]}
         onSelect={({ key }) => setStoredSelectedKey(key)}
-        style={{ fontSize: '16px' }}
+        style={{ fontSize: '16px', position:"fixed" ,  width: 256,}}
       />
     </div>
   );

@@ -2,9 +2,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-right: 2%;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1); /* Use box-shadow for a more subtle line */
   margin-bottom: 20px;
+  position: sticky;
 }
 .home-btn{
   outline: none;
@@ -24,7 +24,7 @@
 }
 
 .user-icon {
-  background: #75ade1;
+  border: 1px solid;
   width: 40px;
   height: 40px;
   border-radius: 50%; /* Make border-radius 50% for a perfect circle */
@@ -62,4 +62,15 @@
   .user-name {
     margin-left: 0; /* Reset margin for small screens */
   }
+}
+.logout-btn{
+  background-color: inherit;
+  margin: 40px;
+  width: 100px;
+  height: 35px;
+  font-size: 16px;
+  border-radius: 30px;
+}
+.logout-btn:hover{
+  cursor: pointer;
 }

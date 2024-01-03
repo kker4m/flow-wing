@@ -11,8 +11,12 @@
 .mail-content {
   display: flex;
   flex-direction: row;
-  width: 90%; 
+  width: 100%;
 }
+.mail-content:hover {
+  box-shadow: 0px 5px 10px -8px #C0440E;
+}
+
 .inbox a {
   text-decoration: none; /* Linkin altını çizme */
   color: inherit; /* Link rengini miras al */
@@ -29,7 +33,7 @@
   border-left: 1px;
 }
 .user-icon-home {
-border: 1px solid;
+  border: 1px solid;
   width: 40px;
   height: 40px;
   border-radius: 50%; /* Make border-radius 50% for a perfect circle */
@@ -37,7 +41,6 @@ border: 1px solid;
   align-items: center;
   justify-content: center;
   margin: 15px;
-
 }
 
 .inbox-mail-opened {
@@ -65,9 +68,16 @@ border: 1px solid;
 .mail-primary-icon:hover {
   background-color: #d8d9da;
 }
-.inbox-mail-body {
-  padding-right: 20px;
+.inbox-mail-title{
+font-weight: bold;
+color: #2D3250;
+}
+.inbox-mail-body,.inbox-mail-title {
+  padding-right: 50px;
   padding-left: 95px;
+}
+.inbox-mail-body{
+  color: #424769;
 }
 .mail-attachment {
   border: 0.5px solid;
@@ -82,4 +92,5 @@ border: 1px solid;
   display: flex;
   align-self: center;
   justify-content: center;
+  color: #A9A9A9;
 }

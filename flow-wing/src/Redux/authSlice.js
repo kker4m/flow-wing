@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
 // Retrieve user from local storage
 const getInitialUser = () => {
   const storedUser = localStorage.getItem("user");
@@ -31,6 +30,13 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+// Logout
+export const logoutUser = createAsyncThunk("user/logout", async () => {
+  // kullanıcı bilgilerini localStorage'dan temizliyoruz.
+  localStorage.removeItem("user");
+  return null; // Çıkış işlemi başarılı olduğunda null döndürebilirsiniz.
+});
+
 const authSlice = createSlice({
   name: "user",
   initialState: {
@@ -38,7 +44,7 @@ const authSlice = createSlice({
     loading: false,
     error: null,
   },
- 
+
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -75,6 +81,22 @@ const authSlice = createSlice({
         state.user = null;
         console.log(action.error.message);
         // Handle the error message according to your needs
+      })
+      // Logout reducer
+
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+        state.user = null;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message; // action.error.message
+        console.log(action.error.message);
       });
   },
 });
