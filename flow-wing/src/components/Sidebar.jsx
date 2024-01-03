@@ -71,6 +71,7 @@ const Sidebar = () => {
         items={items}
         selectedKeys={[localStorage.getItem("selectedKey") || "1"]}
         onSelect={({ key }) => setStoredSelectedKey(key)}
+        style={{ fontSize: '16px' }}
       />
     </div>
   );

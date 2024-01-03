@@ -1,18 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import "./header.css";
 import { Input } from "antd";
 import { Icon } from "@iconify/react";
-
-const getUser = () => {
-  let user = localStorage.getItem("user");
-  if (user) {
-    user = JSON.parse(user);
-    console.log(user);
-  } else {
-    user = null;
-  }
-  return user;
-};
+import { useSelector } from "react-redux";
+import { Divider } from "@mui/material";
+import { Link } from "react-router-dom";
 
 // search functions
 const { Search } = Input;
@@ -20,7 +12,8 @@ const { Search } = Input;
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const Header = () => {
-  const [user, setUser] = useState(getUser());
+  // Use the useSelector hook to get the user from the Redux store
+  const user = useSelector((state) => state.user.user);
 
   return (
     <div className="header-content">
@@ -32,6 +25,14 @@ const Header = () => {
         />
       </div>
 
+      <div className="go-to-home-btn">
+        <Link to="/home">
+          {" "}
+          <button className="home-btn">
+            <Icon icon="teenyicons:home-outline" width="30" />
+          </button>
+        </Link>
+      </div>
       <div className="search-section">
         <Search
           placeholder="Postalarda arayın"
@@ -46,11 +47,12 @@ const Header = () => {
           <Icon icon="ph:user-light" width="30" />{" "}
         </div>
         {user ? (
-          <div  className="user-name">{user.fullname} Tuğçe Özelmaci</div>
+          <div className="user-name">{user.username} </div>
         ) : (
           <div>Kullanıcı yok</div>
         )}
       </div>
+      <Divider />
     </div>
   );
 };

@@ -1,38 +1,46 @@
 .compose-page-content {
-
   margin: 20px;
 }
-.compose-attachments{
-  
+.compose input {
+  width: 100%;
+  height: 50px;
+  border: none;
+  margin-bottom: 10px;
+}
+.compose input:focus,textarea:focus {
+  outline: none;
+}
+textarea{ width: 100%;
+  height: 300px;border: none;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1); /* Use box-shadow for a more subtle line */
+}
+.compose-attachments {
   display: flex;
   align-self: flex-start;
   justify-content: start;
 }
-.compose-btns{
-display: flex;
-align-self: flex-end;
-justify-content: end;
-padding: 20px;
+.compose-btns {
+  display: flex;
+  align-self: flex-end;
+  justify-content: end;
+  padding: 20px;
 }
-.send-btn{
-
+.send-btn {
   margin: 20px;
   width: 100px;
   height: 40px;
   border: none;
-  background: #598C46;
+  background: #598c46;
   border-radius: 45px;
   color: white;
   font-size: 14px;
-
 }
 .send-btn:hover {
   cursor: pointer;
-  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.2), /* Use a slightly darker shade of black */
-    0 17px 50px 0 rgba(0, 0, 0, 0.14);
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.2),
+    /* Use a slightly darker shade of black */ 0 17px 50px 0 rgba(0, 0, 0, 0.14);
 }
-.delete-btn{
-
+.delete-btn {
   margin: 20px;
   width: 100px;
   height: 40px;
@@ -42,8 +50,23 @@ padding: 20px;
   color: white;
   font-size: 14px;
 }
-.delete-btn:hover{
+.delete-btn:hover {
   cursor: pointer;
   box-shadow: 0 12px 16px 0 rgba(215, 19, 19, 0.24),
     0 17px 50px 0 rgba(215, 19, 19, 0.19);
+}
+.compose .mail-body{
+  margin-top: 10px;
+}
+.ql-toolbar {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+.ql-editor {
+  border: none;
+  box-shadow: none;
+  height: 100%;
+  position: relative; /* Editörü toolbar'ın altına itmek için */
 }

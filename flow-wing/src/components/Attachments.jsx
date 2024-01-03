@@ -27,7 +27,7 @@ const Attachments = () => {
     <div className="attachments-content">
       {" "}
       <Upload {...props}>
-        <Button icon={<Icon icon="clarity:attachment-line" />}>Ekle</Button>
+        <Button icon={<Icon icon="clarity:attachment-line" />}></Button>
       </Upload>
     </div>
   );

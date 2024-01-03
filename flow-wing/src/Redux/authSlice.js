@@ -1,5 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+
+
+// Retrieve user from local storage
+const getInitialUser = () => {
+  const storedUser = localStorage.getItem("user");
+  return storedUser ? JSON.parse(storedUser) : null;
+};
 //Login
 export const loginUser = createAsyncThunk("user/login", async (values) => {
   const request = await axios.post(
@@ -7,7 +14,7 @@ export const loginUser = createAsyncThunk("user/login", async (values) => {
     values
   );
   const response = await request.data;
-  localStorage.setItem("token", JSON.stringify(response));
+  localStorage.setItem("user", JSON.stringify(response));
   return response; // action.payload contains whatever we returned here
 });
 // Register
@@ -27,15 +34,11 @@ export const registerUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "user",
   initialState: {
-    user: null,
+    user: getInitialUser(),
     loading: false,
     error: null,
   },
-  reducers:{
-    logout: (state) => {
-      state.user = null
-    },
-  },
+ 
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
