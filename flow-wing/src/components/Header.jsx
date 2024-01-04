@@ -18,7 +18,6 @@ const Header = () => {
 const navigate = useNavigate()
     // Logout function
     const handleLogout = () => {
-      // Çıkış yap eylemini tetikle
       dispatch(logoutUser());
       navigate("/login")
     };

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import alertify from "alertifyjs";
 import axios from "axios";
 
 // Retrieve user from local storage
@@ -9,7 +10,7 @@ const getInitialUser = () => {
 //Login
 export const loginUser = createAsyncThunk("user/login", async (values) => {
   const request = await axios.post(
-    "http://localhost:2255/api/Auth/login",
+    "http://localhost:5232/api/Auth/login",
     values
   );
   const response = await request.data;
@@ -21,7 +22,7 @@ export const registerUser = createAsyncThunk(
   "user/register",
   async (values) => {
     const request = await axios.post(
-      "http://localhost:2255/api/Auth/signup",
+      "http://localhost:5232/api/Auth/signup",
       values
     );
     const response = await request.data;
@@ -62,6 +63,7 @@ const authSlice = createSlice({
         state.error = action.error.message; // action.error.message
         state.user = null;
         console.log(action.error.message);
+        alertify.error(action.error.message)
         // Handle the error message according to your needs
       })
       // Register reducers

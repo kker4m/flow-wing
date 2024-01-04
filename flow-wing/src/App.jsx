@@ -9,64 +9,80 @@ import Scheduled from "./pages/Scheduled/Scheduled";
 import Compose from "./pages/Compose/Compose";
 import Inbox from "./pages/Inbox/Inbox";
 import Trash from "./pages/Trash/Trash";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
   return (
-   
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/home"
-          element={
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/home"
+        element={
+          <RequireAuth>
+            {" "}
             <_Layout>
               <Home />{" "}
             </_Layout>
-          }
-        />
-          <Route
-          path="/sent"
-          element={
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/sent"
+        element={
+          <RequireAuth>
             <_Layout>
               <Sent />{" "}
             </_Layout>
-          }
-        />
-          <Route
-          path="/scheduled"
-          element={
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/scheduled"
+        element={
+          <RequireAuth>
+            {" "}
             <_Layout>
               <Scheduled />{" "}
             </_Layout>
-          }
-        />
-         <Route
-          path="/compose-new"
-          element={
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/compose-new"
+        element={
+          <RequireAuth>
+            {" "}
             <_Layout>
               <Compose />{" "}
             </_Layout>
-          }
-        />
-         <Route
-         path="/inbox/:index"
-          element={
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/inbox/:index"
+        element={
+          <RequireAuth>
+            {" "}
             <_Layout>
               <Inbox />{" "}
             </_Layout>
-          }
-        />
-           <Route
-         path="/trash"
-          element={
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/trash"
+        element={
+          <RequireAuth>
+            {" "}
             <_Layout>
               <Trash />{" "}
             </_Layout>
-          }
-        />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Navigate to="/login" />} />
-      </Routes>
-   
+          </RequireAuth>
+        }
+      />
+      <Route path="/register" element={<Register />} />
+      <Route path="/" element={<Navigate to="/login" />} />
+    </Routes>
   );
 }
 

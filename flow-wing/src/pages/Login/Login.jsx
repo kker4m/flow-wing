@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { Divider, Input } from "antd";
 import { Link } from "react-router-dom";
 import { TextField } from "@mui/material";
-import { Formik, useFormik } from "formik";
+import { Formik, replace, useFormik } from "formik";
 import * as Yup from "yup";
 import UserService from "../../services/userService";
 import { useDispatch, useSelector } from "react-redux";
@@ -100,7 +100,7 @@ const Login = () => {
                   "Giriş Yap"
                 )}
               </button>
-              {error && <div>{error}</div>}
+        
             </form>
           )}
         </Formik>
