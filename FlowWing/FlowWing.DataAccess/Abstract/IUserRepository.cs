@@ -16,9 +16,7 @@ namespace FlowWing.DataAccess.Abstract
         Task<User> GetUserByIdAsync(int id);
         Task<User> GetUserByEmailAsync(string email);
         Task<User> GetUserByUsernameAsync(string username);
-
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserAsync(User user);
 
     }
 }

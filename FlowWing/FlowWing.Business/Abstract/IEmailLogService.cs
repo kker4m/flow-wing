@@ -15,5 +15,6 @@ namespace FlowWing.Business.Abstract
         Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog);
         Task<EmailLog> DeleteEmailLogAsync(int id);
         Task<IEnumerable<EmailLog>> GetEmailLogsByUserIdAsync(int userId);
+        Task<IEnumerable<EmailLog>> GetEmailLogsByRecipientsEmailAsync(string recipientEmail);
     }
 }

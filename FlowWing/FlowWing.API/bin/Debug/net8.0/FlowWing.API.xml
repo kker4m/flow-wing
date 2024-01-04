@@ -18,6 +18,12 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserEmails">
+            <summary>
+              Get Emails Comes to the user
+             </summary>
+             <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.GetAllEmailLogs">
             <summary>
             Get All Email Logs

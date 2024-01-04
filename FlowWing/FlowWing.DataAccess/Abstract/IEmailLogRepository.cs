@@ -17,5 +17,6 @@ namespace FlowWing.DataAccess.Abstract
 
         Task<IEnumerable<EmailLog>> GetAllEmailLogsAsync();
         Task<IEnumerable<EmailLog>> GetEmailLogsByUserIdAsync(int userId);
+        Task<IEnumerable<EmailLog>> GetEmailLogsByRecipientsEmailAsync(string recipientEmail);
     }
 }

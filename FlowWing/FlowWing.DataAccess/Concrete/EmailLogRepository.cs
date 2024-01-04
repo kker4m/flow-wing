@@ -42,6 +42,10 @@ namespace FlowWing.DataAccess.Concrete
         {
             return await _dbContext.EmailLogs.FindAsync(id);
         }
+        public async Task<IEnumerable<EmailLog>> GetEmailLogsByRecipientsEmailAsync(string recipientEmail)
+        {
+            return await _dbContext.EmailLogs.Where(x => x.RecipientsEmail.Contains(recipientEmail)).ToListAsync();
+        }
         
         public async Task<IEnumerable<EmailLog>> GetEmailLogsByUserIdAsync(int userId)
         {

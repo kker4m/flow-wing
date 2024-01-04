@@ -51,11 +51,7 @@ namespace FlowWing.DataAccess.Concrete
         {
             return await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
-
-        public async Task<IEnumerable<EmailLog>> GetAllEmailLogsByUserAsync(User user)
-        {
-            return await _dbContext.EmailLogs.Where(x => x.UserId == user.Id).ToListAsync();
-        }
+        
         public async Task<User> UpdateUserAsync(User user)
         {
             _dbContext.Users.Update(user);

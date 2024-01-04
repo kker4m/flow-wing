@@ -19,14 +19,34 @@ namespace FlowWing.API.Controllers
         private IEmailLogService _emailLogService;
         private IUserService _userService;
         private readonly AppSettings _appSettings;
+        private readonly EmailSenderService _emailSenderService;
 
-        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings)
+        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, EmailSenderService emailSenderService)
         {
             _emailLogService = emailLogService;
             _userService = userService;
             _appSettings = appSettings.Value;
+            _emailSenderService = emailSenderService;
         }
-
+        
+        ///<summary>
+        ///  Get Emails Comes to the user
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetUserEmails")]
+        [Authorize]
+        public async Task<IActionResult> GetUserEmails()
+        {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
+            {
+                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                var userEmails = await _emailLogService.GetEmailLogsByRecipientsEmailAsync(UserEmail);
+                return Ok(userEmails);
+            }
+            return Unauthorized();
+        }
+        
         /// <summary>
         /// Get All Email Logs
         /// </summary>
@@ -82,6 +102,13 @@ namespace FlowWing.API.Controllers
                 };
             
                 var createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
+                
+                var recipients = emailLogModel.RecipientsEmail.Split(",");
+                foreach (var recipient in recipients)
+                {
+                    _emailSenderService.SendEmail(recipient, emailLogModel.EmailSubject, emailLogModel.EmailBody);
+                }
+                
                 return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
             }
             return Unauthorized(); 

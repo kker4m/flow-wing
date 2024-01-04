@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using FlowWing.API.Controllers;
 using FlowWing.API.Helpers;
 using FlowWing.Business.Abstract;
 using FlowWing.Business.Concrete;
@@ -43,6 +44,8 @@ namespace FlowWing.API
                 });
             });
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddScoped<EmailSenderService>();
+            
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IEmailLogRepository, EmailLogRepository>();
             services.AddScoped<IScheduledEmailRepository, ScheduledEmailRepository>();
@@ -50,6 +53,7 @@ namespace FlowWing.API
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IScheduledEmailService, ScheduledEmailManager>();
             services.AddScoped<IEmailLogService, EmailLogManager>();
+            
             //services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql("Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;"));
             services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();

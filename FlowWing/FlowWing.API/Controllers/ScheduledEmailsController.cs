@@ -31,7 +31,7 @@ namespace FlowWing.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> GetAllScheduledEmails()
         {
             var scheduledEmails = await _scheduledEmailService.GetAllScheduledEmailsAsync();
