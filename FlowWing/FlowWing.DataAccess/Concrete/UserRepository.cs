@@ -34,22 +34,22 @@ namespace FlowWing.DataAccess.Concrete
         
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _dbContext.Users.ToListAsync();
+            return await _dbContext.Users.AsNoTracking().ToListAsync();
         }
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+            return await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+            return await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<User> GetUserByUsernameAsync(string username)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
+            return await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username);
         }
         
         public async Task<User> UpdateUserAsync(User user)

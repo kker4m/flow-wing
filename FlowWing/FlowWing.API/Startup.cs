@@ -7,6 +7,9 @@ using FlowWing.Business.Concrete;
 using FlowWing.DataAccess;
 using FlowWing.DataAccess.Abstract;
 using FlowWing.DataAccess.Concrete;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 
 namespace FlowWing.API
 {
@@ -30,6 +34,11 @@ namespace FlowWing.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHangfire(config =>
+                config.UsePostgreSqlStorage(c =>c.UseNpgsqlConnection(
+                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;\r\n")));
+            
+            services.AddHangfireServer();
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
             // Burada bağımlılıkları ekleyin
@@ -44,6 +53,7 @@ namespace FlowWing.API
                 });
             });
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddScoped<DbContext,FlowWingDbContext>();
             services.AddScoped<EmailSenderService>();
             
             services.AddScoped<IUserService, UserManager>();
@@ -54,7 +64,6 @@ namespace FlowWing.API
             services.AddScoped<IScheduledEmailService, ScheduledEmailManager>();
             services.AddScoped<IEmailLogService, EmailLogManager>();
             
-            //services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql("Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;"));
             services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             
@@ -119,11 +128,7 @@ namespace FlowWing.API
             });
 
         }
-
-        private void RunOnStartup()
-        {
-            
-        }
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -134,6 +139,11 @@ namespace FlowWing.API
 
             // app.UseAuthorization();
             //app.UseOpenApi();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                DashboardTitle = "FlowWing Hangfire Dashboard"
+            });
+            
             app.UseRouting();
             app.UseCors("AllowAll");
             app.UseAuthentication();

@@ -67,6 +67,7 @@ namespace FlowWing.Business.Concrete
         }
         public async Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog)
         {
+            
             if (await _emailLogRepository.GetEmailLogByIdAsync(emailLog.Id) == null)
             {
                 throw new Exception("EmailLog does not exist");
@@ -74,6 +75,19 @@ namespace FlowWing.Business.Concrete
             else
             {
                 await _emailLogRepository.UpdateEmailLogAsync(emailLog);
+                return emailLog;
+            }
+        }
+
+        public EmailLog UpdateEmailLog(EmailLog emailLog)
+        {
+            if (_emailLogRepository.GetEmailLogById(emailLog.Id) == null)
+            {
+                throw new Exception("EmailLog does not exist");
+            }
+            else
+            {
+                _emailLogRepository.UpdateEmailLog(emailLog);
                 return emailLog;
             }
         }

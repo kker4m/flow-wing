@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using FlowWing.API.Helpers;
 using FlowWing.API.Models;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -17,13 +18,17 @@ namespace FlowWing.API.Controllers
     {
         private IScheduledEmailService _scheduledEmailService;
         private IEmailLogService _emailLogService;
+        private EmailSenderService _emailSenderService;
         private AppSettings _appSettings;
+        private readonly IRecurringJobManager _recurringJobManager;
 
-        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IOptions<AppSettings> appSettings)
+        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IOptions<AppSettings> appSettings, IRecurringJobManager recurringJobManager, EmailSenderService emailSenderService)
         {
             _scheduledEmailService = scheduledEmailService;
             _emailLogService = emailLogService;
             _appSettings = appSettings.Value;
+            _recurringJobManager = recurringJobManager;
+            _emailSenderService = emailSenderService;
         }
 
         /// <summary>
@@ -92,6 +97,9 @@ namespace FlowWing.API.Controllers
 
                 var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledEmail);
 
+                BackgroundJob.Schedule(() => _emailSenderService.SendEmail(scheduledEmail.RecipientsEmail,scheduledEmail.EmailSubject,scheduledEmail.EmailBody,createdEmailLog)
+                ,scheduledEmail.SentDateTime);
+                
                 return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
             }
             return Unauthorized(); 

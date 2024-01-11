@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FlowWing.Business")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4102237d5333d1cbb08fcd2a507c759eca6031d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6006c8e3edf34e3b27601a449caaddecb93b0264")]
 [assembly: System.Reflection.AssemblyProductAttribute("FlowWing.Business")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FlowWing.Business")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

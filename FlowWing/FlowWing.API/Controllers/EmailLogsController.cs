@@ -106,7 +106,7 @@ namespace FlowWing.API.Controllers
                 var recipients = emailLogModel.RecipientsEmail.Split(",");
                 foreach (var recipient in recipients)
                 {
-                    _emailSenderService.SendEmail(recipient, emailLogModel.EmailSubject, emailLogModel.EmailBody);
+                    _emailSenderService.SendEmail(recipient, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog);
                 }
                 
                 return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
@@ -147,7 +147,7 @@ namespace FlowWing.API.Controllers
                 emailLog.SentEmailBody = emailLogModel.EmailBody;
                 emailLog.Status = false;
                 emailLog.IsScheduled = false;
-                _emailLogService.UpdateEmailLogAsync(emailLog);
+                await _emailLogService.UpdateEmailLogAsync(emailLog);
                 
                 return CreatedAtAction(nameof(UpdateEmailLog), new { id = emailLog.Id }, emailLog);
             }

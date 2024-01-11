@@ -11,10 +11,11 @@ namespace FlowWing.DataAccess.Abstract
     {
         Task<EmailLog> CreateEmailLogAsync(EmailLog emailLog);
         Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog);
+        EmailLog UpdateEmailLog(EmailLog emailLog);
         Task<EmailLog> DeleteEmailLogAsync(EmailLog emailLog);
 
         Task<EmailLog> GetEmailLogByIdAsync(int id);
-
+        EmailLog GetEmailLogById(int id);
         Task<IEnumerable<EmailLog>> GetAllEmailLogsAsync();
         Task<IEnumerable<EmailLog>> GetEmailLogsByUserIdAsync(int userId);
         Task<IEnumerable<EmailLog>> GetEmailLogsByRecipientsEmailAsync(string recipientEmail);

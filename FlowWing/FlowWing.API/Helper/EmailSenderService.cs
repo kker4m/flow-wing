@@ -1,4 +1,7 @@
+using FlowWing.API.Controllers;
+using FlowWing.Business.Abstract;
 using FlowWing.DataAccess;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NuGet.Protocol;
 
@@ -14,14 +17,16 @@ using FlowWing.Entities;
 
 public class EmailSenderService
 {
+    private IEmailLogService _emailLogService;
     private readonly AppSettings _appSettings;
     private readonly string _smtpServer;
     private readonly int _smtpPort;
     private readonly string _senderEmail;
     private readonly string _senderPassword;
 
-    public EmailSenderService(IOptions<AppSettings> appSettings)
+    public EmailSenderService(IOptions<AppSettings> appSettings, IEmailLogService emailLogService)
     {
+        _emailLogService = emailLogService;
         _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
 
         _smtpServer = _appSettings.EmailConnectionServices._smtpServer;
@@ -30,7 +35,7 @@ public class EmailSenderService
         _senderPassword = _appSettings.EmailConnectionServices._senderPassword;
     }
 
-    public void SendEmail(string recipientEmail, string subject, string body)
+    public async Task SendEmail(string recipientEmail, string subject, string body, EmailLog _emailLog)
     {
         try
         {
@@ -41,15 +46,17 @@ public class EmailSenderService
             message.Body = new TextPart("plain") { Text = body };
 
             using var smtpClient = new SmtpClient();
-            smtpClient.Connect(_smtpServer, _smtpPort, SecureSocketOptions.StartTls);
-            smtpClient.Authenticate(_senderEmail, _senderPassword);
-            smtpClient.Send(message);
-            smtpClient.Disconnect(true);
+            await smtpClient.ConnectAsync(_smtpServer, _smtpPort, SecureSocketOptions.StartTls);
+            await smtpClient.AuthenticateAsync(_senderEmail, _senderPassword);
+            await smtpClient.SendAsync(message);
+            await smtpClient.DisconnectAsync(true);
+            _emailLog.Status = true;
+            await _emailLogService.UpdateEmailLogAsync(_emailLog);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"E-posta gönderme hatası: {ex.Message}");
-            // Hata yönetimi yapabilirsiniz
+            // Hata yönetimi yapilabilir
         }
     }
 }
