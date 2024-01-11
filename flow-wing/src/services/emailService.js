@@ -6,7 +6,7 @@ export default class EmailService {
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
 
-    return axios.get("http://localhost:2255/api/EmailLogs", {
+    return axios.get("http://localhost:5232/api/EmailLogs", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
@@ -28,7 +28,7 @@ export default class EmailService {
       emailBody: String(emailBody),
     };
 
-    return axios.post("http://localhost:2255/api/EmailLogs", mailContent, {
+    return axios.post(process.env.REACT_APP_API_URL + "api/EmailLogs", mailContent, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
@@ -38,17 +38,31 @@ export default class EmailService {
   }
 
   sendScheduledMail() {
-
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
 
-    return axios.post("http://localhost:2255/api/ScheduledEmails", {
+    return axios.post(process.env.REACT_APP_API_URL + "api/ScheduledEmails", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
       },
       mode: "cors",
     });
+  }
+
+  getSentMails() {    const userData = localStorage.getItem("user");
+  const userObject = JSON.parse(userData);
+  const userToken = userObject.token;
+    return axios.get(
+      process.env.REACT_APP_API_URL + "api/EmailLogs/GetUserEmails",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        mode: "cors",
+      }
+    );
   }
 }

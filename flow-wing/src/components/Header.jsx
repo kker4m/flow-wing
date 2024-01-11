@@ -27,11 +27,12 @@ const navigate = useNavigate()
   return (
     <div className="header-content">
       <div className="logo-section">
-        <img
+      <Link to="/home"> <img
           className="logo-img"
           src="https://res.cloudinary.com/dirtkkfqn/image/upload/v1703573682/arcelik_logo_lztrqj.png"
           alt="Logo"
-        />
+        /></Link>
+       
       </div>
 
       {/* <div className="go-to-home-btn">

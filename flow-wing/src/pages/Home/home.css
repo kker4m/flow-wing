@@ -11,7 +11,7 @@
 .mail-content {
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 95%;
 }
 .mail-content:hover {
   box-shadow: 0px 5px 10px -8px #C0440E;

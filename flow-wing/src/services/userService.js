@@ -11,7 +11,7 @@ export default class UserService {
       Username: String(username),
     };
 
-    return axios.post("http://localhost:2255/api/Auth/signup", userData, {
+    return axios.post(process.env.REACT_APP_API_URL+"api/Auth/signup", userData, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -27,7 +27,7 @@ export default class UserService {
       Email: String(email),
       Password: String(password),
     };
-    return axios.post("http://localhost:2255/api/Auth/login", userData, {
+    return axios.post(process.env.REACT_APP_API_URL+"api/Auth/login", userData, {
       headers: {
         "Content-Type": "application/json",
       },

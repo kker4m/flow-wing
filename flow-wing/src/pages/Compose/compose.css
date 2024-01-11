@@ -9,6 +9,8 @@
 }
 .compose input:focus,textarea:focus {
   outline: none;
+  box-shadow: 0 0 0 2px rgba(5,145,255, 0.1);
+  outline: 0;
 }
 textarea{ width: 100%;
   height: 300px;border: none;

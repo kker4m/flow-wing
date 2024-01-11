@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import alertify from "alertifyjs";
 import axios from "axios";
 
 // Retrieve user from local storage
@@ -63,8 +62,6 @@ const authSlice = createSlice({
         state.error = action.error.message; // action.error.message
         state.user = null;
         console.log(action.error.message);
-        alertify.error(action.error.message)
-        // Handle the error message according to your needs
       })
       // Register reducers
       .addCase(registerUser.pending, (state) => {
