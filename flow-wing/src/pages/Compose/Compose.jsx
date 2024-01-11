@@ -8,6 +8,8 @@ import EmailService from "../../services/emailService";
 import { useNavigate } from "react-router";
 import alertify from "alertifyjs";
 import { Mentions } from "antd";
+import * as Yup from "yup";
+
 
 const Compose = () => {
   const navigate = useNavigate();
@@ -26,23 +28,37 @@ const Compose = () => {
   // ANTD MENTION FUNCTIONS
   const onChange = (value) => {
     console.log("Change:", value);
-  };
-  const onSelect = (option) => {
-    console.log("select", option);
+    formik.handleChange({ target: { name: "recipientsEmail", value } });
   };
 
+  const onSelect = (option) => {
+    console.log("select", option);
+    formik.setFieldValue("recipientsEmail", option.value);
+  };
+  //Yup validation schema
+  const validationSchema = Yup.object().shape({
+    recipientsEmail: Yup.string().email("Geçersiz mail adresi").required("Mail adresi girmek zorunludur"),
+    emailSubject: Yup.string().required("Konu giriniz"),
+    emailBody: Yup.string().required("İçerik giriniz"),
+  });
   // FORMIK
+
   const formik = useFormik({
     initialValues: {
       recipientsEmail: "",
       emailSubject: "",
       emailBody: "",
     },
+    validationSchema: validationSchema,  
     onSubmit: (values) => {
       handleSubmit(values);
     },
   });
+// reset and return to home page
 
+const handleReset=()=>{
+  
+}
   return (
     <div className="compose-page-content">
       <h2>Mail Oluştur</h2>
@@ -50,16 +66,11 @@ const Compose = () => {
       <div className="compose send-to">
         <span>Kime</span> <Divider />
         <Mentions
-        style={{height:50, border:"none"}}
-          onChange={(value) => {
-            // value contains the current input value
-            formik.handleChange({ target: { name: "recipientsEmail", value } });
-          }}
-          onSelect={(value) => {
-            // option contains the selected value
-            formik.setFieldValue("recipientsEmail", value);
-          }}
+          style={{ height: 50, border: "none" }}
+          onChange={onChange}
+          onSelect={onSelect}
           value={formik.values.recipientsEmail}
+          required
           options={[
             {
               value: "afc163",
@@ -76,6 +87,9 @@ const Compose = () => {
           ]}
         />
       </div>
+      {formik.errors.recipientsEmail && formik.touched.recipientsEmail && (
+          <div className="error-message">{formik.errors.recipientsEmail}</div>
+        )}
       <div className="compose send-to">
         <span>Konu</span>
         <Divider />
@@ -86,13 +100,20 @@ const Compose = () => {
           value={formik.values.emailSubject}
         ></input>
       </div>
-      <div className="compose mail-body"><span>İçerik</span> <Divider />
+      {formik.errors.emailSubject && formik.touched.emailSubject && (
+          <div className="error-message">{formik.errors.emailSubject}</div>
+        )}
+      <div className="compose mail-body">
+        <span>İçerik</span> <Divider />
         <textarea
           name="emailBody"
           value={formik.values.emailBody}
           onChange={formik.handleChange}
         />
       </div>
+      {formik.errors.emailBody && formik.touched.emailBody && (
+          <div className="error-message">{formik.errors.emailBody}</div>
+        )}
       <div className="compose-attachments">
         <Attachments />
         <hr />

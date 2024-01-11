@@ -6,12 +6,12 @@
 }
 .inbox {
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  width: 100%;
 }
 .mail-content {
   display: flex;
   flex-direction: row;
-  width: 95%;
+  width: 100%;
 }
 .mail-content:hover {
   box-shadow: 0px 5px 10px -8px #C0440E;

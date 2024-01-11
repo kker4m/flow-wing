@@ -59,7 +59,7 @@ function App() {
         }
       />
       <Route
-        path="/inbox/:index"
+        path="/inbox/:id"
         element={
           <RequireAuth>
             {" "}

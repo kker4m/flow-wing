@@ -6,7 +6,7 @@ export default class EmailService {
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
 
-    return axios.get("http://localhost:5232/api/EmailLogs", {
+    return axios.get("http://localhost:5232/api/EmailLogs/GetUserEmails", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
@@ -28,7 +28,7 @@ export default class EmailService {
       emailBody: String(emailBody),
     };
 
-    return axios.post(process.env.REACT_APP_API_URL + "api/EmailLogs", mailContent, {
+    return axios.post("http://localhost:5232/api/EmailLogs", mailContent, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
@@ -42,7 +42,7 @@ export default class EmailService {
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
 
-    return axios.post(process.env.REACT_APP_API_URL + "api/ScheduledEmails", {
+    return axios.post("http://localhost:5232/api/ScheduledEmails", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
@@ -51,18 +51,56 @@ export default class EmailService {
     });
   }
 
-  getSentMails() {    const userData = localStorage.getItem("user");
-  const userObject = JSON.parse(userData);
-  const userToken = userObject.token;
-    return axios.get(
-      process.env.REACT_APP_API_URL + "api/EmailLogs/GetUserEmails",
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userToken}`,
-        },
-        mode: "cors",
-      }
-    );
+  getSentMails() {
+    const userData = localStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    const userToken = userObject.token;
+    return axios.get("http://localhost:5232/api/EmailLogs", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      mode: "cors",
+    });
+  }
+
+  getAllUsers() {
+    const userData = localStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    const userToken = userObject.token;
+
+    return axios.get("http://localhost:5232/api/Users", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      mode: "cors",
+    });
+  }
+
+  deleteSentEmail(id) {
+    const userData = localStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    const userToken = userObject.token;
+    return axios.delete("http://localhost:5232/api/EmailLogs/" + id, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      mode: "cors",
+    });
+  }
+
+  getEmailById(id) {
+    const userData = localStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    const userToken = userObject.token;
+    return axios.get("http://localhost:5232/api/EmailLogs/" + id, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      mode: "cors",
+    });
   }
 }

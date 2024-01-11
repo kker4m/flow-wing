@@ -26,6 +26,7 @@ const Login = () => {
       }
     });
   };
+  //validations
   const validationSchema = Yup.object({
     password: Yup.string()
       .required("Zorunlu alan")
