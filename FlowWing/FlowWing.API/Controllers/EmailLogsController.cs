@@ -30,7 +30,7 @@ namespace FlowWing.API.Controllers
         }
         
         ///<summary>
-        ///  Get Emails which is user sent
+        ///  Get emails which is comes to the user
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetUserSentEmails")]
@@ -48,7 +48,7 @@ namespace FlowWing.API.Controllers
         }
         
         ///<summary>
-        /// Get emails which is comes to the user
+        /// Get Emails which is user sent
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetUserReceivedEmails")]
