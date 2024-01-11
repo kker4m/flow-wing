@@ -18,9 +18,15 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserEmails">
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserSentEmails">
             <summary>
-              Get Emails Comes to the user
+              Get Emails which is user sent
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserReceivedEmails">
+            <summary>
+             Get emails which is comes to the user
              </summary>
              <returns></returns>
         </member>

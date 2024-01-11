@@ -30,18 +30,36 @@ namespace FlowWing.API.Controllers
         }
         
         ///<summary>
-        ///  Get Emails Comes to the user
+        ///  Get Emails which is user sent
         /// </summary>
         /// <returns></returns>
-        [HttpGet("GetUserEmails")]
+        [HttpGet("GetUserSentEmails")]
         [Authorize]
-        public async Task<IActionResult> GetUserEmails()
+        public async Task<IActionResult> GetUserSentEmails()
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 var userEmails = await _emailLogService.GetEmailLogsByRecipientsEmailAsync(UserEmail);
+                return Ok(userEmails);
+            }
+            return Unauthorized();
+        }
+        
+        ///<summary>
+        /// Get emails which is comes to the user
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetUserReceivedEmails")]
+        [Authorize]
+        public async Task<IActionResult> GetUserReceivedEmails()
+        {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
+            {
+                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                var userEmails = await _emailLogService.GetEmailLogsByUserIdAsync(int.Parse(UserId));
                 return Ok(userEmails);
             }
             return Unauthorized();
