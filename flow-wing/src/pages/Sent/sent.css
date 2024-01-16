@@ -1,26 +1,32 @@
-.sent-mail-page-content{
-          margin: 20px;
+.sent-mail-page-content {
+  margin: 20px;
 }
-.sent a{
-text-decoration: none;
+.sent a {
+  text-decoration: none;
 }
-.sent{
-          display: flex;
+.sent {
+  display: flex;
   flex-direction: column;
 }
-.sent-mail-content{
-          display: flex;
-          flex-direction: row;
-          width: 100%;
+.sent-mail-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
-.delete-mail-btn{
-background: inherit;
-border: none;
-margin-left: 20px;
+.sent-mail-content:hover{
+  box-shadow: 0px 5px 10px -8px #C0440E;
 }
-.delete-mail-btn:hover{
+.delete-mail{
+  margin: auto;
+}
+.delete-mail-btn {
+  background: inherit;
+  border: none;
+  margin-left: 20px;
+}
+.delete-mail-btn:hover {
   cursor: pointer;
-  background-color: #75ADE1;
+  background-color: #75ade1;
   border-radius: 45px;
   width: 30px;
   height: 30px;

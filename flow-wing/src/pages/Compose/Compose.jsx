@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Attachments from "../../components/Attachments";
 import { Divider } from "@mui/material";
 import { useSelector } from "react-redux";
@@ -9,13 +9,16 @@ import { useNavigate } from "react-router";
 import alertify from "alertifyjs";
 import { Mentions } from "antd";
 import * as Yup from "yup";
+import UserService from "../../services/userService";
 
 
 const Compose = () => {
+  const [users,setUsers]=useState([])
   const navigate = useNavigate();
   // GET USER
   const user = useSelector((state) => state.user.user);
   let emailService = new EmailService();
+  let userService = new UserService()
   // MAIL SEND FUNCTION
   const handleSubmit = (values) => {
     emailService.sendMail(values).then((res) => {
@@ -54,11 +57,21 @@ const Compose = () => {
       handleSubmit(values);
     },
   });
-// reset and return to home page
+//USERS FOR MENTION
+useEffect(()=>{
+  userService.getUsers().then(res=>setUsers(res.data))
+},[])
 
-const handleReset=()=>{
-  
-}
+
+const options = users.map(user => ({
+  value: user.email,
+  label: user.email
+}));
+const handleReset = () => {
+  formik.resetForm(); // Reset the form fields
+};
+
+
   return (
     <div className="compose-page-content">
       <h2>Mail Oluştur</h2>
@@ -66,25 +79,13 @@ const handleReset=()=>{
       <div className="compose send-to">
         <span>Kime</span> <Divider />
         <Mentions
+         allowClear 
           style={{ height: 50, border: "none" }}
           onChange={onChange}
           onSelect={onSelect}
           value={formik.values.recipientsEmail}
           required
-          options={[
-            {
-              value: "afc163",
-              label: "afc163",
-            },
-            {
-              value: "zombieJ",
-              label: "zombieJ",
-            },
-            {
-              value: "yesmeck",
-              label: "yesmeck",
-            },
-          ]}
+          options={options}
         />
       </div>
       {formik.errors.recipientsEmail && formik.touched.recipientsEmail && (
@@ -126,7 +127,7 @@ const handleReset=()=>{
         >
           Gönder
         </button>
-        <button className="delete-btn">Sil</button>
+        <button className="delete-btn" onClick={handleReset}>Sil</button>
       </div>
     </div>
   );

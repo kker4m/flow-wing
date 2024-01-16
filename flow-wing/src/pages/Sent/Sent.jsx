@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import EmailService from "../../services/emailService";
 import "./sent.css";
 
 const Sent = () => {
   const [sentMails, setSentMails] = useState([]);
+  let navigate = useNavigate()
   let { id } = useParams();
   // to shorten the mail body
   const excerpt = (str, count) => {
@@ -38,6 +39,7 @@ const Sent = () => {
       console.log(res);
       // Update the sentMails state after deleting the email
       setSentMails(sentMails.filter((mail) => mail.id !== id));
+      navigate("/sent")
     });
   };
   return (
@@ -46,24 +48,24 @@ const Sent = () => {
       <div className="sent">
         {sentMails.map((item, index) => {
           // to format date
-          const gelenTarih = new Date(item.sentDateTime);
-          const suAnkiTarih = new Date();
+          const dateFromAPI = new Date(item.sentDateTime);
+          const nowsDate = new Date();
 
           let timeToShow;
 
           if (
-            gelenTarih.getFullYear() === suAnkiTarih.getFullYear() &&
-            gelenTarih.getMonth() === suAnkiTarih.getMonth() &&
-            gelenTarih.getDate() === suAnkiTarih.getDate()
+            dateFromAPI.getFullYear() === nowsDate.getFullYear() &&
+            dateFromAPI.getMonth() === nowsDate.getMonth() &&
+            dateFromAPI.getDate() === nowsDate.getDate()
           ) {
-            const saatKismi = gelenTarih.toLocaleTimeString("tr-TR", {
+            const hourPart = dateFromAPI.toLocaleTimeString("tr-TR", {
               hour: "numeric",
               minute: "numeric",
             });
-            timeToShow = saatKismi;
+            timeToShow = hourPart;
           } else {
-            const tarihKismi = gelenTarih.toLocaleDateString("tr-TR");
-            timeToShow = tarihKismi;
+            const datePart = dateFromAPI.toLocaleDateString("tr-TR");
+            timeToShow = datePart;
           }
 
           return (
@@ -91,15 +93,18 @@ const Sent = () => {
                     {" "}
                     <div className="delete-mail">
                       {" "}
-                      <button className="delete-mail-btn" onClick={() => handleDelete(item.id)}>
+                      <button
+                        className="delete-mail-btn"
+                        onClick={() => handleDelete(item.id)}
+                      >
                         <Icon icon="iconoir:trash" />
                       </button>
                     </div>{" "}
                     <div className="inbox-sent-time">{timeToShow}</div>
+                 
                   </div>
-                </div>{" "}
+                </div>{" "}   <Divider />{" "}
               </Link>
-              <Divider />
             </>
           );
         })}
