@@ -1,4 +1,5 @@
-﻿using FlowWing.Business.Abstract;
+﻿using System.Xml;
+using FlowWing.Business.Abstract;
 using FlowWing.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +9,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace FlowWing.API.Controllers
 {
@@ -18,17 +20,14 @@ namespace FlowWing.API.Controllers
     {
         private IScheduledEmailService _scheduledEmailService;
         private IEmailLogService _emailLogService;
-        private EmailSenderService _emailSenderService;
         private AppSettings _appSettings;
-        private readonly IRecurringJobManager _recurringJobManager;
-
-        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IOptions<AppSettings> appSettings, IRecurringJobManager recurringJobManager, EmailSenderService emailSenderService)
+        private ScheduledMailHelper _scheduledMailHelper;
+        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IOptions<AppSettings> appSettings, ScheduledMailHelper scheduledMailHelper)
         {
             _scheduledEmailService = scheduledEmailService;
             _emailLogService = emailLogService;
             _appSettings = appSettings.Value;
-            _recurringJobManager = recurringJobManager;
-            _emailSenderService = emailSenderService;
+            _scheduledMailHelper = scheduledMailHelper;
         }
 
         /// <summary>
@@ -58,7 +57,6 @@ namespace FlowWing.API.Controllers
             }
             return Ok(scheduledEmail);
         }
-
         /// <summary>
         /// Create an Scheduled Email
         /// </summary>
@@ -97,13 +95,14 @@ namespace FlowWing.API.Controllers
 
                 var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledEmail);
 
-                BackgroundJob.Schedule(() => _emailSenderService.SendEmail(scheduledEmail.RecipientsEmail,scheduledEmail.EmailSubject,scheduledEmail.EmailBody,createdEmailLog)
-                ,scheduledEmail.SentDateTime);
+                // Hangfire'da işi planla
+                _scheduledMailHelper.ScheduleScheduledEmail(createdEmailLog, scheduledEmail);
                 
                 return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
             }
             return Unauthorized(); 
         }
+        
         
         /// <summary>
         /// Create an Repeating scheduled email
@@ -118,7 +117,7 @@ namespace FlowWing.API.Controllers
             if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-
+                
                 EmailLog newEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
@@ -144,6 +143,9 @@ namespace FlowWing.API.Controllers
                 };
                 
                 var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledRepeatingEmail);
+                
+                // Hangfire'da işi planla
+                _scheduledMailHelper.ScheduleRepeatingEmail(createdEmailLog, scheduledRepeatingEmailModel);
                 
                 return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
             }

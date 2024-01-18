@@ -20,13 +20,13 @@
         </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserSentEmails">
             <summary>
-              Get Emails which is user sent
+              Get emails which is comes to the user
              </summary>
              <returns></returns>
         </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserReceivedEmails">
             <summary>
-             Get emails which is comes to the user
+             Get Emails which is user sent
              </summary>
              <returns></returns>
         </member>

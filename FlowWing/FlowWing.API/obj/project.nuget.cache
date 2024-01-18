@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "coEHuIhhVC63LVOZ8wy2QnS/2L9gMyvw28z0qtd9TlJYNbOrfebBHWAytWV9nnKH2AhSe1qzM2kD/0ZOxzFFCw==",
+  "dgSpecHash": "hjX7IJ4nkmKf5UXy3G7HZosqsy7pbXRXtHUtXtq1L8Z2ZYRDDTNXaccww8DLCZNpps0opQmAGlUDz+O1ET8Mtw==",
   "success": true,
   "projectFilePath": "/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/FlowWing.API.csproj",
   "expectedPackageFiles": [
@@ -167,6 +167,7 @@
     "/Users/kker4m/.nuget/packages/microsoft.win32.systemevents/7.0.0/microsoft.win32.systemevents.7.0.0.nupkg.sha512",
     "/Users/kker4m/.nuget/packages/mimekit/4.3.0/mimekit.4.3.0.nupkg.sha512",
     "/Users/kker4m/.nuget/packages/mono.texttemplating/2.3.1/mono.texttemplating.2.3.1.nupkg.sha512",
+    "/Users/kker4m/.nuget/packages/ncrontab/3.3.3/ncrontab.3.3.3.nupkg.sha512",
     "/Users/kker4m/.nuget/packages/netstandard.library/1.6.1/netstandard.library.1.6.1.nupkg.sha512",
     "/Users/kker4m/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
     "/Users/kker4m/.nuget/packages/npgsql/8.0.1/npgsql.8.0.1.nupkg.sha512",

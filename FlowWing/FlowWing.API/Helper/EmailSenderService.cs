@@ -1,17 +1,11 @@
-using FlowWing.API.Controllers;
 using FlowWing.Business.Abstract;
-using FlowWing.DataAccess;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using NuGet.Protocol;
 
 namespace FlowWing.API.Helpers;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FlowWing.Entities;
 
@@ -50,8 +44,11 @@ public class EmailSenderService
             await smtpClient.AuthenticateAsync(_senderEmail, _senderPassword);
             await smtpClient.SendAsync(message);
             await smtpClient.DisconnectAsync(true);
-            _emailLog.Status = true;
-            await _emailLogService.UpdateEmailLogAsync(_emailLog);
+            if (_emailLog.Status == false)
+            {
+                _emailLog.Status = true;
+                await _emailLogService.UpdateEmailLogAsync(_emailLog);
+            }
         }
         catch (Exception ex)
         {

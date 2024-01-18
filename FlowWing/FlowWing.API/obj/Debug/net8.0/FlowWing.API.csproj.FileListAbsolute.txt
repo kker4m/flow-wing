@@ -534,3 +534,4 @@ C:/Users/linux/OneDrive/Documents/GitHub/flow-wing/FlowWing/FlowWing.API/bin/Deb
 /Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/zh/Hangfire.Core.resources.dll
 /Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/Dapper.dll
 /Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/Hangfire.PostgreSql.dll
+/Users/kker4m/RiderProjects/flow-wing/FlowWing/FlowWing.API/bin/Debug/net8.0/NCrontab.dll

@@ -22,7 +22,7 @@ namespace FlowWing.Entities
         
         public DateTime? LastSendingDate { get; set; }
         public DateTime? NextSendingDate { get; set; }
-        public DateTime? RepeatInterval { get; set; }
+        public String? RepeatInterval { get; set; }
         public DateTime? RepeatEndDate { get; set; }
         
         [ForeignKey("EmailLogId")] 

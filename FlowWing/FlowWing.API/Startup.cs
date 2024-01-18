@@ -53,7 +53,8 @@ namespace FlowWing.API
                 });
             });
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddScoped<DbContext,FlowWingDbContext>();
+            //services.AddScoped<DbContext,FlowWingDbContext>();
+            services.AddScoped<ScheduledMailHelper>();
             services.AddScoped<EmailSenderService>();
             
             services.AddScoped<IUserService, UserManager>();
