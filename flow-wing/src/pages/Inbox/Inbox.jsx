@@ -5,6 +5,7 @@ import { Tooltip } from "@mui/material";
 import { Divider } from "antd";
 import EmailService from "../../services/emailService";
 import { useParams } from "react-router";
+import Spinner from "../../components/Spinner";
 
 const Inbox = () => {
   const [mail, setMail] = useState(null);
@@ -14,10 +15,11 @@ const Inbox = () => {
 
   useEffect(() => {
     emailService.getEmailById(id).then((res) => setMail(res.data));
+    return()=>{}
   }, [id]);
 
   if (!mail) {
-    return <div>Loading...</div>;
+    return <Spinner/>;
   }
 
   // sentDateTime'ı tarih ve saat olarak ayır

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import "./header.css";
 import { Input } from "antd";
 import { Icon } from "@iconify/react";
@@ -10,29 +10,30 @@ import { logoutUser } from "../Redux/authSlice";
 // search functions
 const { Search } = Input;
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const Header = () => {
-    // Use the useDispatch hook to get the dispatch function
-    const dispatch = useDispatch();
-const navigate = useNavigate()
-    // Logout function
-    const handleLogout = () => {
-      dispatch(logoutUser());
-      navigate("/login")
-    };
+const Header = ({onSearch}) => {
+  // Use the useDispatch hook to get the dispatch function
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // Logout function
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate("/login");
+  };
   // Use the useSelector hook to get the user from the Redux store
   const user = useSelector((state) => state.user.user);
 
   return (
     <div className="header-content">
       <div className="logo-section">
-      <Link to="/home"> <img
-          className="logo-img"
-          src="https://res.cloudinary.com/dirtkkfqn/image/upload/v1703573682/arcelik_logo_lztrqj.png"
-          alt="Logo"
-        /></Link>
-       
+        <Link to="/home">
+          {" "}
+          <img
+            className="logo-img"
+            src="https://res.cloudinary.com/dirtkkfqn/image/upload/v1703573682/arcelik_logo_lztrqj.png"
+            alt="Logo"
+          />
+        </Link>
       </div>
 
       {/* <div className="go-to-home-btn">
@@ -62,7 +63,7 @@ const navigate = useNavigate()
           <div>Kullanıcı yok</div>
         )}
         <button className="logout-btn" onClick={handleLogout}>
-        Çıkış Yap
+          Çıkış Yap
         </button>
       </div>
       <Divider />
@@ -70,4 +71,4 @@ const navigate = useNavigate()
   );
 };
 
-export default Header;
+export default memo(Header);

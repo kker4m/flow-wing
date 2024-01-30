@@ -6,7 +6,7 @@ export default class EmailService {
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
 
-    return axios.get("http://localhost:5232/api/EmailLogs/GetUserEmails", {
+    return axios.get("http://localhost:5232/api/EmailLogs/GetUserSentEmails", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
@@ -55,7 +55,7 @@ export default class EmailService {
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
-    return axios.get("http://localhost:5232/api/EmailLogs", {
+    return axios.get("http://localhost:5232/api/EmailLogs/GetUserReceivedEmails", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
@@ -102,5 +102,39 @@ export default class EmailService {
       },
       mode: "cors",
     });
+  }
+
+  sendScheduledRepeatingMail(values) {
+    const userData = localStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    const userToken = userObject.token;
+
+    const {
+      recipientsEmail,
+      emailSubject,
+      emailBody,
+      nextSendingDate,
+      repeatInterval,
+      repeatEndDate,
+    } = values;
+
+    const mailContent={
+      recipientsEmail:recipientsEmail,
+      emailSubject:emailSubject,
+      emailBody:emailBody,
+      nextSendingDate:nextSendingDate,
+      repeatInterval:repeatInterval,
+      repeatEndDate:repeatEndDate
+    }
+    return axios.post(
+      "http://localhost:5232/api/ScheduledEmails/CreateScheduledRepeatingEmail",mailContent,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        mode: "cors",
+      }
+    );
   }
 }

@@ -3,9 +3,11 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
 const Layout = ({ children }) => {
+  
+const onSearch = (value, _e, info) => console.log(info?.source, value);
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <Header />
+      <Header onSearch={onSearch} />
 
       <div style={{ display: "flex", flex: "1" }}>
         <Sidebar />

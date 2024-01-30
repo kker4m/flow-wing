@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from "react";
 import Attachments from "../../components/Attachments";
-import { Divider } from "@mui/material";
+import { Divider, MenuItem } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import "./compose.css";
 import EmailService from "../../services/emailService";
 import { useNavigate } from "react-router";
 import alertify from "alertifyjs";
-import { Mentions } from "antd";
+import { Checkbox, DatePicker, Mentions, Modal, Select } from "antd";
 import * as Yup from "yup";
 import UserService from "../../services/userService";
-
+import dayjs from "dayjs";
 
 const Compose = () => {
-  const [users,setUsers]=useState([])
+  const [users, setUsers] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRepeating, setIsRepeating] = useState(false);
+  // MODAL FUNCTIONS
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const navigate = useNavigate();
   // GET USER
   const user = useSelector((state) => state.user.user);
   let emailService = new EmailService();
-  let userService = new UserService()
-  // MAIL SEND FUNCTION
+  let userService = new UserService();
+  // MAIL SEND FUNCTION FOR NON REPEATING MAIL
   const handleSubmit = (values) => {
     emailService.sendMail(values).then((res) => {
       if (res.status === 201) {
@@ -28,69 +40,167 @@ const Compose = () => {
       } else alertify.error("Gönderme başarısız oldu");
     });
   };
+
+  // MAIL SEND FUNCTION FOR REPEATING MAIL
+
+  const handleSubmitScheduled = (values) => {
+    console.log("Repeating mail olarak işaretlendi");
+    emailService.sendScheduledRepeatingMail(values).then((res) => {
+      if (res.status === 201) {
+        alertify.success("Mail Gönderildi");
+        navigate("/home");
+      } else alertify.error("Gönderme başarısız oldu");
+    });
+  };
+
   // ANTD MENTION FUNCTIONS
-  const onChange = (value) => {
+  const onMentionChange = (value) => {
     console.log("Change:", value);
     formik.handleChange({ target: { name: "recipientsEmail", value } });
   };
 
-  const onSelect = (option) => {
+  const onMentionSelect = (option) => {
     console.log("select", option);
     formik.setFieldValue("recipientsEmail", option.value);
   };
+
+  // DATE FIELDS
+
+  const onDateSelect = (value) => {
+    formik.setFieldValue("nextSendingDate", dayjs(value));
+    console.log("next sending date seçildi", value);
+  };
+
+  const onRepeatIntervalDateSelect = (value) => {
+    // Burada seçilen değeri formik formunun değerlerine ekleyin
+    formik.setFieldValue("repeatInterval", value);
+    console.log("repeat interval date seçildi", value);
+  };
+
+  const onRepeatEndDateSelect = (value) => {
+    formik.setFieldValue("repeatEndDate", dayjs(value));
+    console.log("repeat ending date seçildi", value);
+  };
+
   //Yup validation schema
   const validationSchema = Yup.object().shape({
-    recipientsEmail: Yup.string().email("Geçersiz mail adresi").required("Mail adresi girmek zorunludur"),
+    recipientsEmail: Yup.string()
+      .email("Geçersiz mail adresi")
+      .required("Mail adresi girmek zorunludur"),
     emailSubject: Yup.string().required("Konu giriniz"),
     emailBody: Yup.string().required("İçerik giriniz"),
   });
+
   // FORMIK
 
+  const initialValues = {
+    recipientsEmail: "",
+    emailSubject: "",
+    emailBody: "",
+    nextSendingDate: "",
+    repeatInterval: "",
+    repeatEndDate: "",
+  };
+
   const formik = useFormik({
-    initialValues: {
-      recipientsEmail: "",
-      emailSubject: "",
-      emailBody: "",
-    },
-    validationSchema: validationSchema,  
+    initialValues,
+    validationSchema: validationSchema,
     onSubmit: (values) => {
-      handleSubmit(values);
+      const { repeatEndDate, repeatInterval, nextSendingDate } = values;
+      if (isRepeating) {
+        // Eğer isRepeating true ise, ekstra değerler ile birlikte gönder
+        handleSubmitScheduled({
+          ...values,
+          nextSendingDate,
+          repeatInterval,
+          repeatEndDate,
+        });
+      } else {
+        // Değilse, sadece form alanlarını gönder
+        handleSubmit(values);
+      }
     },
   });
-//USERS FOR MENTION
-useEffect(()=>{
-  userService.getUsers().then(res=>setUsers(res.data))
-},[])
 
+  useEffect(() => {
+    userService
+      .getUsers()
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
 
-const options = users.map(user => ({
-  value: user.email,
-  label: user.email
-}));
-const handleReset = () => {
-  formik.resetForm(); // Reset the form fields
-};
+    return () => {};
+  }, []);
 
-
+  const options = users.map((user) => ({
+    value: user.email,
+    label: user.email,
+  }));
+  const handleReset = () => {
+    formik.resetForm(); // Reset the form fields
+  };
+  // CHECKBOX
+  const handleCheck = (event) => {
+    if (event.target.checked) {
+      console.log("Checkbox işaretlendi");
+      setIsRepeating(true);
+      showModal();
+    }
+  };
+  const handleChange = (value) => {
+    console.log(value); // { value: "lucy", key: "lucy", label: "Lucy (101)" }
+  };
   return (
     <div className="compose-page-content">
       <h2>Mail Oluştur</h2>
+      <Checkbox onChange={handleCheck}>Tekrarla</Checkbox>
+      {/* MODAL FOR DATE PICKING TO SEND SCHEDULED MAIL */}
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <h2>Ne zaman gönderilsin?</h2>
+        <DatePicker
+          onSelect={onDateSelect}
+          value={formik.values.nextSendingDate}
+        />
+        <h2>Ne sıklıkla gönderilsin?</h2>
 
+        <Select
+          style={{ width: 120 }}
+          defaultValue="30-00-00-00"
+          value={formik.values.repeatInterval}
+          onChange={onRepeatIntervalDateSelect}
+        >
+          <MenuItem value={"00-07-00-00"}>Haftada bir</MenuItem>
+          <MenuItem value={"30-00-00-00"}>Ayda bir</MenuItem>
+        </Select>
+        <h2>Ne zamana kadar gönderilsin?</h2>
+        <DatePicker
+          onSelect={onRepeatEndDateSelect}
+          value={formik.values.repeatEndDate}
+        />
+      </Modal>
       <div className="compose send-to">
         <span>Kime</span> <Divider />
         <Mentions
-         allowClear 
+          allowClear
           style={{ height: 50, border: "none" }}
-          onChange={onChange}
-          onSelect={onSelect}
+          onChange={onMentionChange}
+          onSelect={onMentionSelect}
           value={formik.values.recipientsEmail}
           required
           options={options}
         />
       </div>
       {formik.errors.recipientsEmail && formik.touched.recipientsEmail && (
-          <div className="error-message">{formik.errors.recipientsEmail}</div>
-        )}
+        <div className="error-message">{formik.errors.recipientsEmail}</div>
+      )}
       <div className="compose send-to">
         <span>Konu</span>
         <Divider />
@@ -102,8 +212,8 @@ const handleReset = () => {
         ></input>
       </div>
       {formik.errors.emailSubject && formik.touched.emailSubject && (
-          <div className="error-message">{formik.errors.emailSubject}</div>
-        )}
+        <div className="error-message">{formik.errors.emailSubject}</div>
+      )}
       <div className="compose mail-body">
         <span>İçerik</span> <Divider />
         <textarea
@@ -113,8 +223,8 @@ const handleReset = () => {
         />
       </div>
       {formik.errors.emailBody && formik.touched.emailBody && (
-          <div className="error-message">{formik.errors.emailBody}</div>
-        )}
+        <div className="error-message">{formik.errors.emailBody}</div>
+      )}
       <div className="compose-attachments">
         <Attachments />
         <hr />
@@ -127,7 +237,9 @@ const handleReset = () => {
         >
           Gönder
         </button>
-        <button className="delete-btn" onClick={handleReset}>Sil</button>
+        <button className="delete-btn" onClick={handleReset}>
+          Sil
+        </button>
       </div>
     </div>
   );
