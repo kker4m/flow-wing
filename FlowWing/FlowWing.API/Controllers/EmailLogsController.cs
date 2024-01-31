@@ -105,7 +105,7 @@ namespace FlowWing.API.Controllers
             if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-                
+                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 EmailLog NewEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
@@ -117,6 +117,7 @@ namespace FlowWing.API.Controllers
                     SentEmailBody = emailLogModel.EmailBody,
                     Status = true,
                     IsScheduled = false,
+                    User = user
                 };
             
                 var createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
