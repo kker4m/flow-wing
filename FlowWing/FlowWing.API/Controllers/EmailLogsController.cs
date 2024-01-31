@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.Extensions.Options;
+using NuGet.Protocol.Plugins;
 
 namespace FlowWing.API.Controllers
 {
@@ -38,15 +39,21 @@ namespace FlowWing.API.Controllers
         public async Task<IActionResult> GetUserSentEmails()
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var userEmails = await _emailLogService.GetEmailLogsByRecipientsEmailAsync(UserEmail);
-                return Ok(userEmails);
+
+                var result = new { User = user, UserEmails = userEmails };
+
+                return Ok(result);
             }
+
             return Unauthorized();
         }
-        
+
         ///<summary>
         /// Get Emails which is user sent
         /// </summary>
@@ -59,8 +66,12 @@ namespace FlowWing.API.Controllers
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var userEmails = await _emailLogService.GetEmailLogsByUserIdAsync(int.Parse(UserId));
-                return Ok(userEmails);
+
+                var result = new { User = user, UserEmails = userEmails };
+
+                return Ok(result);
             }
             return Unauthorized();
         }
@@ -82,14 +93,38 @@ namespace FlowWing.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetEmailLogById(int id)
         {
-            var emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
-            if (emailLog == null)
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
-                return NotFound();
+                bool Sender;
+                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+                var emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
+                
+                //Check if the email is sended or recevied by the user, if sender mail equals to user mail set sender value true, else set false
+                if (emailLog.SenderEmail == UserEmail)
+                {
+                    Sender = true;
+                }
+
+                // check if recipients mail contains user mail, if contains set sender value true, else set false
+                else if (emailLog.RecipientsEmail.Contains(UserEmail))
+                {
+                    Sender = false;
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+                var result = new { User = user, emailLog = emailLog, Sender = Sender };
+
+                return Ok(result);
             }
-            return Ok(emailLog);
+            return Unauthorized();
         }
 
         /// <summary>
