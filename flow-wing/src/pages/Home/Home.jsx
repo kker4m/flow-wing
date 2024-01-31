@@ -9,7 +9,7 @@ import EmptyPage from "../../components/EmptyPage";
 
 const Home = () => {
   const [mails, setMails] = useState([]);
-  let navigate = useNavigate()
+  let navigate = useNavigate();
   let emailService = new EmailService();
   // to shorten the mail body
   const excerpt = (str, count) => {
@@ -23,9 +23,9 @@ const Home = () => {
     const fetchMails = async () => {
       try {
         const response = await emailService.getMails();
-        console.log("gelen mailler: ", response.data);
+        console.log("gelen mailler: ", response.data.userEmails);
 
-        const sortedMails = response.data.sort(
+        const sortedMails = response.data.userEmails.sort(
           (a, b) => new Date(b.sentDateTime) - new Date(a.sentDateTime)
         );
 
@@ -45,14 +45,14 @@ const Home = () => {
       // Update the sentMails state after deleting the email
       setMails(mails.filter((mail) => mail.id !== id));
       alertify.success("Mail silindi.");
-      navigate("/home")
+      navigate("/home");
     });
   };
   // COLOR ARRAY FOR HR ELEMENT
   const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"]; // İstediğiniz renkleri ekleyin
 
-  if (mails.length===0) {
-    return <EmptyPage/>;
+  if (mails.length === 0) {
+    return <EmptyPage />;
   }
   return (
     <div className="home-page-content">
@@ -102,9 +102,10 @@ const Home = () => {
                       {excerpt(item.sentEmailBody, 120)}
                     </div>
                   </div>{" "}
-                  
-                  <div>
-                    {" "}
+                  <div className="repeat-delete-sent-time-section">
+                    <div className="is-repeating-icon">
+                      {item.isScheduled === true && <Icon icon="bi:repeat" />}
+                    </div>{" "}
                     <div className="delete-mail">
                       {" "}
                       <button
@@ -115,9 +116,10 @@ const Home = () => {
                       </button>
                     </div>{" "}
                     <div className="inbox-sent-time">{timeToShow}</div>
-                  </div> 
-                </div><Divider />
-             </Link>
+                  </div>
+                </div>
+                <Divider />
+              </Link>
             </>
           );
         })}

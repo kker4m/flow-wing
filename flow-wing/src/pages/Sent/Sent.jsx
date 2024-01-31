@@ -23,7 +23,7 @@ const Sent = () => {
   useEffect(() => {
     emailService.getSentMails().then((res) => {
       // Sort the sentMails array by sentDateTime in descending order
-      const sortedMails = res.data.sort(
+      const sortedMails = res.data.userEmails.sort(
         (a, b) => new Date(b.sentDateTime) - new Date(a.sentDateTime)
       );
       setSentMails(sortedMails);

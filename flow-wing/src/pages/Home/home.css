@@ -87,10 +87,19 @@ color: #2D3250;
   text-align: center;
   width: 70px;
 }
+.repeat-delete-sent-time-section{
+  padding-top: 15px;
+}
 .inbox-sent-time {
   width: 70px;
   display: flex;
   align-self: center;
   justify-content: center;
   color: #A9A9A9;
+}
+.is-repeating-icon{
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  margin-bottom: 5px;
 }

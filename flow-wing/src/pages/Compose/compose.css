@@ -59,15 +59,11 @@ height: fit-content;
 .compose .mail-body{
   margin-top: 50px;
 }
-.ql-toolbar {
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-  border-bottom: 1px solid #ccc;
-}
-.ql-editor {
+
+.ant-mentions-outlined{
   border: none;
-  box-shadow: none;
-  height: 100%;
-  position: relative; /* Editörü toolbar'ın altına itmek için */
+}
+
+.checkbox{
+  float: inline-end;
 }
