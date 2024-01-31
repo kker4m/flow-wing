@@ -46,7 +46,7 @@ namespace FlowWing.API.Controllers
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var userEmails = await _emailLogService.GetEmailLogsByRecipientsEmailAsync(UserEmail);
 
-                var result = new { User = user, UserEmails = userEmails };
+                var result = new { User = user, UserEmails = userEmails, Username = user.Username };
 
                 return Ok(result);
             }
@@ -99,12 +99,24 @@ namespace FlowWing.API.Controllers
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
-                String Sender;
+                bool Sender;
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
                 emailLog.User = user;
-                Sender = emailLog.SenderEmail;
+                
+                if (emailLog.SenderEmail == UserEmail)
+                {
+                    Sender = true;
+                }
+                else if (emailLog.RecipientsEmail.Contains(UserEmail))
+                {
+                    Sender = false;
+                }
+                else
+                {
+                    return NotFound();
+                }
 
                 var result = new { emailLog = emailLog, Sender = Sender };
 
