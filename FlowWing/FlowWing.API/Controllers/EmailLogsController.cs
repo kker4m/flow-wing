@@ -103,9 +103,10 @@ namespace FlowWing.API.Controllers
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
+                emailLog.User = user;
                 Sender = emailLog.SenderEmail;
 
-                var result = new { User = user, emailLog = emailLog, Sender = Sender };
+                var result = new { emailLog = emailLog, Sender = Sender };
 
                 return Ok(result);
             }
