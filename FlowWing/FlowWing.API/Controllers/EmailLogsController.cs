@@ -99,26 +99,11 @@ namespace FlowWing.API.Controllers
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
-                bool Sender;
+                String Sender;
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
-                
-                //Check if the email is sended or recevied by the user, if sender mail equals to user mail set sender value true, else set false
-                if (emailLog.SenderEmail == UserEmail)
-                {
-                    Sender = true;
-                }
-
-                // check if recipients mail contains user mail, if contains set sender value true, else set false
-                else if (emailLog.RecipientsEmail.Contains(UserEmail))
-                {
-                    Sender = false;
-                }
-                else
-                {
-                    return NotFound();
-                }
+                Sender = emailLog.SenderEmail;
 
                 var result = new { User = user, emailLog = emailLog, Sender = Sender };
 
