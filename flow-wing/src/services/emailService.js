@@ -37,12 +37,24 @@ export default class EmailService {
     });
   }
 
-  sendScheduledMail() {
+  sendScheduledMail(values) {
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
 
-    return axios.post("http://localhost:5232/api/ScheduledEmails", {
+    const {sentDateTime,
+      recipientsEmail,
+      emailSubject,
+      emailBody,
+    } = values;
+
+    const mailContent={
+      sentDateTime:sentDateTime,
+      recipientsEmail:recipientsEmail,
+      emailSubject:emailSubject,
+      emailBody:emailBody,
+    }
+    return axios.post("http://localhost:5232/api/ScheduledEmails/CreateScheduledEmail", mailContent,{
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,

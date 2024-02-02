@@ -17,7 +17,7 @@
 .logo-section,
 .user-section,
 .search-section {
-  margin: 0 15px;
+  margin: 0;
   display: flex;
   flex-direction: row;
   align-items: center; /* Align items vertically centered */
@@ -73,4 +73,14 @@
 }
 .logout-btn:hover{
   cursor: pointer;
+}
+.ant-dropdown{
+  border: none;
+}
+
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled){
+  color: black;
+}
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover{
+  color: black;
 }

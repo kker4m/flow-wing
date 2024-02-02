@@ -21,8 +21,8 @@ const Inbox = () => {
     console.log("get mail by id",res.data)
     setSender(res.data.sender)
     console.log("mail sender", sender)
-    setUser(res.data.user.username)
-  console.log("user",res.data.user)
+    setUser(res.data.emailLog.user.username)
+  console.log("user",res.data.emailLog.user.username)
   }
     );
     return()=>{}

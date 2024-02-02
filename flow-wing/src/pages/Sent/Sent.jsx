@@ -89,8 +89,10 @@ const Sent = () => {
                       {excerpt(item.sentEmailBody, 120)}
                     </div>
                   </div>{" "}
-                  <div>
-                    {" "}
+                  <div className="repeat-delete-sent-time-section">
+                    <div className="is-repeating-icon">
+                      {item.isScheduled === true && <Icon icon="bi:repeat" />}
+                    </div>{" "}
                     <div className="delete-mail">
                       {" "}
                       <button
@@ -101,8 +103,8 @@ const Sent = () => {
                       </button>
                     </div>{" "}
                     <div className="inbox-sent-time">{timeToShow}</div>
-                 
                   </div>
+               
                 </div>{" "}   <Divider />{" "}
               </Link>
             </>

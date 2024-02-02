@@ -1,14 +1,11 @@
-import dayjs from "dayjs";
 import React from "react";
 import "./login.css";
-import Header from "../../components/Header";
 import { useNavigate } from "react-router";
-import { Divider, Input } from "antd";
+import { Divider } from "antd";
 import { Link } from "react-router-dom";
 import { TextField } from "@mui/material";
-import { Formik, replace, useFormik } from "formik";
+import { Formik } from "formik";
 import * as Yup from "yup";
-import UserService from "../../services/userService";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../Redux/authSlice";
 
@@ -20,7 +17,7 @@ const Login = () => {
   // login handler function
   const handleLogin = (values) => {
     dispatch(loginUser(values)).then((result) => {
-      console.log(result)
+      console.log(result);
       if (result.payload) {
         navigate("/home");
       }
@@ -39,7 +36,6 @@ const Login = () => {
 
   return (
     <div className="login-page-content">
-   
       <div className="login-page-form">
         <p>Hoş Geldiniz</p>
         <Divider />
@@ -101,7 +97,6 @@ const Login = () => {
                   "Giriş Yap"
                 )}
               </button>
-        
             </form>
           )}
         </Formik>

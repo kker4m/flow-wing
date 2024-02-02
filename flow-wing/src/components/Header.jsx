@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import "./header.css";
-import { Input } from "antd";
+import { Dropdown, Input } from "antd";
 import { Icon } from "@iconify/react";
 import { useDispatch, useSelector } from "react-redux";
 import { Divider } from "@mui/material";
@@ -10,8 +10,7 @@ import { logoutUser } from "../Redux/authSlice";
 // search functions
 const { Search } = Input;
 
-
-const Header = ({onSearch}) => {
+const Header = ({ search }) => {
   // Use the useDispatch hook to get the dispatch function
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,6 +21,24 @@ const Header = ({onSearch}) => {
   };
   // Use the useSelector hook to get the user from the Redux store
   const user = useSelector((state) => state.user.user);
+
+  //USER MENU DROPDOWN
+  const handleMenuClick = () => {
+    handleLogout();
+  };
+
+  const items = [
+    {
+      label: "  Çıkış Yap",
+      key: "1",
+      icon: <Icon icon="material-symbols-light:logout-sharp" width="26" height="26"  style={{color: "black"}} />,
+    },
+  ];
+
+  const menuProps = {
+    items,
+    onClick: (e) => handleMenuClick( e),
+  };
 
   return (
     <div className="header-content">
@@ -35,36 +52,33 @@ const Header = ({onSearch}) => {
           />
         </Link>
       </div>
-
-      {/* <div className="go-to-home-btn">
-        <Link to="/home">
-          {" "}
-          <button className="home-btn">
-            <Icon icon="teenyicons:home-outline" width="30" />
-          </button>
-        </Link>
-      </div> */}
+      
       <div className="search-section">
         <Search
           placeholder="Postalarda arayın"
-          onSearch={onSearch}
+          onChange={(e) => {
+              const value = e.target.value;
+              setSearchInput(value);
+              search();
+            }}
           style={{
             width: 350,
+            height:60
           }}
         />
       </div>
       <div className="user-section">
-        <div className="user-icon">
-          <Icon icon="ph:user-light" width="30" />{" "}
-        </div>
-        {user ? (
-          <div className="user-name">{user.username} </div>
-        ) : (
-          <div>Kullanıcı yok</div>
-        )}
-        <button className="logout-btn" onClick={handleLogout}>
-          Çıkış Yap
-        </button>
+        <Dropdown.Button
+          menu={menuProps}
+          placement="bottom"
+          icon={<Icon icon="ph:user-light" width="30" />}
+        >
+          {user ? (
+            <div className="user-name">{user.username} </div>
+          ) : (
+            <div>Kullanıcı yok</div>
+          )}
+        </Dropdown.Button>
       </div>
       <Divider />
     </div>

@@ -16,6 +16,7 @@ const Compose = () => {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
+  const [isScheduled, setIsScheduled] = useState(false);
   // MODAL FUNCTIONS
   const showModal = () => {
     setIsModalOpen(true);
@@ -31,6 +32,8 @@ const Compose = () => {
   const user = useSelector((state) => state.user.user);
   let emailService = new EmailService();
   let userService = new UserService();
+
+
   // MAIL SEND FUNCTION FOR NON REPEATING MAIL
   const handleSubmit = (values) => {
     emailService.sendMail(values).then((res) => {
@@ -43,8 +46,7 @@ const Compose = () => {
 
   // MAIL SEND FUNCTION FOR REPEATING MAIL
 
-  const handleSubmitScheduled = (values) => {
-    console.log("Repeating mail olarak işaretlendi");
+  const handleSubmitRepeating = (values) => {
     emailService.sendScheduledRepeatingMail(values).then((res) => {
       if (res.status === 201) {
         alertify.success("Mail Gönderildi");
@@ -52,6 +54,16 @@ const Compose = () => {
       } else alertify.error("Gönderme başarısız oldu");
     });
   };
+// MAIL SEND FUNCTION FOR SCHEDULED MAIL
+
+const handleSubmitScheduled = (values)=>{
+emailService.sendScheduledMail(values).then(res=>{
+  if (res.status === 201) {
+    alertify.success("Mail şu tarih için gönderilecek: ");
+    navigate("/home");
+  } else alertify.error("Gönderme başarısız oldu");
+})
+}
 
   // ANTD MENTION FUNCTIONS
   const onMentionChange = (value) => {
@@ -82,6 +94,11 @@ const Compose = () => {
     console.log("repeat ending date seçildi", value);
   };
 
+  const onSendDateTimeSelect=(value)=>{
+    setIsScheduled(true)
+    formik.setFieldValue("sentDateTime", dayjs(value));
+    console.log("schedule send date seçildi", value);
+  }
   //Yup validation schema
   const validationSchema = Yup.object().shape({
     recipientsEmail: Yup.string()
@@ -100,16 +117,19 @@ const Compose = () => {
     nextSendingDate: "",
     repeatInterval: "",
     repeatEndDate: "",
+    sentDateTime:""
   };
 
   const formik = useFormik({
     initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      const { repeatEndDate, repeatInterval, nextSendingDate } = values;
-      if (isRepeating) {
+      const { repeatEndDate, repeatInterval, nextSendingDate ,sentDateTime } = values;
+      if (isScheduled) {
+        handleSubmitScheduled({ ...values, sentDateTime }); // Eğer isScheduled true ise, planlanmış gönderimi gerçekleştir
+      } else if (isRepeating) {
         // Eğer isRepeating true ise, ekstra değerler ile birlikte gönder
-        handleSubmitScheduled({
+        handleSubmitRepeating({
           ...values,
           nextSendingDate,
           repeatInterval,
@@ -121,7 +141,7 @@ const Compose = () => {
       }
     },
   });
-
+// GET USERS FOR MENTION
   useEffect(() => {
     userService
       .getUsers()
@@ -150,9 +170,7 @@ const Compose = () => {
       showModal();
     }
   };
-  const handleChange = (value) => {
-    console.log(value); // { value: "lucy", key: "lucy", label: "Lucy (101)" }
-  };
+ 
   return (
     <div className="compose-page-content">
       <h2>
@@ -170,7 +188,16 @@ const Compose = () => {
       </h2>
       <div className="checkbox">
         <Checkbox onChange={handleCheck}   style={{ width: 120 }}>Tekrarla</Checkbox>
+      <br/>
+      <div>
+        Şu tarihte gönder:
+          <br/>
+        <DatePicker
+          onSelect={onSendDateTimeSelect}
+          value={formik.values.sentDateTime}/>
       </div>
+      </div>
+
       {/* MODAL FOR DATE PICKING TO SEND SCHEDULED MAIL */}
       <Modal
         title="Basic Modal"
