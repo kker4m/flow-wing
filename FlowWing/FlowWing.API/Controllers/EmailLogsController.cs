@@ -29,7 +29,7 @@ namespace FlowWing.API.Controllers
             _appSettings = appSettings.Value;
             _emailSenderService = emailSenderService;
         }
-        
+
         ///<summary>
         ///  Get emails which is comes to the user
         /// </summary>
@@ -75,7 +75,7 @@ namespace FlowWing.API.Controllers
             }
             return Unauthorized();
         }
-        
+
         /// <summary>
         /// Get All Email Logs
         /// </summary>
@@ -102,9 +102,15 @@ namespace FlowWing.API.Controllers
                 bool Sender;
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+                if (await _emailLogService.GetEmailLogByIdAsync(id) == null)
+                {
+                    return NotFound();
+                }
+
+
                 var emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
                 emailLog.User = user;
-                
+
                 if (emailLog.SenderEmail == UserEmail)
                 {
                     Sender = true;
@@ -134,8 +140,8 @@ namespace FlowWing.API.Controllers
         public async Task<IActionResult> CreateEmailLog([FromBody] EmailLogModel emailLogModel)
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            
-            if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
+
+            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
@@ -152,18 +158,18 @@ namespace FlowWing.API.Controllers
                     IsScheduled = false,
                     User = user
                 };
-            
+
                 var createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
-                
+
                 var recipients = emailLogModel.RecipientsEmail.Split(",");
                 foreach (var recipient in recipients)
                 {
                     _emailSenderService.SendEmail(recipient, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog);
                 }
-                
+
                 return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
             }
-            return Unauthorized(); 
+            return Unauthorized();
         }
 
         /// <summary>
@@ -179,10 +185,10 @@ namespace FlowWing.API.Controllers
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-                
+
                 //get email log by emaillogId
                 var emailLog = await _emailLogService.GetEmailLogByIdAsync(EmailLogId);
-                
+
                 //get user's email logs and check if the email log exists
                 var user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var userLogs = await _emailLogService.GetEmailLogsByUserIdAsync(user.Id);
@@ -191,8 +197,8 @@ namespace FlowWing.API.Controllers
                     //return 404
                     return NotFound();
                 }
-                
-                
+
+
                 //update email log
                 emailLog.RecipientsEmail = emailLogModel.RecipientsEmail;
                 emailLog.EmailSubject = emailLogModel.EmailSubject;
@@ -200,7 +206,7 @@ namespace FlowWing.API.Controllers
                 emailLog.Status = false;
                 emailLog.IsScheduled = false;
                 await _emailLogService.UpdateEmailLogAsync(emailLog);
-                
+
                 return CreatedAtAction(nameof(UpdateEmailLog), new { id = emailLog.Id }, emailLog);
             }
 
@@ -215,12 +221,18 @@ namespace FlowWing.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmailLog(int id)
         {
-            if (await _emailLogService.GetEmailLogByIdAsync(id) == null)
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
-                return NotFound();
+
+                if (await _emailLogService.GetEmailLogByIdAsync(id) == null)
+                {
+                    return NotFound();
+                }
+                await _emailLogService.DeleteEmailLogAsync(id);
+                return Ok();
             }
-            await _emailLogService.DeleteEmailLogAsync(id);
-            return Ok();
+            return Unauthorized();
         }
     }
 }
