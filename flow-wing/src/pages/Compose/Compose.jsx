@@ -36,13 +36,28 @@ const Compose = () => {
 
   // MAIL SEND FUNCTION FOR NON REPEATING MAIL
   const handleSubmit = (values) => {
-    emailService.sendMail(values).then((res) => {
+  
+      console.log("Form Values:", values); // Form verilerini konsola yazdır
+      const formData = new FormData();
+      // Form değerlerini FormData'ya ekle
+      formData.append("recipientsEmail", values.recipientsEmail);
+      formData.append("emailSubject", values.emailSubject);
+      formData.append("emailBody", values.emailBody);
+      if (values.attachment) {
+        formData.append("attachment", values.attachment);
+      }
+    
+    
+  
+    emailService.sendMail(formData).then((res) => {
       if (res.status === 201) {
         alertify.success("Mail Gönderildi");
         navigate("/home");
       } else alertify.error("Gönderme başarısız oldu");
     });
   };
+  
+
 
   // MAIL SEND FUNCTION FOR REPEATING MAIL
 
@@ -117,7 +132,8 @@ emailService.sendScheduledMail(values).then(res=>{
     nextSendingDate: "",
     repeatInterval: "",
     repeatEndDate: "",
-    sentDateTime:""
+    sentDateTime:"",
+    attachment:null
   };
 
   const formik = useFormik({
@@ -170,7 +186,10 @@ emailService.sendScheduledMail(values).then(res=>{
       showModal();
     }
   };
- 
+ // Dosya seçildiğinde tetiklenecek fonksiyon
+const handleFileChange = (event) => {
+  formik.setFieldValue("attachment", event.target.files[0]);
+};
   return (
     <div className="compose-page-content">
       <h2>
@@ -268,7 +287,7 @@ emailService.sendScheduledMail(values).then(res=>{
         <div className="error-message">{formik.errors.emailBody}</div>
       )}
       <div className="compose-attachments">
-        <Attachments />
+      <Attachments onChange={handleFileChange} />
         <hr />
       </div>
       <div className="compose-btns">

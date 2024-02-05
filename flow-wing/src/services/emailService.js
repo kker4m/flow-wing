@@ -1,24 +1,48 @@
 import axios from "axios";
 
-export default class EmailService {
-  getMails() {
+// Create an instance of Axios
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:5232/api/", 
+  mode: 'cors'
+})
+axiosInstance.interceptors.request.use(
+  function (config) {
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${userToken}`
+    }
+    // Do something before request is sent
+    console.log("Request Interceptor - Request Config: ", config)
+    return config
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error)
+  }
+)
 
-    return axios.get("http://localhost:5232/api/EmailLogs/GetUserSentEmails", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      mode: "cors",
-    });
+// Add a response interceptor
+axiosInstance.interceptors.response.use(
+  function (response) {
+    // Do something with response data
+    console.log("Response Interceptor - Response Data: ", response.data)
+    return response
+  },
+  function (error) {
+    // Do something with response error
+    return Promise.reject(error)
+  }
+)
+export default class EmailService {
+  getMails() {
+   return axiosInstance.get("EmailLogs/GetUserSentEmails")
   }
 
   sendMail(values) {
-    const userData = localStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    const userToken = userObject.token;
+
     const { recipientsEmail, emailSubject, emailBody } = values;
 
     // Convert values to strings if necessary
@@ -28,19 +52,11 @@ export default class EmailService {
       emailBody: String(emailBody),
     };
 
-    return axios.post("http://localhost:5232/api/EmailLogs", mailContent, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      mode: "cors",
-    });
+    return axiosInstance.post("EmailLogs", mailContent);
   }
 
   sendScheduledMail(values) {
-    const userData = localStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    const userToken = userObject.token;
+  
 
     const {sentDateTime,
       recipientsEmail,
@@ -54,72 +70,30 @@ export default class EmailService {
       emailSubject:emailSubject,
       emailBody:emailBody,
     }
-    return axios.post("http://localhost:5232/api/ScheduledEmails/CreateScheduledEmail", mailContent,{
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      mode: "cors",
-    });
+    return axios.post("ScheduledEmails/CreateScheduledEmail", mailContent);
   }
 
   getSentMails() {
-    const userData = localStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    const userToken = userObject.token;
-    return axios.get("http://localhost:5232/api/EmailLogs/GetUserReceivedEmails", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      mode: "cors",
-    });
+ 
+    return axiosInstance.get("EmailLogs/GetUserReceivedEmails");
   }
 
   getAllUsers() {
-    const userData = localStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    const userToken = userObject.token;
 
-    return axios.get("http://localhost:5232/api/Users", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      mode: "cors",
-    });
+    return axiosInstance.get("Users");
   }
 
   deleteSentEmail(id) {
-    const userData = localStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    const userToken = userObject.token;
-    return axios.delete("http://localhost:5232/api/EmailLogs/" + id, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      mode: "cors",
-    });
+   
+    return axiosInstance.delete("EmailLogs/" + id);
   }
 
   getEmailById(id) {
-    const userData = localStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    const userToken = userObject.token;
-    return axios.get("http://localhost:5232/api/EmailLogs/" + id, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      mode: "cors",
-    });
+    return axiosInstance.get("EmailLogs/" + id);
   }
 
   sendScheduledRepeatingMail(values) {
-    const userData = localStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    const userToken = userObject.token;
+  
 
     const {
       recipientsEmail,
@@ -138,15 +112,8 @@ export default class EmailService {
       repeatInterval:repeatInterval,
       repeatEndDate:repeatEndDate
     }
-    return axios.post(
-      "http://localhost:5232/api/ScheduledEmails/CreateScheduledRepeatingEmail",mailContent,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userToken}`,
-        },
-        mode: "cors",
-      }
+    return axiosInstance.post(
+      "ScheduledEmails/CreateScheduledRepeatingEmail",mailContent
     );
   }
 }

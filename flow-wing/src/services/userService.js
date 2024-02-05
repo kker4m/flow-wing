@@ -1,50 +1,43 @@
 import axios from "axios";
-
-export default class UserService {
-  // createUser(values) {
-  //   const { email, username, password } = values;
-
-  //   // Convert values to strings if necessary
-  //   const userData = {
-  //     Email: String(email),
-  //     Password: String(password),
-  //     Username: String(username),
-  //   };
-
-  //   return axios.post(process.env.REACT_APP_API_URL+"api/Auth/signup", userData, {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     mode: "cors",
-  //   });
-  // }
-
-  // login(values) {
-  //   const { email, password } = values;
-
-  //   // Convert values to strings if necessary
-  //   const userData = {
-  //     Email: String(email),
-  //     Password: String(password),
-  //   };
-  //   return axios.post(process.env.REACT_APP_API_URL+"api/Auth/login", userData, {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     mode: "cors",
-  //   });
-  // }
-
-  getUsers(){
+// Create an instance of Axios
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:5232/api/", 
+  mode: 'cors'
+})
+axiosInstance.interceptors.request.use(
+  function (config) {
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const userToken = userObject.token;
-    return axios.get("http://localhost:5232/api/Users", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      mode: "cors",
-    });
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${userToken}`
+    }
+    // Do something before request is sent
+    console.log("Request Interceptor - Request Config: ", config)
+    return config
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error)
+  }
+)
+
+// Add a response interceptor
+axiosInstance.interceptors.response.use(
+  function (response) {
+    // Do something with response data
+    console.log("Response Interceptor - Response Data: ", response.data)
+    return response
+  },
+  function (error) {
+    // Do something with response error
+    return Promise.reject(error)
+  }
+)
+export default class UserService {
+
+  getUsers(){
+    return axiosInstance.get("Users");
   }
 }
