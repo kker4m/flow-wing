@@ -161,11 +161,8 @@ namespace FlowWing.API.Controllers
 
                 var createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
 
-                var recipients = emailLogModel.RecipientsEmail.Split(",");
-                foreach (var recipient in recipients)
-                {
-                    _emailSenderService.SendEmail(recipient, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog);
-                }
+                _emailSenderService.SendEmail(emailLogModel.RecipientsEmail, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog,emailLogModel.Attachments);
+
 
                 return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
             }
@@ -175,7 +172,7 @@ namespace FlowWing.API.Controllers
         /// <summary>
         /// Update an Email Log
         /// </summary>
-        /// <param name="emailLog"></param>
+        /// <param name="emailLogModel"></param>
         /// <returns></returns>
         [HttpPut]
         [Authorize]

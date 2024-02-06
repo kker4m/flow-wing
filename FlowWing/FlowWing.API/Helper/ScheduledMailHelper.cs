@@ -33,13 +33,14 @@ public class ScheduledMailHelper
     public async Task ScheduleScheduledEmail(EmailLog createdEmailLog, ScheduledEmailLogModel scheduledEmail)
     {
         // Hangfire'da işi planla
-        BackgroundJob.Schedule(() => _emailSenderService.SendEmail(scheduledEmail.RecipientsEmail,scheduledEmail.EmailSubject,scheduledEmail.EmailBody,createdEmailLog)
+        BackgroundJob.Schedule(() => _emailSenderService.SendEmail(scheduledEmail.RecipientsEmail,scheduledEmail.EmailSubject,scheduledEmail.EmailBody,createdEmailLog,scheduledEmail.Attachments)
             ,scheduledEmail.SentDateTime);
     }
     public async Task SendRepeatingEmail(EmailLog emailLog, ScheduledRepeatingEmailModel scheduledRepeatingEmailModel)
     {
         // E-postayı gönder
-        _emailSenderService.SendEmail(emailLog.RecipientsEmail, emailLog.EmailSubject, emailLog.SentEmailBody, emailLog);
+        // RecipientsEmail'i virgulden ayir, her bir aliciya ayri ayri gonder
+        _emailSenderService.SendEmail(emailLog.RecipientsEmail, emailLog.EmailSubject, emailLog.SentEmailBody, emailLog,scheduledRepeatingEmailModel.Attachments);
 
         // Eğer EndDate'den önceyse, işlemi sona erdir
         if (DateTime.UtcNow < scheduledRepeatingEmailModel.RepeatEndDate)

@@ -8,4 +8,5 @@ public class ScheduledRepeatingEmailModel
     public DateTime NextSendingDate { get; set; }
     public String RepeatInterval { get; set; }
     public DateTime RepeatEndDate { get; set; }
+    public List<string> Attachments { get; set; }
 }

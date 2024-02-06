@@ -20,14 +20,17 @@ namespace FlowWing.API.Controllers
     {
         private IScheduledEmailService _scheduledEmailService;
         private IEmailLogService _emailLogService;
+        private IUserService _userService;
         private AppSettings _appSettings;
         private ScheduledMailHelper _scheduledMailHelper;
-        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IOptions<AppSettings> appSettings, ScheduledMailHelper scheduledMailHelper)
+
+        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, ScheduledMailHelper scheduledMailHelper)
         {
             _scheduledEmailService = scheduledEmailService;
             _emailLogService = emailLogService;
             _appSettings = appSettings.Value;
             _scheduledMailHelper = scheduledMailHelper;
+            _userService = userService;
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace FlowWing.API.Controllers
             if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-
+                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 EmailLog newEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
@@ -81,7 +84,8 @@ namespace FlowWing.API.Controllers
                     EmailSubject = scheduledEmail.EmailSubject,
                     SentEmailBody = scheduledEmail.EmailBody,
                     Status = false,
-                    IsScheduled = true
+                    IsScheduled = true,
+                    User = user
                 };
 
                 var createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
@@ -117,7 +121,7 @@ namespace FlowWing.API.Controllers
             if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-                
+                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 EmailLog newEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
@@ -128,7 +132,8 @@ namespace FlowWing.API.Controllers
                     EmailSubject = scheduledRepeatingEmailModel.EmailSubject,
                     SentEmailBody = scheduledRepeatingEmailModel.EmailBody,
                     Status = false,
-                    IsScheduled = true
+                    IsScheduled = true,
+                    User = user
                 };
                 
                 var createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
@@ -143,7 +148,7 @@ namespace FlowWing.API.Controllers
                 };
                 
                 var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledRepeatingEmail);
-                
+
                 // Hangfire'da işi planla
                 _scheduledMailHelper.ScheduleRepeatingEmail(createdEmailLog, scheduledRepeatingEmailModel);
                 

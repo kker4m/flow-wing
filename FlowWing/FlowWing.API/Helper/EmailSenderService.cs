@@ -29,21 +29,45 @@ public class EmailSenderService
         _senderPassword = _appSettings.EmailConnectionServices._senderPassword;
     }
 
-    public async Task SendEmail(string recipientEmail, string subject, string body, EmailLog _emailLog)
+    public async Task SendEmail(string recipientEmail, string subject, string body, EmailLog _emailLog, List<string> attachments)
     {
         try
         {
             var message = new MimeMessage();
             message.From.Add(MailboxAddress.Parse(_senderEmail));
-            message.To.Add(MailboxAddress.Parse(recipientEmail));
+            
+            foreach(var recipient in recipientEmail.Split(','))
+            {
+                message.To.Add(MailboxAddress.Parse(recipient));
+            }
+
             message.Subject = subject;
-            message.Body = new TextPart("plain") { Text = body };
+
+            var multipart = new Multipart("mixed");
+
+            multipart.Add(new TextPart("plain") { Text = body });
+
+            foreach (var attachmentPath in attachments)
+            {
+                var attachment = new MimePart
+                {
+                    Content = new MimeContent(File.OpenRead(attachmentPath), ContentEncoding.Default),
+                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                    ContentTransferEncoding = ContentEncoding.Base64,
+                    FileName = Path.GetFileName(attachmentPath)
+                };
+
+                multipart.Add(attachment);
+            }
+
+            message.Body = multipart;
 
             using var smtpClient = new SmtpClient();
             await smtpClient.ConnectAsync(_smtpServer, _smtpPort, SecureSocketOptions.StartTls);
             await smtpClient.AuthenticateAsync(_senderEmail, _senderPassword);
             await smtpClient.SendAsync(message);
             await smtpClient.DisconnectAsync(true);
+
             if (_emailLog.Status == false)
             {
                 _emailLog.Status = true;
