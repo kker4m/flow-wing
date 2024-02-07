@@ -54,7 +54,7 @@
             <summary>
             Update an Email Log
             </summary>
-            <param name="emailLog"></param>
+            <param name="emailLogModel"></param>
             <returns></returns>
         </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.DeleteEmailLog(System.Int32)">
