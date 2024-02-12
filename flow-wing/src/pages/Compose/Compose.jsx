@@ -35,27 +35,25 @@ const Compose = () => {
 
 
   // MAIL SEND FUNCTION FOR NON REPEATING MAIL
-  const handleSubmit = (values) => {
-  
-      console.log("Form Values:", values); // Form verilerini konsola yazdır
-      const formData = new FormData();
-      // Form değerlerini FormData'ya ekle
-      formData.append("recipientsEmail", values.recipientsEmail);
-      formData.append("emailSubject", values.emailSubject);
-      formData.append("emailBody", values.emailBody);
-      if (values.attachment) {
-        formData.append("attachment", values.attachment);
-      }
-    
-    
-  
-    emailService.sendMail(formData).then((res) => {
+  const handleSubmit = async (values) => {
+    console.log(formik.values); 
+    try {
+     
+      // Submit form data
+      const res = await emailService.sendMail(values);
       if (res.status === 201) {
         alertify.success("Mail Gönderildi");
         navigate("/home");
-      } else alertify.error("Gönderme başarısız oldu");
-    });
+      } else {
+        alertify.error("Gönderme başarısız oldu");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alertify.error("Bir hata oluştu");
+    }
   };
+  
+  
   
 
 
@@ -133,14 +131,14 @@ emailService.sendScheduledMail(values).then(res=>{
     repeatInterval: "",
     repeatEndDate: "",
     sentDateTime:"",
-    attachment:null
+    attachment:[]
   };
 
   const formik = useFormik({
     initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      const { repeatEndDate, repeatInterval, nextSendingDate ,sentDateTime } = values;
+      const { repeatEndDate, repeatInterval, nextSendingDate ,sentDateTime,attachment } = values;
       if (isScheduled) {
         handleSubmitScheduled({ ...values, sentDateTime }); // Eğer isScheduled true ise, planlanmış gönderimi gerçekleştir
       } else if (isRepeating) {
@@ -186,12 +184,20 @@ emailService.sendScheduledMail(values).then(res=>{
       showModal();
     }
   };
- // Dosya seçildiğinde tetiklenecek fonksiyon
+// Dosya seçildiğinde tetiklenecek fonksiyon
 const handleFileChange = (event) => {
-  formik.setFieldValue("attachment", event.target.files[0]);
+  if (event.target.files.length > 0) {
+    console.log("Selected files:", event.target.files);
+    formik.setFieldValue("attachment", event.target.files[0]);
+  } else {
+    console.log("No file selected");
+    formik.setFieldValue("attachment", []); // Dosya seçilmediğinde boş bir dizi yolla
+  }
 };
+
+
   return (
-    <div className="compose-page-content">
+    <div className="compose-page-content"><form onSubmit={formik.handleSubmit}>
       <h2>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -287,14 +293,14 @@ const handleFileChange = (event) => {
         <div className="error-message">{formik.errors.emailBody}</div>
       )}
       <div className="compose-attachments">
-      <Attachments onChange={handleFileChange} />
+      <Attachments onChange={handleFileChange}  value={formik.values.attachment}/>
         <hr />
       </div>
       <div className="compose-btns">
         <button
           className="send-btn"
           type="submit"
-          onClick={formik.handleSubmit}
+        
         >
           Gönder
         </button>
@@ -302,6 +308,7 @@ const handleFileChange = (event) => {
           Sil
         </button>
       </div>
+      </form>
     </div>
   );
 };

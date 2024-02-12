@@ -3,6 +3,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Menu } from "antd";
 import { Icon } from "@iconify/react";
 import { Link, useLocation } from "react-router-dom";
+import { COMPOSE_NEW_ROUTE, HOME_ROUTE, SENT_ROUTE, TRASH_ROUTE } from "../routes";
 function getItem(label, key, icon, children, type) {
   return {
     key,
@@ -14,12 +15,12 @@ function getItem(label, key, icon, children, type) {
 }
 const items = [
   getItem(
-    <Link to="/home">Gelen Kutusu</Link>,
+    <Link to={HOME_ROUTE}>Gelen Kutusu</Link>,
     "1",
     <Icon icon="quill:mail" />
   ),
   getItem(
-    <Link to="/sent">Gönderilenler</Link>,
+    <Link to={SENT_ROUTE}>Gönderilenler</Link>,
     "2",
     <Icon icon="icon-park-outline:message-sent" />
   ),
@@ -29,12 +30,12 @@ const items = [
     <Icon icon="ic:sharp-schedule" />
   ),
   getItem(
-    <Link to="/compose-new">Mail Oluştur</Link>,
+    <Link to={COMPOSE_NEW_ROUTE}>Mail Oluştur</Link>,
     "4",
     <Icon icon="streamline:chat-bubble-square-write" />
   ),
   getItem(
-    <Link to="/trash">Çöp Kutusu</Link>,
+    <Link to={TRASH_ROUTE}>Çöp Kutusu</Link>,
     "5",
     <Icon icon="bi:trash" />
   ),

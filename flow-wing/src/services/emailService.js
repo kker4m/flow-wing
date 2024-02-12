@@ -1,44 +1,10 @@
 import axios from "axios";
+import apiAxios from "../lib/apiAxios";
 
-// Create an instance of Axios
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:5232/api/", 
-  mode: 'cors'
-})
-axiosInstance.interceptors.request.use(
-  function (config) {
-    const userData = localStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    const userToken = userObject.token;
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${userToken}`
-    }
-    // Do something before request is sent
-    console.log("Request Interceptor - Request Config: ", config)
-    return config
-  },
-  function (error) {
-    // Do something with request error
-    return Promise.reject(error)
-  }
-)
 
-// Add a response interceptor
-axiosInstance.interceptors.response.use(
-  function (response) {
-    // Do something with response data
-    console.log("Response Interceptor - Response Data: ", response.data)
-    return response
-  },
-  function (error) {
-    // Do something with response error
-    return Promise.reject(error)
-  }
-)
 export default class EmailService {
   getMails() {
-   return axiosInstance.get("EmailLogs/GetUserSentEmails")
+   return apiAxios.get("EmailLogs/GetUserSentEmails")
   }
 
   sendMail(values) {
@@ -50,9 +16,10 @@ export default class EmailService {
       recipientsEmail: String(recipientsEmail),
       emailSubject: String(emailSubject),
       emailBody: String(emailBody),
+      attachments:[]
     };
 
-    return axiosInstance.post("EmailLogs", mailContent);
+    return apiAxios.post("EmailLogs", mailContent);
   }
 
   sendScheduledMail(values) {
@@ -69,27 +36,28 @@ export default class EmailService {
       recipientsEmail:recipientsEmail,
       emailSubject:emailSubject,
       emailBody:emailBody,
+      attachments:[]
     }
-    return axios.post("ScheduledEmails/CreateScheduledEmail", mailContent);
+    return apiAxios.post("ScheduledEmails/CreateScheduledEmail", mailContent);
   }
 
   getSentMails() {
  
-    return axiosInstance.get("EmailLogs/GetUserReceivedEmails");
+    return apiAxios.get("EmailLogs/GetUserReceivedEmails");
   }
 
   getAllUsers() {
 
-    return axiosInstance.get("Users");
+    return apiAxios.get("Users");
   }
 
   deleteSentEmail(id) {
    
-    return axiosInstance.delete("EmailLogs/" + id);
+    return apiAxios.delete("EmailLogs/" + id);
   }
 
   getEmailById(id) {
-    return axiosInstance.get("EmailLogs/" + id);
+    return apiAxios.get("EmailLogs/" + id);
   }
 
   sendScheduledRepeatingMail(values) {
@@ -110,9 +78,10 @@ export default class EmailService {
       emailBody:emailBody,
       nextSendingDate:nextSendingDate,
       repeatInterval:repeatInterval,
-      repeatEndDate:repeatEndDate
+      repeatEndDate:repeatEndDate,
+     
     }
-    return axiosInstance.post(
+    return apiAxios.post(
       "ScheduledEmails/CreateScheduledRepeatingEmail",mailContent
     );
   }

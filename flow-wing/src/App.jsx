@@ -1,4 +1,4 @@
-import { Navigate, Route, Router, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import "./App.css";
 import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
@@ -10,13 +10,14 @@ import Compose from "./pages/Compose/Compose";
 import Inbox from "./pages/Inbox/Inbox";
 import Trash from "./pages/Trash/Trash";
 import RequireAuth from "./components/RequireAuth";
+import { COMPOSE_NEW_ROUTE, HOME_ROUTE, INBOX_ROUTE, LOGIN_ROUTE, REGISTER_ROUTE, SENT_ROUTE, TRASH_ROUTE } from "./routes";
 
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path={LOGIN_ROUTE} element={<Login />} />
       <Route
-        path="/home"
+        path={HOME_ROUTE}
         element={
           <RequireAuth>
             {" "}
@@ -27,7 +28,7 @@ function App() {
         }
       />
       <Route
-        path="/sent"
+        path={SENT_ROUTE}
         element={
           <RequireAuth>
             <_Layout>
@@ -48,7 +49,7 @@ function App() {
         }
       />
       <Route
-        path="/compose-new"
+        path={COMPOSE_NEW_ROUTE}
         element={
           <RequireAuth>
             {" "}
@@ -59,7 +60,7 @@ function App() {
         }
       />
       <Route
-        path="/inbox/:id"
+        path={INBOX_ROUTE}
         element={
           <RequireAuth>
             {" "}
@@ -70,7 +71,7 @@ function App() {
         }
       />
       <Route
-        path="/trash"
+        path={TRASH_ROUTE}
         element={
           <RequireAuth>
             {" "}
@@ -80,7 +81,7 @@ function App() {
           </RequireAuth>
         }
       />
-      <Route path="/register" element={<Register />} />
+      <Route path={REGISTER_ROUTE} element={<Register />} />
       <Route path="/" element={<Navigate to="/login" />} />
     </Routes>
   );

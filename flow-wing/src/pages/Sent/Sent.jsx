@@ -4,18 +4,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import EmailService from "../../services/emailService";
 import "./sent.css";
+import { excerpt } from "../../helpers";
 
 const Sent = () => {
   const [sentMails, setSentMails] = useState([]);
   let navigate = useNavigate()
   let { id } = useParams();
-  // to shorten the mail body
-  const excerpt = (str, count) => {
-    if (str && str.length > count) {
-      str = str.substring(0, count) + "...";
-    }
-    return str;
-  };
+
 
   const emailService = new EmailService();
 
