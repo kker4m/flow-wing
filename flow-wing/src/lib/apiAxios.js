@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create an instance of Axios
 const apiAxios = axios.create({
-  baseURL: "http://localhost:5232/api/", 
+  baseURL: import.meta.env.VITE_API_URL, 
   mode: 'cors'
 })
 apiAxios.interceptors.request.use(
