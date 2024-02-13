@@ -6,12 +6,12 @@
   margin-bottom: 20px;
   position: sticky;
 }
-.home-btn{
+.home-btn {
   outline: none;
   background: inherit;
   border: none;
 }
-.home-btn:hover{
+.home-btn:hover {
   cursor: pointer;
 }
 .logo-section,
@@ -63,7 +63,7 @@
     margin-left: 0; /* Reset margin for small screens */
   }
 }
-.logout-btn{
+.logout-btn {
   background-color: inherit;
   margin: 40px;
   width: 100px;
@@ -71,16 +71,16 @@
   font-size: 16px;
   border-radius: 30px;
 }
-.logout-btn:hover{
+.logout-btn:hover {
   cursor: pointer;
 }
-.ant-dropdown{
+.ant-dropdown {
   border: none;
 }
 
-.ant-btn-default:not(:disabled):not(.ant-btn-disabled){
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled) {
   color: black;
 }
-.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover{
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
   color: black;
 }

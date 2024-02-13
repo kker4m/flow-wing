@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Button, Menu } from "antd";
-import { Icon } from "@iconify/react";
-import { Link, useLocation } from "react-router-dom";
-import { COMPOSE_NEW_ROUTE, HOME_ROUTE, SENT_ROUTE, TRASH_ROUTE } from "../routes";
+import React, { useEffect, useState } from "react"
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
+import { Button, Menu } from "antd"
+import { Icon } from "@iconify/react"
+import { Link, useLocation } from "react-router-dom"
+import {
+  COMPOSE_NEW_ROUTE,
+  HOME_ROUTE,
+  SENT_ROUTE,
+  TRASH_ROUTE
+} from "../routes"
 function getItem(label, key, icon, children, type) {
   return {
     key,
     icon,
     children,
     label,
-    type,
-  };
+    type
+  }
 }
 const items = [
   getItem(
@@ -38,36 +43,36 @@ const items = [
     <Link to={TRASH_ROUTE}>Çöp Kutusu</Link>,
     "5",
     <Icon icon="bi:trash" />
-  ),
-];
+  )
+]
 const Sidebar = () => {
-  const location = useLocation();
+  const location = useLocation()
 
   useEffect(() => {
-    const path = location.pathname;
+    const path = location.pathname
     // Burada path'e göre seçili anahtarı ayarlayabilirsiniz.
-  }, [location]);
+  }, [location])
 
   const setStoredSelectedKey = (key) => {
-    localStorage.setItem("selectedKey", key);
-  };
+    localStorage.setItem("selectedKey", key)
+  }
 
   useEffect(() => {
-    const path = location.pathname;
-    const storedSelectedKey = localStorage.getItem("selectedKey");
-    const defaultSelectedKey = "1"; // Default selected key
+    const path = location.pathname
+    const storedSelectedKey = localStorage.getItem("selectedKey")
+    const defaultSelectedKey = "1" // Default selected key
 
     // Use the stored key if it exists, otherwise use the default
     const selectedKey = storedSelectedKey
       ? storedSelectedKey
-      : defaultSelectedKey;
+      : defaultSelectedKey
 
-    setStoredSelectedKey(selectedKey); // Store the selected key
-  }, [location]);
+    setStoredSelectedKey(selectedKey) // Store the selected key
+  }, [location])
   return (
     <div
       style={{
-        width: 256,
+        width: 256
       }}
     >
       <Menu
@@ -77,9 +82,9 @@ const Sidebar = () => {
         items={items}
         selectedKeys={[localStorage.getItem("selectedKey") || "1"]}
         onSelect={({ key }) => setStoredSelectedKey(key)}
-        style={{ fontSize: '16px', position:"fixed" ,  width: 256,}}
+        style={{ fontSize: "16px", position: "fixed", width: 256 }}
       />
     </div>
-  );
-};
-export default Sidebar;
+  )
+}
+export default Sidebar

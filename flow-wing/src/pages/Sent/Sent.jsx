@@ -1,52 +1,49 @@
-import React, { useEffect, useState } from "react";
-import { Icon } from "@iconify/react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import Divider from "@mui/material/Divider";
-import EmailService from "../../services/emailService";
-import "./sent.css";
-import { excerpt } from "../../helpers";
+import React, { useEffect, useState } from "react"
+import { Icon } from "@iconify/react"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import Divider from "@mui/material/Divider"
+import "./sent.css"
+import { excerpt } from "../../helpers"
+import { deleteSentEmail, getSentMails } from "../../services/emailService"
 
 const Sent = () => {
-  const [sentMails, setSentMails] = useState([]);
+  const [sentMails, setSentMails] = useState([])
   let navigate = useNavigate()
-  let { id } = useParams();
-
-
-  const emailService = new EmailService();
+  let { id } = useParams()
 
   // get sent emails
   useEffect(() => {
-    emailService.getSentMails().then((res) => {
+    getSentMails().then((res) => {
       // Sort the sentMails array by sentDateTime in descending order
       const sortedMails = res.data.userEmails.sort(
         (a, b) => new Date(b.sentDateTime) - new Date(a.sentDateTime)
-      );
-      setSentMails(sortedMails);
-    });
-  }, []);
+      )
+      setSentMails(sortedMails)
+    })
+  }, [])
 
   // COLOR ARRAY FOR HR ELEMENT
-  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"]; // İstediğiniz renkleri ekleyin
+  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"] // İstediğiniz renkleri ekleyin
 
   // delete email
   const handleDelete = (id) => {
-    emailService.deleteSentEmail(id).then((res) => {
-      console.log(res);
+    deleteSentEmail(id).then((res) => {
+      console.log(res)
       // Update the sentMails state after deleting the email
-      setSentMails(sentMails.filter((mail) => mail.id !== id));
+      setSentMails(sentMails.filter((mail) => mail.id !== id))
       navigate("/sent")
-    });
-  };
+    })
+  }
   return (
     <div className="sent-mail-page-content">
       <h2>Gönderilmiş Mailler</h2>
       <div className="sent">
         {sentMails.map((item, index) => {
           // to format date
-          const dateFromAPI = new Date(item.sentDateTime);
-          const nowsDate = new Date();
+          const dateFromAPI = new Date(item.sentDateTime)
+          const nowsDate = new Date()
 
-          let timeToShow;
+          let timeToShow
 
           if (
             dateFromAPI.getFullYear() === nowsDate.getFullYear() &&
@@ -55,12 +52,12 @@ const Sent = () => {
           ) {
             const hourPart = dateFromAPI.toLocaleTimeString("tr-TR", {
               hour: "numeric",
-              minute: "numeric",
-            });
-            timeToShow = hourPart;
+              minute: "numeric"
+            })
+            timeToShow = hourPart
           } else {
-            const datePart = dateFromAPI.toLocaleDateString("tr-TR");
-            timeToShow = datePart;
+            const datePart = dateFromAPI.toLocaleDateString("tr-TR")
+            timeToShow = datePart
           }
 
           return (
@@ -69,7 +66,7 @@ const Sent = () => {
                 <div className="sent-mail-content">
                   <hr
                     style={{
-                      border: `1px solid ${colors[index % colors.length]}`,
+                      border: `1px solid ${colors[index % colors.length]}`
                     }}
                   />
                   <div key={index} className="inbox-mail-unopened">
@@ -99,15 +96,15 @@ const Sent = () => {
                     </div>{" "}
                     <div className="inbox-sent-time">{timeToShow}</div>
                   </div>
-               
-                </div>{" "}   <Divider />{" "}
+                </div>{" "}
+                <Divider />{" "}
               </Link>
             </>
-          );
+          )
         })}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Sent;
+export default Sent

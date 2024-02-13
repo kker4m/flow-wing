@@ -1,38 +1,36 @@
-import React from "react";
-import "./login.css";
-import { useNavigate } from "react-router";
-import { Divider } from "antd";
-import { Link } from "react-router-dom";
-import { TextField } from "@mui/material";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../Redux/authSlice";
+import React from "react"
+import "./login.css"
+import { useNavigate } from "react-router"
+import { Divider } from "antd"
+import { Link } from "react-router-dom"
+import { TextField } from "@mui/material"
+import { Formik } from "formik"
+import * as Yup from "yup"
+import { useDispatch, useSelector } from "react-redux"
+import { loginUser } from "../../Redux/authSlice"
 
 const Login = () => {
-  let navigate = useNavigate();
-  const dispatch = useDispatch();
+  let navigate = useNavigate()
+  const dispatch = useDispatch()
   // redux state
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user)
   // login handler function
   const handleLogin = (values) => {
     dispatch(loginUser(values)).then((result) => {
-      console.log(result);
+      console.log(result)
       if (result.payload) {
-        navigate("/home");
+        navigate("/home")
       }
-    });
-  };
+    })
+  }
   //validations
   const validationSchema = Yup.object({
     password: Yup.string()
       .required("Zorunlu alan")
       .min(4, "Şifre en az 4 karakter içermelidir")
       .max(8, "Şifre en fazla 8 karakterden oluşabilir."),
-    email: Yup.string()
-      .email("Geçersiz e-mail adresi")
-      .required("Zorunlu alan"),
-  });
+    email: Yup.string().email("Geçersiz e-mail adresi").required("Zorunlu alan")
+  })
 
   return (
     <div className="login-page-content">
@@ -42,12 +40,12 @@ const Login = () => {
         <Formik
           initialValues={{
             password: "",
-            email: "",
+            email: ""
           }}
           validationSchema={validationSchema}
           onSubmit={(values) => {
-            console.log(values);
-            handleLogin(values);
+            console.log(values)
+            handleLogin(values)
           }}
         >
           {({ handleSubmit, handleChange, values, errors }) => (
@@ -102,7 +100,7 @@ const Login = () => {
         </Formik>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

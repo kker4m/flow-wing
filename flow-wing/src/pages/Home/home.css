@@ -6,7 +6,8 @@
 }
 .inbox {
   display: flex;
-  flex-direction: column;  width: 100%;
+  flex-direction: column;
+  width: 100%;
 }
 .mail-content {
   display: flex;
@@ -14,7 +15,7 @@
   width: 100%;
 }
 .mail-content:hover {
-  box-shadow: 0px 5px 10px -8px #C0440E;
+  box-shadow: 0px 5px 10px -8px #c0440e;
 }
 
 .inbox a {
@@ -68,15 +69,16 @@
 .mail-primary-icon:hover {
   background-color: #d8d9da;
 }
-.inbox-mail-title{
-font-weight: bold;
-color: #2D3250;
+.inbox-mail-title {
+  font-weight: bold;
+  color: #2d3250;
 }
-.inbox-mail-body,.inbox-mail-title {
+.inbox-mail-body,
+.inbox-mail-title {
   padding-right: 50px;
   padding-left: 95px;
 }
-.inbox-mail-body{
+.inbox-mail-body {
   color: #424769;
 }
 .mail-attachment {
@@ -87,7 +89,7 @@ color: #2D3250;
   text-align: center;
   width: 70px;
 }
-.repeat-delete-sent-time-section{
+.repeat-delete-sent-time-section {
   padding-top: 15px;
 }
 .inbox-sent-time {
@@ -95,9 +97,9 @@ color: #2D3250;
   display: flex;
   align-self: center;
   justify-content: center;
-  color: #A9A9A9;
+  color: #a9a9a9;
 }
-.is-repeating-icon{
+.is-repeating-icon {
   display: flex;
   align-self: center;
   justify-content: center;

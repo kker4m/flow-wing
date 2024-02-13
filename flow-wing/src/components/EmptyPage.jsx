@@ -1,5 +1,5 @@
-import React from "react";
-import "./emptyPage.css";
+import React from "react"
+import "./emptyPage.css"
 
 const EmptyPage = () => {
   return (
@@ -7,7 +7,7 @@ const EmptyPage = () => {
       <h3>Burası şimdilik boş</h3>
       <span class="loader-empty-page"></span>
     </div>
-  );
-};
+  )
+}
 
-export default EmptyPage;
+export default EmptyPage

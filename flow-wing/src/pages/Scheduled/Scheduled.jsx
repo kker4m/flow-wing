@@ -1,54 +1,53 @@
-import { useFormik } from "formik";
-import React from "react";
-import EmailService from "../../services/emailService";
-import { useSelector } from "react-redux";
-import { Divider } from "@mui/material";
-import Attachments from "../../components/Attachments";
-import { Select } from "antd";
+import { useFormik } from "formik"
+import React from "react"
+import { useSelector } from "react-redux"
+import { Divider } from "@mui/material"
+import Attachments from "../../components/Attachments"
+import { Select } from "antd"
+import { sendMail } from "../../services/emailService"
 
 const Scheduled = () => {
   // GET USER
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user.user)
 
   // MAIL SEND FUNCTION
   const handleSubmit = (values) => {
-    let emailService = new EmailService();
-    emailService.sendMail(values);
-  };
+    sendMail(values)
+  }
   // FORMIK
 
   const formik = useFormik({
     initialValues: {
       recipientsEmail: "",
       emailSubject: "",
-      emailBody: "",
+      emailBody: ""
     },
     onSubmit: (values) => {
-      handleSubmit(values);
-    },
-  });
+      handleSubmit(values)
+    }
+  })
 
   const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
+    console.log(`selected ${value}`)
+  }
   return (
     <div className="compose-page-content">
-    <h2>Planlanmış Mailler</h2>
+      <h2>Planlanmış Mailler</h2>
       <div className="schedule-time">
         <Select
           style={{
-            width: 120,
+            width: 120
           }}
           onChange={handleChange}
           options={[
             {
               value: "2 günde bir",
-              label: "2 günde bir",
+              label: "2 günde bir"
             },
             {
               value: "Haftada bir",
-              label: "Haftada bir",
-            },
+              label: "Haftada bir"
+            }
           ]}
         />
       </div>
@@ -95,7 +94,7 @@ const Scheduled = () => {
         <button className="delete-btn">Sil</button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Scheduled;
+export default Scheduled

@@ -1,53 +1,50 @@
-import React, { useEffect, useState } from "react";
-import "./inbox.css";
-import { Icon } from "@iconify/react";
-import { Tooltip } from "@mui/material";
-import { Divider } from "antd";
-import EmailService from "../../services/emailService";
-import { useNavigate, useParams } from "react-router";
-import Spinner from "../../components/Spinner";
-import alertify from "alertifyjs";
+import React, { useEffect, useState } from "react"
+import "./inbox.css"
+import { Icon } from "@iconify/react"
+import { Tooltip } from "@mui/material"
+import { Divider } from "antd"
+import { useNavigate, useParams } from "react-router"
+import Spinner from "../../components/Spinner"
+import alertify from "alertifyjs"
+import { deleteSentEmail, getEmailById } from "../../services/emailService"
 
 const Inbox = () => {
-  const [mail, setMail] = useState(null);
+  const [mail, setMail] = useState(null)
   const [sender, setSender] = useState(true)
-  const [user,setUser] = useState("")
-  let navigate= useNavigate()
-  let { id } = useParams();
-  let emailService = new EmailService();
+  const [user, setUser] = useState("")
+  let navigate = useNavigate()
+  let { id } = useParams()
 
   useEffect(() => {
-    emailService.getEmailById(id).then((res) => {setMail(res.data.emailLog)
-    console.log("get mail by id",res.data)
-    setSender(res.data.sender)
-    console.log("mail sender", sender)
-    setUser(res.data.emailLog.user.username)
-  console.log("user",res.data.emailLog.user.username)
-  }
-    );
-    return()=>{}
-  }, [id]);
+    getEmailById(id).then((res) => {
+      setMail(res.data.emailLog)
+      console.log("get mail by id", res.data)
+      setSender(res.data.sender)
+      console.log("mail sender", sender)
+      setUser(res.data.emailLog.user.username)
+      console.log("user", res.data.emailLog.user.username)
+    })
+    return () => {}
+  }, [id])
 
   if (!mail) {
-    return <Spinner/>;
+    return <Spinner />
   }
   // DELETE AN EMAIL
   const handleDelete = () => {
-    emailService.deleteSentEmail(mail.id).then((res) => {
-      console.log(res);
-      alertify.success("Mail silindi.");
-      navigate("/home");
-    });
-  };
+    deleteSentEmail(mail.id).then((res) => {
+      console.log(res)
+      alertify.success("Mail silindi.")
+      navigate("/home")
+    })
+  }
   // sentDateTime'ı tarih ve saat olarak ayır
-  const sentDateTime = new Date(mail.sentDateTime);
-  const formattedDate = sentDateTime.toLocaleDateString("tr-TR");
-  const formattedTime = sentDateTime.toLocaleTimeString("tr-TR");
+  const sentDateTime = new Date(mail.sentDateTime)
+  const formattedDate = sentDateTime.toLocaleDateString("tr-TR")
+  const formattedTime = sentDateTime.toLocaleTimeString("tr-TR")
 
-  return (
-    
-      sender === false  ? (
-      <div className="inbox-page-content">
+  return sender === false ? (
+    <div className="inbox-page-content">
       <div className="mail-actions">
         <Tooltip title="İlet" arrow>
           <div className="icons">
@@ -115,10 +112,12 @@ const Inbox = () => {
           <span>Konu:</span> {mail.emailSubject}
         </p>
         <p>
-          <span>Gönderilme Tarihi:</span> {formattedTime} - {formattedDate} 
+          <span>Gönderilme Tarihi:</span> {formattedTime} - {formattedDate}
         </p>
       </div>
-    </div>) : (   <div className="inbox-page-content">
+    </div>
+  ) : (
+    <div className="inbox-page-content">
       <div className="mail-actions">
         <Tooltip title="İlet" arrow>
           <div className="icons">
@@ -186,13 +185,11 @@ const Inbox = () => {
           <span>Konu:</span> {mail.emailSubject}
         </p>
         <p>
-          <span>Gönderilme Tarihi:</span> {formattedTime} - {formattedDate} 
+          <span>Gönderilme Tarihi:</span> {formattedTime} - {formattedDate}
         </p>
       </div>
-    </div>)
-    
-  
-  );
-};
+    </div>
+  )
+}
 
-export default Inbox;
+export default Inbox

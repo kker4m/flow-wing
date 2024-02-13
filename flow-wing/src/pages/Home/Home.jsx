@@ -1,58 +1,53 @@
-import React, { useEffect, useState } from "react";
-import "./home.css";
-import { Icon } from "@iconify/react";
-import { Link, useNavigate } from "react-router-dom";
-import Divider from "@mui/material/Divider";
-import EmailService from "../../services/emailService";
-import alertify from "alertifyjs";
-import EmptyPage from "../../components/EmptyPage";
+import React, { useEffect, useState } from "react"
+import "./home.css"
+import { Icon } from "@iconify/react"
+import { Link, useNavigate } from "react-router-dom"
+import Divider from "@mui/material/Divider"
+import alertify from "alertifyjs"
+import EmptyPage from "../../components/EmptyPage"
+import { deleteSentEmail, getMails } from "../../services/emailService"
+import { excerpt } from "../../helpers"
 
 const Home = () => {
-  const [mails, setMails] = useState([]);
-  let navigate = useNavigate();
-  let emailService = new EmailService();
-  // to shorten the mail body
-  const excerpt = (str, count) => {
-    if (str && str.length > count) {
-      str = str.substring(0, count) + "...";
-    }
-    return str;
-  };
+  const [mails, setMails] = useState([])
+  let navigate = useNavigate()
+
   // Get all e-mails
   useEffect(() => {
-    const fetchMails = async () => {
-      try {
-        const response = await emailService.getMails();
-        console.log("gelen mailler: ", response.data.userEmails);
+    try {
+      getMails().then((response) => {
+        console.log("gelen mailler: ", response.data.userEmails)
 
         const sortedMails = response.data.userEmails.sort(
           (a, b) => new Date(b.sentDateTime) - new Date(a.sentDateTime)
-        );
+        )
 
-        setMails(sortedMails);
-      } catch (error) {
-        console.error("Error fetching mails:", error);
-      }
-    };
-
-    fetchMails();
-  }, []);
+        setMails(sortedMails)
+      })
+    } catch (error) {
+      console.error("Error fetching mails:", error)
+    }
+  }, [])
 
   // DELETE AN EMAIL
   const handleDelete = (id) => {
-    emailService.deleteSentEmail(id).then((res) => {
-      console.log(res);
-      // Update the sentMails state after deleting the email
-      setMails(mails.filter((mail) => mail.id !== id));
-      alertify.success("Mail silindi.");
-      navigate("/home");
-    });
-  };
+    try {
+      deleteSentEmail(id).then((res) => {
+        console.log(res)
+        // Update the sentMails state after deleting the email
+        setMails(mails.filter((mail) => mail.id !== id))
+        alertify.success("Mail silindi.")
+        navigate("/home")
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
   // COLOR ARRAY FOR HR ELEMENT
-  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"]; // İstediğiniz renkleri ekleyin
+  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"] // İstediğiniz renkleri ekleyin
 
   if (mails.length === 0) {
-    return <EmptyPage />;
+    return <EmptyPage />
   }
   return (
     <div className="home-page-content">
@@ -60,10 +55,10 @@ const Home = () => {
       <div className="inbox">
         {mails.map((item, index) => {
           // to format date
-          const dateFromAPI = new Date(item.sentDateTime);
-          const nowsDate = new Date();
+          const dateFromAPI = new Date(item.sentDateTime)
+          const nowsDate = new Date()
 
-          let timeToShow;
+          let timeToShow
 
           if (
             dateFromAPI.getFullYear() === nowsDate.getFullYear() &&
@@ -72,12 +67,12 @@ const Home = () => {
           ) {
             const hourPart = dateFromAPI.toLocaleTimeString("tr-TR", {
               hour: "numeric",
-              minute: "numeric",
-            });
-            timeToShow = hourPart;
+              minute: "numeric"
+            })
+            timeToShow = hourPart
           } else {
-            const datePart = dateFromAPI.toLocaleDateString("tr-TR");
-            timeToShow = datePart;
+            const datePart = dateFromAPI.toLocaleDateString("tr-TR")
+            timeToShow = datePart
           }
 
           return (
@@ -86,7 +81,7 @@ const Home = () => {
                 <div className="mail-content">
                   <hr
                     style={{
-                      border: `1px solid ${colors[index % colors.length]}`,
+                      border: `1px solid ${colors[index % colors.length]}`
                     }}
                   />
                   <div key={index} className="inbox-mail-unopened">
@@ -121,11 +116,11 @@ const Home = () => {
                 <Divider />
               </Link>
             </>
-          );
+          )
         })}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

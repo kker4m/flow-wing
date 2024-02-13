@@ -1,30 +1,30 @@
-import { Divider } from "antd";
-import React from "react";
-import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
-import "./register.css";
-import { TextField } from "@mui/material";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import alertify from "alertifyjs";
-import { registerUser } from "../../Redux/authSlice";
+import { Divider } from "antd"
+import React from "react"
+import { useNavigate } from "react-router"
+import { Link } from "react-router-dom"
+import "./register.css"
+import { TextField } from "@mui/material"
+import { Formik } from "formik"
+import * as Yup from "yup"
+import { useDispatch, useSelector } from "react-redux"
+import alertify from "alertifyjs"
+import { registerUser } from "../../Redux/authSlice"
 
 const Register = () => {
-  let navigate = useNavigate();
-  const dispatch = useDispatch();
+  let navigate = useNavigate()
+  const dispatch = useDispatch()
 
   // redux state
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user)
 
   // REGISTER FUNCTION
   const handleRegister = (values) => {
     dispatch(registerUser(values)).then((result) => {
       if (result.payload) {
-        navigate("/login");
+        navigate("/login")
       }
-    });
-  };
+    })
+  }
   const validationSchema = Yup.object({
     username: Yup.string()
       .required("Zorunlu alan")
@@ -34,10 +34,8 @@ const Register = () => {
       .required("Zorunlu alan")
       .min(4, "Şifre en az 4 karakter içermelidir")
       .max(8, "Şifre en fazla 8 karakterden oluşabilir."),
-    email: Yup.string()
-      .email("Geçersiz e-mail adresi")
-      .required("Zorunlu alan"),
-  });
+    email: Yup.string().email("Geçersiz e-mail adresi").required("Zorunlu alan")
+  })
 
   return (
     <div className="register-page-content">
@@ -48,11 +46,11 @@ const Register = () => {
           initialValues={{
             username: "",
             password: "",
-            email: "",
+            email: ""
           }}
           validationSchema={validationSchema}
           onSubmit={(values) => {
-            handleRegister(values);
+            handleRegister(values)
           }}
         >
           {({ handleSubmit, handleChange, values, errors }) => (
@@ -109,7 +107,7 @@ const Register = () => {
         </Formik>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register
