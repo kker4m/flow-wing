@@ -60,7 +60,9 @@ namespace FlowWing.API
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IEmailLogRepository, EmailLogRepository>();
             services.AddScoped<IScheduledEmailRepository, ScheduledEmailRepository>();
+            services.AddScoped<IAttachmentService,AttachmentManager>();
 
+            services.AddScoped<IAttachmentRepository, AttachmentRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IScheduledEmailService, ScheduledEmailManager>();
             services.AddScoped<IEmailLogService, EmailLogManager>();

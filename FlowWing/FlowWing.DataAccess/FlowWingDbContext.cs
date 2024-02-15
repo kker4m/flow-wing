@@ -19,5 +19,6 @@ namespace FlowWing.DataAccess
         public DbSet<EmailLog> EmailLogs { get; set; }
         public DbSet<ScheduledEmail> ScheduledEmails { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
     }
 }

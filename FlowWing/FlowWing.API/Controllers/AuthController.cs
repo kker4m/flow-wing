@@ -40,6 +40,7 @@ namespace FlowWing.API.Controllers
                     Email = model.Email,
                     Password = model.Password,
                     Username = model.Username,
+                    IsApplicationUser = false,
                     LastLoginDate = DateTime.Now,
                     CreationDate = DateTime.Now
                 };

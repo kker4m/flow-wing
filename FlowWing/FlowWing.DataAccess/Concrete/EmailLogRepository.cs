@@ -56,7 +56,12 @@ namespace FlowWing.DataAccess.Concrete
             //Return all the email logs that user have as a list
             return await _dbContext.EmailLogs.AsNoTracking().Where(x => x.UserId == userId).ToListAsync();
         }
-
+        
+        public async Task<EmailLog> GetEmailLogByScheduledEmailIdAsync(int scheduledEmailId)
+        {
+            return await _dbContext.ScheduledEmails.AsNoTracking().Where(x => x.Id == scheduledEmailId).Select(x => x.EmailLog).FirstOrDefaultAsync();
+        }
+        
         public async Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog)
         {
             _dbContext.Entry(emailLog).State = EntityState.Modified;

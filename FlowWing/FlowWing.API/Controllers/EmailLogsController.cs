@@ -21,13 +21,15 @@ namespace FlowWing.API.Controllers
         private IUserService _userService;
         private readonly AppSettings _appSettings;
         private readonly EmailSenderService _emailSenderService;
+        private readonly IAttachmentService _attachmentService;
 
-        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, EmailSenderService emailSenderService)
+        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, EmailSenderService emailSenderService,IAttachmentService attachmentService)
         {
             _emailLogService = emailLogService;
             _userService = userService;
             _appSettings = appSettings.Value;
             _emailSenderService = emailSenderService;
+            _attachmentService = attachmentService;
         }
 
         ///<summary>
@@ -44,9 +46,25 @@ namespace FlowWing.API.Controllers
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+                //find attachments by user's email
                 var userEmails = await _emailLogService.GetEmailLogsByRecipientsEmailAsync(UserEmail);
-
-                var result = new { User = user, UserEmails = userEmails, Username = user.Username };
+                var resultEmails = new List<object>();
+                foreach (var email in userEmails)
+                {
+                    email.User= user;
+                    IEnumerable<Attachment?> attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(email.Id);
+                    if (attachments != null)
+                    {
+                        foreach (var attachment in attachments)
+                        {
+                            attachment.EmailLog = email;
+                        }
+                        var attachmentResult = new { EmailLog = email, Attachments = attachments };
+                        resultEmails.Add(attachmentResult);
+                    }
+                }
+                
+                var result = new { User = user, UserEmails = resultEmails, Username = UserEmail};
 
                 return Ok(result);
             }
@@ -68,8 +86,22 @@ namespace FlowWing.API.Controllers
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var userEmails = await _emailLogService.GetEmailLogsByUserIdAsync(int.Parse(UserId));
-
-                var result = new { User = user, UserEmails = userEmails };
+                var resultEmails = new List<object>();
+                foreach (var email in userEmails)
+                {
+                    email.User= user;
+                    IEnumerable<Attachment?> attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(email.Id);
+                    if (attachments != null)
+                    {
+                        foreach (var attachment in attachments)
+                        {
+                            attachment.EmailLog = email;
+                        }
+                        var attachmentResult = new { EmailLog = email, Attachments = attachments };
+                        resultEmails.Add(attachmentResult);
+                    }
+                }
+                var result = new { User = user, UserEmails = resultEmails, Username = UserEmail };
 
                 return Ok(result);
             }
@@ -137,7 +169,7 @@ namespace FlowWing.API.Controllers
         /// <param name="emailLog"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateEmailLog([FromBody] EmailLogModel emailLogModel)
+        public async Task<IActionResult> CreateEmailLog([FromForm] EmailLogModel emailLogModel)
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
@@ -145,6 +177,9 @@ namespace FlowWing.API.Controllers
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+                var formFiles = HttpContext.Request.Form.Files;
+                string attachmentIds = "";
+                
                 EmailLog NewEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
@@ -158,10 +193,39 @@ namespace FlowWing.API.Controllers
                     IsScheduled = false,
                     User = user
                 };
-
+                
                 var createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
+                
 
-                _emailSenderService.SendEmail(emailLogModel.RecipientsEmail, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog,emailLogModel.Attachments);
+                foreach (var formFile in formFiles)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                            await formFile.CopyToAsync(stream);
+                            byte[] bytes = stream.ToArray();
+
+                            var attachment = new Attachment
+                            {
+                                EmailLogId = createdEmailLog.Id,
+                                FileName = formFile.FileName,
+                                FileSize = formFile.Length,
+                                ContentType = formFile.ContentType,
+                                Data = bytes,
+                            };
+                        
+                        await _attachmentService.CreateAttachmentAsync(attachment);
+                        attachmentIds += attachment.Id + ",";
+                    }
+                }
+
+                if (attachmentIds.Length > 0)
+                {
+                    attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                    createdEmailLog.AttachmentIds = attachmentIds;
+                    await _emailLogService.UpdateEmailLogAsync(createdEmailLog);
+                }
+                
+                _emailSenderService.SendEmail(emailLogModel.RecipientsEmail, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog);
 
 
                 return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
@@ -176,7 +240,7 @@ namespace FlowWing.API.Controllers
         /// <returns></returns>
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateEmailLog([FromBody] EmailLogModel emailLogModel, int EmailLogId)
+        public async Task<IActionResult> UpdateEmailLog([FromForm] EmailLogModel emailLogModel, int EmailLogId)
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))

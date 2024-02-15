@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "XbXaTtfRt2mTRVPEBAUxiH24b7MFhhtEzpcEsRY5NzIHwPDS2zN0oweShczJizSGX/1FPcQgeS+Mg8rXZ3cGuw==",
+  "dgSpecHash": "MfukZkiXkcmWrOueMSxJz+++T5hKhVmEFbI/paOilHC82VDh1QWifzNK9//M5AT8qUEA3Ry2NHyQZE8JJf4+Ww==",
   "success": true,
-  "projectFilePath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/home/kerem/RiderProjects/flow-wing/FlowWing/FlowWing.Entities/FlowWing.Entities.csproj",
+  "expectedPackageFiles": [
+    "/home/kerem/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.1/microsoft.aspnetcore.app.ref.8.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

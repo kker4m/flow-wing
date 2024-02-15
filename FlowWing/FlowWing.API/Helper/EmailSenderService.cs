@@ -29,7 +29,7 @@ public class EmailSenderService
         _senderPassword = _appSettings.EmailConnectionServices._senderPassword;
     }
 
-    public async Task SendEmail(string recipientEmail, string subject, string body, EmailLog _emailLog, List<string> attachments)
+    public async Task SendEmail(string recipientEmail, string subject, string body, EmailLog _emailLog)
     {
         try
         {
@@ -46,19 +46,19 @@ public class EmailSenderService
             var multipart = new Multipart("mixed");
 
             multipart.Add(new TextPart("plain") { Text = body });
-
-            foreach (var attachmentPath in attachments)
-            {
-                var attachment = new MimePart
-                {
-                    Content = new MimeContent(File.OpenRead(attachmentPath), ContentEncoding.Default),
-                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-                    ContentTransferEncoding = ContentEncoding.Base64,
-                    FileName = Path.GetFileName(attachmentPath)
-                };
-
-                multipart.Add(attachment);
-            }
+            //
+            //foreach (var attachmentPath in attachments)
+            //{
+            //   var attachment = new MimePart
+            //   {
+            //      Content = new MimeContent(File.OpenRead(attachmentPath), ContentEncoding.Default),
+            //      ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+            //      ContentTransferEncoding = ContentEncoding.Base64,
+            //      FileName = Path.GetFileName(attachmentPath)
+            //  };
+            //
+            //              multipart.Add(attachment);
+            //}
 
             message.Body = multipart;
 

@@ -54,7 +54,7 @@
         "runtime": {
           "lib/netcoreapp3.0/Hangfire.AspNetCore.dll": {
             "assemblyVersion": "1.8.7.0",
-            "fileVersion": "1.8.7.0"
+            "fileVersion": "0.0.0.0"
           }
         }
       },
@@ -65,7 +65,7 @@
         "runtime": {
           "lib/netstandard2.0/Hangfire.Core.dll": {
             "assemblyVersion": "1.8.7.0",
-            "fileVersion": "1.8.7.0"
+            "fileVersion": "0.0.0.0"
           }
         },
         "resources": {
@@ -134,7 +134,7 @@
         "runtime": {
           "lib/netstandard2.1/Hangfire.NetCore.dll": {
             "assemblyVersion": "1.8.7.0",
-            "fileVersion": "1.8.7.0"
+            "fileVersion": "0.0.0.0"
           }
         }
       },

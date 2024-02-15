@@ -27,6 +27,9 @@ namespace FlowWing.Entities
         public string EmailSubject { get; set; }
         [Required]
         public string SentEmailBody { get; set; }
+        
+        public string? AttachmentIds { get; set; }
+        
         [Required]
         public bool Status { get; set; }
         [Required]

@@ -91,16 +91,30 @@
             <param name="repeatingEmail"></param>
             <returns></returns>
         </member>
-        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledEmail(FlowWing.Entities.ScheduledEmail)">
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledEmail(FlowWing.API.Models.ScheduledEmailLogModel,System.Int32)">
             <summary>
             Update an Scheduled Email
             </summary>
             <param name="scheduledEmail"></param>
             <returns></returns>
         </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledRepeatingEmail(FlowWing.API.Models.ScheduledRepeatingEmailModel,System.Int32)">
+            <summary>
+            Update an Scheduled Repeating Email
+            </summary>
+            <param name="scheduledRepeatingEmail"></param>
+            <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.DeleteScheduledEmail(System.Int32)">
             <summary>
             Delete an Scheduled Email
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.DeleteScheduledRepeatingEmail(System.Int32)">
+            <summary>
+            Delete an Scheduled Repeating Email
             </summary>
             <param name="id"></param>
             <returns></returns>
