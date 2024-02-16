@@ -13,8 +13,9 @@ apiAxios.interceptors.request.use(
     config.headers = {
       ...config.headers,
       Authorization: `Bearer ${userToken}`,
-    };
-    
+      "Content-Type": "multipart/form-data"
+    }
+
     // Do something before request is sent
     // console.log("Request Interceptor - Request Config: ", config)
     return config

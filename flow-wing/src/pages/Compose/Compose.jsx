@@ -6,7 +6,7 @@ import { useFormik } from "formik"
 import "./compose.css"
 import { useNavigate } from "react-router"
 import alertify from "alertifyjs"
-import { Checkbox, DatePicker, Mentions, Modal, Select } from "antd"
+import { Checkbox, DatePicker, Mentions, Modal, Select, Upload } from "antd"
 import * as Yup from "yup"
 import dayjs from "dayjs"
 import {
@@ -36,28 +36,27 @@ const Compose = () => {
   const user = useSelector((state) => state.user.user)
 
   // MAIL SEND FUNCTION FOR NON REPEATING MAIL
-  const handleSubmit = async (values,formData) => {
+  const handleSubmit = async (values) => {
     try {
-      const formData = new FormData();
-      if (values.attachment && values.attachment.length > 0) {
-        formData.append("attachment", values.attachment[0]);
-      }
-      else{
-        formData==[]
-      }
-      console.log("values:",values,"form data ",formData)
-      const res = await sendMail(values, formData);
-      if (res.status === 201) {
-        alertify.success("Mail Gönderildi");
-        navigate("/home");
+      const formData = new FormData()
+      if (values.file && values.file.length > 0) {
+        formData.append("attachment", values.file[0])
       } else {
-        alertify.error("Gönderme başarısız oldu");
+        formData == []
+      }
+      console.log("values:", values, "form data ", formData)
+      const res = await sendMail(values, formData)
+      if (res.status === 201) {
+        alertify.success("Mail Gönderildi")
+        navigate("/home")
+      } else {
+        alertify.error("Gönderme başarısız oldu")
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alertify.error("Bir hata oluştu");
+      console.error("Error submitting form:", error)
+      alertify.error("Bir hata oluştu")
     }
-  };
+  }
 
   // MAIL SEND FUNCTION FOR REPEATING MAIL
 
@@ -133,19 +132,15 @@ const Compose = () => {
     repeatInterval: "",
     repeatEndDate: "",
     sentDateTime: "",
-    attachment: []
+    file: []
   }
 
   const formik = useFormik({
     initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      const {
-        repeatEndDate,
-        repeatInterval,
-        nextSendingDate,
-        sentDateTime,
-      } = values
+      const { repeatEndDate, repeatInterval, nextSendingDate, sentDateTime } =
+        values
       if (isScheduled) {
         handleSubmitScheduled({ ...values, sentDateTime }) // Eğer isScheduled true ise, planlanmış gönderimi gerçekleştir
       } else if (isRepeating) {
@@ -193,18 +188,16 @@ const Compose = () => {
   // ATTACHMENT FUNCTION
   const handleFileChange = (event) => {
     if (event.target.files.length > 0) {
-      console.log("Selected files:", event.target.files);
+      console.log("Selected files:", event.target.files)
       // Dosya nesnesini al
-      const file = event.target.files[0];
+      const file = event.target.files[0]
       // Form verilerine dosya nesnesini ekle
-      formik.setFieldValue("attachment", file);
+      formik.setFieldValue("attachment", file)
     } else {
-      console.log("No file selected");
-      formik.setFieldValue("attachment", []); // Dosya seçilmediğinde null ata
+      console.log("No file selected")
+      formik.setFieldValue("attachment", [])
     }
-  };
-  
-  
+  }
 
   return (
     <div className="compose-page-content">
@@ -307,10 +300,15 @@ const Compose = () => {
           <div className="error-message">{formik.errors.emailBody}</div>
         )}
         <div className="compose-attachments">
-          <Attachments
-            onChange={handleFileChange}
-            value={formik.values.attachment}
+          <input
+            id="file"
+            name="file"
+            type="file"
+            onChange={(event) => {
+              formik.setFieldValue("file", event.currentTarget.files[0])
+            }}
           />
+
           <hr />
         </div>
         <div className="compose-btns">

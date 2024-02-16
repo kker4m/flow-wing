@@ -40,7 +40,7 @@ const Sent = () => {
       <div className="sent">
         {sentMails.map((item, index) => {
           // to format date
-          const dateFromAPI = new Date(item.sentDateTime)
+          const dateFromAPI = new Date(item.emailLog.sentDateTime)
           const nowsDate = new Date()
 
           let timeToShow
@@ -62,7 +62,7 @@ const Sent = () => {
 
           return (
             <>
-              <Link to={`/inbox/${item.id}`} key={index}>
+              <Link to={`/inbox/${item.emailLog.id}`} key={index}>
                 <div className="sent-mail-content">
                   <hr
                     style={{
@@ -74,22 +74,28 @@ const Sent = () => {
                       <div className="user-icon-home">
                         <Icon icon="ph:user-light" width="30" />{" "}
                       </div>
-                      <div className="user-name">{item.recipientsEmail} </div>
+                      <div className="user-name">
+                        {item.emailLog.recipientsEmail}{" "}
+                      </div>
                     </div>
-                    <div className="inbox-mail-title">{item.emailSubject}</div>
+                    <div className="inbox-mail-title">
+                      {item.emailLog.emailSubject}
+                    </div>
                     <div className="inbox-mail-body">
-                      {excerpt(item.sentEmailBody, 120)}
+                      {excerpt(item.emailLog.sentEmailBody, 120)}
                     </div>
                   </div>{" "}
                   <div className="repeat-delete-sent-time-section">
                     <div className="is-repeating-icon">
-                      {item.isScheduled === true && <Icon icon="bi:repeat" />}
+                      {item.emailLog.isScheduled === true && (
+                        <Icon icon="bi:repeat" />
+                      )}
                     </div>{" "}
                     <div className="delete-mail">
                       {" "}
                       <button
                         className="delete-mail-btn"
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(item.emailLog.id)}
                       >
                         <Icon icon="iconoir:trash" />
                       </button>

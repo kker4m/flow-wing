@@ -4,18 +4,18 @@ const getMails = () => {
   return apiAxios.get("EmailLogs/GetUserSentEmails")
 }
 
-const sendMail = (values,formData) => {
-  const { recipientsEmail, emailSubject, emailBody } = values
+const sendMail = (values) => {
+  const { recipientsEmail, emailSubject, emailBody, file } = values
 
   // Convert values to strings if necessary
   const mailContent = {
     recipientsEmail: String(recipientsEmail),
     emailSubject: String(emailSubject),
     emailBody: String(emailBody),
-    attachments: formData
+    attachmentIds: file
   }
 
-  return apiAxios.post("EmailLogs", mailContent,formData)
+  return apiAxios.post("EmailLogs", mailContent)
 }
 
 const sendScheduledMail = (values) => {

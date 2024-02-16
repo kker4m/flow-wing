@@ -105,3 +105,10 @@
   justify-content: center;
   margin-bottom: 5px;
 }
+.inbox-mail-attachment{
+  float: inline-end;
+}
+.attachment-img{
+  width: 50px;
+  height: 50px;
+}

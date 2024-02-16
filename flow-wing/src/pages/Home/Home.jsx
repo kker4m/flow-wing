@@ -16,12 +16,14 @@ const Home = () => {
   useEffect(() => {
     try {
       getMails().then((response) => {
+        console.log("response gelen mail: ", response)
         console.log("gelen mailler: ", response.data.userEmails)
 
         const sortedMails = response.data.userEmails.sort(
-          (a, b) => new Date(b.sentDateTime) - new Date(a.sentDateTime)
+          (a, b) => new Date(a.sentDateTime) - new Date(b.sentDateTime)
         )
-
+        console.log("sorted: ", sortedMails)
+        // console.log("attachments: ", sortedMails[3].attachments[0].fileName)
         setMails(sortedMails)
       })
     } catch (error) {
@@ -55,7 +57,7 @@ const Home = () => {
       <div className="inbox">
         {mails.map((item, index) => {
           // to format date
-          const dateFromAPI = new Date(item.sentDateTime)
+          const dateFromAPI = new Date(item.emailLog.sentDateTime)
           const nowsDate = new Date()
 
           let timeToShow
@@ -77,7 +79,7 @@ const Home = () => {
 
           return (
             <>
-              <Link to={`/inbox/${item.id}`} key={index}>
+              <Link to={`/inbox/${item.emailLog.id}`} key={index}>
                 <div className="mail-content">
                   <hr
                     style={{
@@ -90,22 +92,61 @@ const Home = () => {
                         <Icon icon="ph:user-light" width="30" />{" "}
                       </div>
 
-                      <div className="user-name">{item.senderEmail} </div>
+                      <div className="user-name">
+                        {item.emailLog.senderEmail}{" "}
+                      </div>
                     </div>
-                    <div className="inbox-mail-title">{item.emailSubject}</div>
+                    <div className="inbox-mail-title">
+                      {item.emailLog.emailSubject}
+                    </div>
                     <div className="inbox-mail-body">
-                      {excerpt(item.sentEmailBody, 120)}
+                      {excerpt(item.emailLog.sentEmailBody, 120)}
                     </div>
-                  </div>{" "}
-                  <div className="repeat-delete-sent-time-section">
-                    <div className="is-repeating-icon">
-                      {item.isScheduled === true && <Icon icon="bi:repeat" />}
-                    </div>{" "}
+                    <div className="inbox-mail-attachment">
+  <Icon icon="ri:attachment-fill" width="20" height="20" />
+  {item.attachments[0].fileName}
+</div>
+<div>
+  {item.attachments[0].contentType === 'text/plain' && (
+    <iframe
+      title="Attachment"
+      width="600"
+      height="400"
+      srcDoc={atob(item.attachments[0].data)}
+    />
+  )}
+  {item.attachments[0].contentType === 'application/pdf' && (
+    <embed
+      src={`data:application/pdf;base64,${item.attachments[0].data}`}
+      type="application/pdf"
+      width="100"
+      height="100"
+    />
+  )}
+  {['image/jpeg', 'image/png', 'image/gif'].includes(item.attachments[0].contentType) && (
+    <img
+      src={`data:${item.attachments[0].contentType};base64,${item.attachments[0].data}`}
+      alt="Attachment"
+      width="100"
+      height="100"
+    />
+  )}
+</div>
+<div className="repeat-delete-sent-time-section">
+  <div className="is-repeating-icon">
+    {item.emailLog.isScheduled === true && (
+      <Icon icon="bi:repeat" />
+    )}
+  </div>
+</div>
+
+
+
                     <div className="delete-mail">
                       {" "}
                       <button
                         className="delete-mail-btn"
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(item.emailLog.id)}
                       >
                         <Icon icon="iconoir:trash" />
                       </button>
