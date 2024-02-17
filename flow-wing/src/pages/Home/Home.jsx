@@ -103,45 +103,45 @@ const Home = () => {
                       {excerpt(item.emailLog.sentEmailBody, 120)}
                     </div>
                     <div className="inbox-mail-attachment">
-  <Icon icon="ri:attachment-fill" width="20" height="20" />
-  {item.attachments[0].fileName}
-</div>
-<div>
-  {item.attachments[0].contentType === 'text/plain' && (
-    <iframe
-      title="Attachment"
-      width="600"
-      height="400"
-      srcDoc={atob(item.attachments[0].data)}
-    />
-  )}
-  {item.attachments[0].contentType === 'application/pdf' && (
-    <embed
-      src={`data:application/pdf;base64,${item.attachments[0].data}`}
-      type="application/pdf"
-      width="100"
-      height="100"
-    />
-  )}
-  {['image/jpeg', 'image/png', 'image/gif'].includes(item.attachments[0].contentType) && (
-    <img
-      src={`data:${item.attachments[0].contentType};base64,${item.attachments[0].data}`}
-      alt="Attachment"
-      width="100"
-      height="100"
-    />
-  )}
-</div>
-<div className="repeat-delete-sent-time-section">
-  <div className="is-repeating-icon">
-    {item.emailLog.isScheduled === true && (
-      <Icon icon="bi:repeat" />
-    )}
-  </div>
-</div>
-
-
-
+                      <Icon icon="ri:attachment-fill" width="20" height="20" />
+                      {item.attachments[0].fileName}
+                    </div>
+                    <div>
+                      {item.attachments[0].contentType === "text/plain" && (
+                        <iframe
+                          title="Attachment"
+                          width="600"
+                          height="400"
+                          srcDoc={atob(item.attachments[0].data)}
+                        />
+                      )}
+                      {item.attachments[0].contentType ===
+                        "application/pdf" && (
+                        <embed
+                          src={`data:application/pdf;base64,${item.attachments[0].data}`}
+                          type="application/pdf"
+                          width="500"
+                          height="500"
+                        />
+                      )}
+                      {["image/jpeg", "image/png", "image/gif"].includes(
+                        item.attachments[0].contentType
+                      ) && (
+                        <img
+                          src={`data:${item.attachments[0].contentType};base64,${item.attachments[0].data}`}
+                          alt="Attachment"
+                          width="100"
+                          height="100"
+                        />
+                      )}
+                    </div>
+                    <div className="repeat-delete-sent-time-section">
+                      <div className="is-repeating-icon">
+                        {item.emailLog.isScheduled === true && (
+                          <Icon icon="bi:repeat" />
+                        )}
+                      </div>
+                    </div>
                     <div className="delete-mail">
                       {" "}
                       <button
