@@ -138,8 +138,7 @@ namespace FlowWing.API.Controllers
                 {
                     return NotFound();
                 }
-
-
+                
                 var emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
                 emailLog.User = user;
 
@@ -155,8 +154,15 @@ namespace FlowWing.API.Controllers
                 {
                     return NotFound();
                 }
+                var attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(emailLog.Id);
 
-                var result = new { emailLog = emailLog, Sender = Sender };
+                foreach (var attachment in attachments)
+                {
+                    attachment.EmailLog = emailLog;
+                    attachment.EmailLog.User = user;
+                }
+                
+                var result = new { emailLog = emailLog, Sender = Sender, Attachments = attachments };
 
                 return Ok(result);
             }
