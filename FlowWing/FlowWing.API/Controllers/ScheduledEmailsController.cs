@@ -73,10 +73,16 @@ namespace FlowWing.API.Controllers
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
             {
+                EmailLog newEmailLog;
+                EmailLog createdEmailLog;
+                ScheduledEmail newScheduledEmail;
+                string attachmentIds = "";
+                
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var formFiles = HttpContext.Request.Form.Files;
-                EmailLog newEmailLog = new EmailLog
+                
+                newEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
                     CreationDate = DateTime.UtcNow,
@@ -89,10 +95,10 @@ namespace FlowWing.API.Controllers
                     IsScheduled = true,
                     User = user
                 };
-
-                var createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
-
-                ScheduledEmail newScheduledEmail = new ScheduledEmail
+                
+                createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
+                
+                newScheduledEmail = new ScheduledEmail
                 {
                     EmailLogId = createdEmailLog.Id,
                     IsRepeating = false,
@@ -118,9 +124,17 @@ namespace FlowWing.API.Controllers
                         };
                        
                         await _attachmentService.CreateAttachmentAsync(attachment);
+                        attachmentIds += attachment.Id + ",";
                     }
                 }
-
+                
+                if (attachmentIds.Length > 0)
+                {
+                    attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                    createdEmailLog.AttachmentIds = attachmentIds;
+                    _emailLogService.UpdateEmailLog(createdEmailLog);
+                }
+                
                 // Hangfire'da işi planla
                 _scheduledMailHelper.ScheduleScheduledEmail(createdEmailLog, scheduledEmail);
                 
@@ -143,9 +157,14 @@ namespace FlowWing.API.Controllers
             if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                EmailLog newEmailLog;
+                EmailLog createdEmailLog;
+                ScheduledEmail createdScheduledEmail;
+                String attachmentIds = "";
+                
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var formFiles = HttpContext.Request.Form.Files;
-                EmailLog newEmailLog = new EmailLog
+                newEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
                     CreationDate = DateTime.UtcNow,
@@ -159,7 +178,7 @@ namespace FlowWing.API.Controllers
                     User = user
                 };
                 
-                var createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
+                createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
                 
                 ScheduledEmail newScheduledRepeatingEmail = new ScheduledEmail
                 {
@@ -170,7 +189,7 @@ namespace FlowWing.API.Controllers
                     RepeatEndDate = scheduledRepeatingEmailModel.RepeatEndDate
                 };
                 
-                var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledRepeatingEmail);
+                createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledRepeatingEmail);
                 foreach (var formFile in formFiles)
                 {
                     using (var stream = new MemoryStream())
@@ -188,7 +207,15 @@ namespace FlowWing.API.Controllers
                         };
                        
                         await _attachmentService.CreateAttachmentAsync(attachment);
+                        attachmentIds += attachment.Id + ",";
                     }
+                }
+                
+                if (attachmentIds.Length > 0)
+                {
+                    attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                    createdEmailLog.AttachmentIds = attachmentIds;
+                    _emailLogService.UpdateEmailLog(createdEmailLog);
                 }
 
                 // Hangfire'da işi planla

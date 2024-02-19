@@ -181,12 +181,14 @@ namespace FlowWing.API.Controllers
 
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
+                EmailLog NewEmailLog;
+                EmailLog createdEmailLog;
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var formFiles = HttpContext.Request.Form.Files;
                 string attachmentIds = "";
-                
-                EmailLog NewEmailLog = new EmailLog
+
+                NewEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
                     CreationDate = DateTime.UtcNow,
@@ -200,9 +202,35 @@ namespace FlowWing.API.Controllers
                     User = user
                 };
                 
-                var createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
+                if (emailLogModel.RepliedEmailId != null)
+                {
+                    int RepliedEmailId = (int)emailLogModel.RepliedEmailId;
+                    EmailLog RepliedEmail = await _emailLogService.GetEmailLogByIdAsync(RepliedEmailId);
+                    
+                    if(RepliedEmail == null)
+                    { 
+                        //RepliedEmailId'si verilen email log bulunamadıysa kullaniciya bu durumu bildiriyoruz.
+                        return NotFound("Replied Email Not Found");
+                    }
+                    
+                    createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
+                    
+                    //String olan RepliedEmail.Answers column'una , ekleyerek yeni emailin id'sini ekliyoruz.
+                    if (RepliedEmail.Answers == null)
+                    {
+                        RepliedEmail.Answers = NewEmailLog.Id.ToString();
+                    }
+                    else
+                    {
+                        RepliedEmail.Answers += "," + NewEmailLog.Id;
+                    }
+                    _emailLogService.UpdateEmailLog(RepliedEmail);
+                }
+                else
+                {
+                    createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
+                }
                 
-
                 foreach (var formFile in formFiles)
                 {
                     using (var stream = new MemoryStream())
@@ -228,7 +256,7 @@ namespace FlowWing.API.Controllers
                 {
                     attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
                     createdEmailLog.AttachmentIds = attachmentIds;
-                    await _emailLogService.UpdateEmailLogAsync(createdEmailLog);
+                    _emailLogService.UpdateEmailLog(createdEmailLog);
                 }
                 
                 _emailSenderService.SendEmail(emailLogModel.RecipientsEmail, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog);
