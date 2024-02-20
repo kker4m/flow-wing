@@ -29,19 +29,15 @@ const items = [
     "2",
     <Icon icon="icon-park-outline:message-sent" />
   ),
-  getItem(
-    <Link to="/scheduled">Planlanmış Mailler</Link>,
-    "3",
-    <Icon icon="ic:sharp-schedule" />
-  ),
+
   getItem(
     <Link to={COMPOSE_NEW_ROUTE}>Mail Oluştur</Link>,
-    "4",
+    "3",
     <Icon icon="streamline:chat-bubble-square-write" />
   ),
   getItem(
     <Link to={TRASH_ROUTE}>Çöp Kutusu</Link>,
-    "5",
+    "4",
     <Icon icon="bi:trash" />
   )
 ]
@@ -82,7 +78,7 @@ const Sidebar = () => {
         items={items}
         selectedKeys={[localStorage.getItem("selectedKey") || "1"]}
         onSelect={({ key }) => setStoredSelectedKey(key)}
-        style={{ fontSize: "16px", position: "fixed", width: 256 }}
+        style={{ fontSize: "16px", width: 256 }}
       />
     </div>
   )

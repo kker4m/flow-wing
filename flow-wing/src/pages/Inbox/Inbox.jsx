@@ -10,6 +10,7 @@ import { deleteSentEmail, getEmailById } from "../../services/emailService"
 
 const Inbox = () => {
   const [mail, setMail] = useState(null)
+  const [attachment, setAttachment] = useState("")
   const [sender, setSender] = useState(true)
   const [user, setUser] = useState("")
   let navigate = useNavigate()
@@ -19,6 +20,8 @@ const Inbox = () => {
     getEmailById(id).then((res) => {
       setMail(res.data.emailLog)
       console.log("get mail by id", res.data)
+      setAttachment(res.data.attachments[0])
+      console.log("attachment: ", attachment)
       setSender(res.data.sender)
       console.log("mail sender", sender)
       setUser(res.data.emailLog.user.username)
@@ -93,13 +96,46 @@ const Inbox = () => {
       <p>{mail.sentEmailBody}</p>
 
       <div className="mail-attachments">
+        <Icon icon="ri:attachment-fill" width="20" height="20" />
+        {attachment.fileName} -----
+        <div>
+          {attachment.contentType === "text/plain" && (
+            <iframe
+              title="Attachment"
+              width="600"
+              height="400"
+              srcDoc={atob(attachment.data)}
+            />
+          )}
+          {attachment.contentType === "application/pdf" && (
+            <embed
+              src={`data:application/pdf;base64,${attachment.data}`}
+              type="application/pdf"
+              width="500"
+              height="500"
+            />
+          )}
+          {["image/jpeg", "image/png", "image/gif"].includes(
+            attachment.contentType
+          ) && (
+            <img
+              src={`data:${attachment.contentType};base64,${attachment.data}`}
+              alt="Attachment"
+              width="100"
+              height="100"
+            />
+          )}
+        </div>
+      </div>
+
+      <div className="mail-attachments">
         <div className="attachment-content">
           <Icon
             icon="material-symbols-light:attachment"
             color="#b31312"
             width="30"
           />
-          <span>{mail.attachment}</span>
+          <span>{attachment.fileName}</span>
         </div>
         <Divider />
       </div>
@@ -164,7 +200,6 @@ const Inbox = () => {
         <h3>{mail.emailSubject}</h3>
       </div>
       <p>{mail.sentEmailBody}</p>
-
       <div className="mail-attachments">
         <div className="attachment-content">
           <Icon
@@ -172,9 +207,46 @@ const Inbox = () => {
             color="#b31312"
             width="30"
           />
-          <span>{mail.attachment}</span>
         </div>
-        <Divider />
+
+        <div className="mail-attachments">
+          {attachment ? (
+            <div className="inbox-mail-attachment">
+              <div>
+                {attachment.contentType === "text/plain" && (
+                  <div>
+                    <a
+                      href={`data:text/plain;base64,${attachment.data}`}
+                      download={attachment.fileName}
+                    >
+                      {attachment.fileName}
+                    </a>
+                  </div>
+                )}
+
+                {attachment.contentType === "application/pdf" && (
+                  <a
+                    href={`data:application/pdf;base64,${attachment.data}`}
+                    target="_blank"
+                  >
+                    {attachment.fileName}{" "}
+                  </a>
+                )}
+
+                {["image/jpeg", "image/png", "image/gif"].includes(
+                  attachment.contentType
+                ) && (
+                  <a
+                    href={`data:${attachment.contentType};base64,${attachment.data}`}
+                    target="_blank"
+                  >
+                    {attachment.fileName}{" "}
+                  </a>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
 
       <div className="inbox-mail-summary">

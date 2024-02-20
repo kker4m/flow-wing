@@ -16,6 +16,7 @@ import {
 } from "../../services/emailService"
 import { getUsers } from "../../services/userService"
 
+        
 const Compose = () => {
   const [users, setUsers] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -290,6 +291,7 @@ const Compose = () => {
         )}
         <div className="compose mail-body">
           <span>İçerik</span> <Divider />
+        
           <textarea
             name="emailBody"
             value={formik.values.emailBody}

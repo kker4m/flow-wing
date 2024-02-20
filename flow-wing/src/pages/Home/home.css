@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 20px;
+  margin-left: 20px;
 }
 .inbox {
   display: flex;
