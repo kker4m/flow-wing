@@ -1,5 +1,6 @@
 .compose-page-content {
   margin: 20px;
+  overflow: visible;
 }
 .compose input {
   width: 100%;
@@ -64,6 +65,7 @@ textarea {
 }
 .compose .mail-body {
   margin-top: 50px;
+  overflow: auto;
 }
 .ant-mentions-focused {
   border-radius: 0%;
@@ -76,4 +78,7 @@ textarea {
   display: flex;
   flex-direction: column-reverse;
   align-items: flex-end;
+} .ql-tooltip {
+  left: 100px !important;
 }
+

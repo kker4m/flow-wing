@@ -4,3 +4,12 @@ export const excerpt = (str, count) => {
   }
   return str
 }
+export const getText = (html) => {
+  try {
+    const doc = new DOMParser().parseFromString(html, "text/html")
+    return doc.body.innerHTML
+  } catch (error) {
+    console.error("Hata oluştu:", error)
+    return null
+  }
+}

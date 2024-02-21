@@ -91,13 +91,15 @@
 }
 .repeat-delete-sent-time-section {
   padding-top: 15px;
+  padding-right: 10px;
 }
 .inbox-sent-time {
-  width: 70px;
+  width: max-content;
   display: flex;
   align-self: center;
   justify-content: center;
   color: #a9a9a9;
+  align-items: center;
 }
 .is-repeating-icon {
   display: flex;

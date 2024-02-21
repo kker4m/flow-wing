@@ -6,7 +6,7 @@ import Divider from "@mui/material/Divider"
 import alertify from "alertifyjs"
 import EmptyPage from "../../components/EmptyPage"
 import { deleteSentEmail, getMails } from "../../services/emailService"
-import { excerpt } from "../../helpers"
+import { excerpt, getText } from "../../helpers"
 
 const Home = () => {
   const [mails, setMails] = useState([])
@@ -16,14 +16,12 @@ const Home = () => {
   useEffect(() => {
     try {
       getMails().then((response) => {
-        console.log("response gelen mail: ", response)
-        console.log("gelen mailler: ", response.data.userEmails)
-
         const sortedMails = response.data.userEmails.sort(
-          (a, b) => new Date(a.sentDateTime) - new Date(b.sentDateTime)
+          (a, b) =>
+            new Date(b.emailLog.sentDateTime) -
+            new Date(a.emailLog.sentDateTime)
         )
-        console.log("sorted: ", sortedMails)
-        // console.log("attachments: ", sortedMails[3].attachments[0].fileName)
+
         setMails(sortedMails)
       })
     } catch (error) {
@@ -52,7 +50,7 @@ const Home = () => {
     return <EmptyPage />
   }
   return (
-    <div className="home-page-content">
+    <div className="sent-mail-page-content">
       <h2>Gelen Mailler</h2>
       <div className="inbox">
         {mails.map((item, index) => {
@@ -80,7 +78,7 @@ const Home = () => {
           return (
             <>
               <Link to={`/inbox/${item.emailLog.id}`} key={index}>
-                <div className="mail-content">
+                <div className="sent-mail-content">
                   <hr
                     style={{
                       border: `1px solid ${colors[index % colors.length]}`
@@ -100,7 +98,13 @@ const Home = () => {
                       {item.emailLog.emailSubject}
                     </div>
                     <div className="inbox-mail-body">
-                      {excerpt(item.emailLog.sentEmailBody, 120)}
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: getText(
+                            excerpt(item.emailLog.sentEmailBody, 120)
+                          )
+                        }}
+                      />
                     </div>
                   </div>{" "}
                   <div className="repeat-delete-sent-time-section">
@@ -111,7 +115,7 @@ const Home = () => {
                         )}
                       </div>
                     </div>
-                    <div className="delete-mail">
+                    {/* <div className="delete-mail">
                       {" "}
                       <button
                         className="delete-mail-btn"
@@ -119,7 +123,7 @@ const Home = () => {
                       >
                         <Icon icon="iconoir:trash" />
                       </button>
-                    </div>{" "}
+                    </div>{" "} */}
                     <div className="inbox-sent-time">{timeToShow}</div>
                   </div>
                 </div>

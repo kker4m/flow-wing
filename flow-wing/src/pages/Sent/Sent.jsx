@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import Divider from "@mui/material/Divider"
 import "./sent.css"
-import { excerpt } from "../../helpers"
+import { excerpt, getText } from "../../helpers"
 import { deleteSentEmail, getSentMails } from "../../services/emailService"
 
 const Sent = () => {
@@ -13,11 +13,13 @@ const Sent = () => {
 
   // get sent emails
   useEffect(() => {
-    getSentMails().then((res) => {
+    getSentMails().then((response) => {
       // Sort the sentMails array by sentDateTime in descending order
-      const sortedMails = res.data.userEmails.sort(
-        (a, b) => new Date(b.sentDateTime) - new Date(a.sentDateTime)
+      const sortedMails = response.data.userEmails.sort(
+        (a, b) =>
+          new Date(b.emailLog.sentDateTime) - new Date(a.emailLog.sentDateTime)
       )
+
       setSentMails(sortedMails)
     })
   }, [])
@@ -82,7 +84,13 @@ const Sent = () => {
                       {item.emailLog.emailSubject}
                     </div>
                     <div className="inbox-mail-body">
-                      {excerpt(item.emailLog.sentEmailBody, 120)}
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: getText(
+                            excerpt(item.emailLog.sentEmailBody, 120)
+                          )
+                        }}
+                      />
                     </div>
                   </div>{" "}
                   <div className="repeat-delete-sent-time-section">

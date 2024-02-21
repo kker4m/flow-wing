@@ -70,6 +70,9 @@ const sendScheduledRepeatingMail = (values) => {
   )
 }
 
+const getMailAnswersById = (id) => {
+  return apiAxios.get("EmailLogs/GetEmailAndAnswersByEmailLogId/" + id)
+}
 export {
   getAllUsers,
   getEmailById,
@@ -78,5 +81,6 @@ export {
   sendMail,
   sendScheduledMail,
   sendScheduledRepeatingMail,
-  deleteSentEmail
+  deleteSentEmail,
+  getMailAnswersById
 }

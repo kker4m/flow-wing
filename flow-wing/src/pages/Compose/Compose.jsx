@@ -15,13 +15,30 @@ import {
   sendScheduledRepeatingMail
 } from "../../services/emailService"
 import { getUsers } from "../../services/userService"
+import "react-quill/dist/quill.bubble.css"
+import ReactQuill from "react-quill"
 
-        
 const Compose = () => {
   const [users, setUsers] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRepeating, setIsRepeating] = useState(false)
   const [isScheduled, setIsScheduled] = useState(false)
+
+  
+  const toolbarOptions = {
+    toolbar: [
+      [{ font: [] }],
+      [{ header: [1, 2, 3] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ script: "sub" }, { script: "super" }],
+      ["blockquote", "code-block"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }, { align: [] }],
+      ["link", "image", "video"],
+      ["clean"]
+    ]
+  }
   // MODAL FUNCTIONS
   const showModal = () => {
     setIsModalOpen(true)
@@ -284,6 +301,7 @@ const Compose = () => {
             name="emailSubject"
             onChange={formik.handleChange}
             value={formik.values.emailSubject}
+            required
           ></input>
         </div>
         {formik.errors.emailSubject && formik.touched.emailSubject && (
@@ -291,11 +309,15 @@ const Compose = () => {
         )}
         <div className="compose mail-body">
           <span>İçerik</span> <Divider />
-        
-          <textarea
+          <ReactQuill
+            modules={toolbarOptions}
+            theme="bubble"
             name="emailBody"
+            style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
             value={formik.values.emailBody}
-            onChange={formik.handleChange}
+            onChange={(value) => formik.setFieldValue("emailBody", value)}
+            required
+            
           />
         </div>
         {formik.errors.emailBody && formik.touched.emailBody && (
