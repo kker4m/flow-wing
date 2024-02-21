@@ -159,19 +159,9 @@ const Inbox = () => {
   </div>
 
 
-      <div className="mail-attachments">
-        <div className="attachment-content">
-          <Icon
-            icon="material-symbols-light:attachment"
-            color="#b31312"
-            width="30"
-          />
-          <span>{attachment.fileName}</span>
-        </div>
-        <Divider />
-      </div>
+   
 
-      <div className="inbox-mail-summary">
+      {/* <div className="inbox-mail-summary">
         <p>
           <span>Kimden:</span> {mail.senderEmail}
         </p>
@@ -181,14 +171,9 @@ const Inbox = () => {
         <p>
           <span>Gönderilme Tarihi:</span> {formattedTime} - {formattedDate}
         </p>
-      </div>
+      </div> */}
 
-      <div className="mail-answers">
-        {answer &&
-          answer.map((answer) => {
-            ;<div>{answer.emailLog.emailSubject}</div>
-          })}
-      </div>
+      
     </div>
   ) : (
     <div className="inbox-page-content">
@@ -282,7 +267,7 @@ const Inbox = () => {
     </div>
   </div>
 
-
+{/* 
       <div className="inbox-mail-summary">
         <p>
           <span>Kime:</span> {mail.recipientsEmail}
@@ -293,212 +278,214 @@ const Inbox = () => {
         <p>
           <span>Gönderilme Tarihi:</span> {formattedTime} - {formattedDate}
         </p>
-      </div>
+      </div> */}
       <Divider />
       <div className="mail-answers">
-        {Array.isArray(answer) ? (
-          answer.map((item, index) => (
-            <div className="mail-answer-content" key={index}>
-              <div className="mail-actions">
-                <Tooltip title="İlet" arrow>
-                  <div className="icons">
-                    <button className="mail-action-btns">
-                      <Icon
-                        icon="material-symbols-light:forward"
-                        width="40"
-                        rotate={2}
-                      />
-                    </button>
-                  </div>
-                </Tooltip>
-                <Tooltip title="Yanıtla" arrow>
-                  <div className="icons">
-                    <button className="mail-action-btns">
-                      <Icon icon="iconoir:reply" width="30" />
-                    </button>
-                  </div>{" "}
-                </Tooltip>
-                <Tooltip title="Sil" arrow>
-                  <div className="icons">
-                    <button className="mail-action-btns" onClick={handleDelete}>
-                      <Icon icon="bi:trash" width="30" />
-                    </button>
-                  </div>
-                </Tooltip>
-              </div>
-              <div className="mail-sender">
-                <div className="user-icon-home">
-                  <Icon icon="ph:user-light" width="70" />
-                </div>
-                <div>
-                  <div className="mail-sender-email">
-                    {item.emailLog.senderEmail}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mail-title">
-                <Icon icon="uit:subject" color="#b31312" width="40" />{" "}
-                <h3>{item.emailLog.emailSubject}</h3>
-              </div>
-
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: getText(item.emailLog.sentEmailBody)
-                }}
-              />
-              <div className="mail-attachments">
-                <div className="attachment-content">
-                  <Icon
-                    icon="material-symbols-light:attachment"
-                    color="#b31312"
-                    width="30"
-                  />
-                </div>
-
-                <div className="mail-attachments">
-                  {answer.attachment ? (
-                    <div className="inbox-mail-attachment">
-                      <div>
-                        {answer.attachment.contentType === "text/plain" && (
-                          <div>
-                            <a
-                              href={`data:text/plain;base64,${answer.attachment.data}`}
-                              download={answer.attachment.fileName}
-                            >
-                              {answer.attachment.fileName}
-                            </a>
-                          </div>
-                        )}
-
-                        {answer.attachment.contentType ===
-                          "application/pdf" && (
-                          <a
-                            href={`data:application/pdf;base64,${answer.attachment.data}`}
-                            target="_blank"
-                          >
-                            {answer.attachment.fileName}{" "}
-                          </a>
-                        )}
-
-                        {["image/jpeg", "image/png", "image/gif"].includes(
-                          answer.attachment.contentType
-                        ) && (
-                          <a
-                            href={`data:${answer.attachment.contentType};base64,${answer.attachment.data}`}
-                            target="_blank"
-                          >
-                            {answer.attachment.fileName}{" "}
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-              {item.emailLog.emailSubject}
-            </div>
-          ))
-        ) : (
-          <div className="mail-answer-content">
-            <div className="mail-actions">
-              <Tooltip title="İlet" arrow>
-                <div className="icons">
-                  <button className="mail-action-btns">
-                    <Icon
-                      icon="material-symbols-light:forward"
-                      width="40"
-                      rotate={2}
-                    />
-                  </button>
-                </div>
-              </Tooltip>
-              <Tooltip title="Yanıtla" arrow>
-                <div className="icons">
-                  <button className="mail-action-btns">
-                    <Icon icon="iconoir:reply" width="30" />
-                  </button>
-                </div>{" "}
-              </Tooltip>
-              <Tooltip title="Sil" arrow>
-                <div className="icons">
-                  <button className="mail-action-btns" onClick={handleDelete}>
-                    <Icon icon="bi:trash" width="30" />
-                  </button>
-                </div>
-              </Tooltip>
-            </div>
-            <div className="mail-sender">
-              <div className="user-icon-home">
-                <Icon icon="ph:user-light" width="70" />
-              </div>
-              <div>
-                <div className="mail-sender-email">
-                  {answer.emailLog.senderEmail}
-                </div>
-              </div>
-            </div>
-
-            <div className="mail-title">
-              <Icon icon="uit:subject" color="#b31312" width="40" />{" "}
-              <h3>{answer.emailLog.emailSubject}</h3>
-            </div>
-
-            <p
-              dangerouslySetInnerHTML={{
-                __html: getText(answer.emailLog.sentEmailBody)
-              }}
-            />
-            <div className="mail-attachments">
-              <div className="attachment-content">
+      {answer ? (
+  Array.isArray(answer) ? (
+    answer.map((item, index) => (
+      <div className="mail-answer-content" key={index}>
+        <div className="mail-actions">
+          <Tooltip title="İlet" arrow>
+            <div className="icons">
+              <button className="mail-action-btns">
                 <Icon
-                  icon="material-symbols-light:attachment"
-                  color="#b31312"
-                  width="30"
+                  icon="material-symbols-light:forward"
+                  width="40"
+                  rotate={2}
                 />
-              </div>
-
-              <div className="mail-attachments">
-                {answer.attachment ? (
-                  <div className="inbox-mail-attachment">
-                    <div>
-                      {answer.attachment.contentType === "text/plain" && (
-                        <div>
-                          <a
-                            href={`data:text/plain;base64,${answer.attachment.data}`}
-                            download={answer.attachment.fileName}
-                          >
-                            {answer.attachment.fileName}
-                          </a>
-                        </div>
-                      )}
-
-                      {answer.attachment.contentType === "application/pdf" && (
-                        <a
-                          href={`data:application/pdf;base64,${answer.attachment.data}`}
-                          target="_blank"
-                        >
-                          {answer.attachment.fileName}{" "}
-                        </a>
-                      )}
-
-                      {["image/jpeg", "image/png", "image/gif"].includes(
-                        answer.attachment.contentType
-                      ) && (
-                        <a
-                          href={`data:${answer.attachment.contentType};base64,${attachment.data}`}
-                          target="_blank"
-                        >
-                          {answer.attachment.fileName}{" "}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ) : null}
-              </div>
+              </button>
+            </div>
+          </Tooltip>
+          <Tooltip title="Yanıtla" arrow>
+            <div className="icons">
+              <button className="mail-action-btns">
+                <Icon icon="iconoir:reply" width="30" />
+              </button>
+            </div>{" "}
+          </Tooltip>
+          <Tooltip title="Sil" arrow>
+            <div className="icons">
+              <button className="mail-action-btns" onClick={handleDelete}>
+                <Icon icon="bi:trash" width="30" />
+              </button>
+            </div>
+          </Tooltip>
+        </div>
+        <div className="mail-sender">
+          <div className="user-icon-home">
+            <Icon icon="ph:user-light" width="70" />
+          </div>
+          <div>
+            <div className="mail-sender-email">
+              {item.emailLog.senderEmail}
             </div>
           </div>
-        )}
+        </div>
+
+        <div className="mail-title">
+          <Icon icon="uit:subject" color="#b31312" width="40" />{" "}
+          <h3>{item.emailLog.emailSubject}</h3>
+        </div>
+
+        <p
+          dangerouslySetInnerHTML={{
+            __html: getText(item.emailLog.sentEmailBody)
+          }}
+        />
+        <div className="mail-attachments">
+          <div className="attachment-content">
+            <Icon
+              icon="material-symbols-light:attachment"
+              color="#b31312"
+              width="30"
+            />
+          </div>
+
+          <div className="mail-attachments">
+            {item.attachment ? (
+              <div className="inbox-mail-attachment">
+                <div>
+                  {item.attachment.contentType === "text/plain" && (
+                    <div>
+                      <a
+                        href={`data:text/plain;base64,${item.attachment.data}`}
+                        download={item.attachment.fileName}
+                      >
+                        {item.attachment.fileName}
+                      </a>
+                    </div>
+                  )}
+
+                  {item.attachment.contentType === "application/pdf" && (
+                    <a
+                      href={`data:application/pdf;base64,${item.attachment.data}`}
+                      target="_blank"
+                    >
+                      {item.attachment.fileName}{" "}
+                    </a>
+                  )}
+
+                  {["image/jpeg", "image/png", "image/gif"].includes(
+                    item.attachment.contentType
+                  ) && (
+                    <a
+                      href={`data:${item.attachment.contentType};base64,${item.attachment.data}`}
+                      target="_blank"
+                    >
+                      {item.attachment.fileName}{" "}
+                    </a>
+                  )}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        {item.emailLog.emailSubject}
+      </div>
+    ))
+  ) : (
+    <div className="mail-answer-content">
+      <div className="mail-actions">
+        <Tooltip title="İlet" arrow>
+          <div className="icons">
+            <button className="mail-action-btns">
+              <Icon
+                icon="material-symbols-light:forward"
+                width="40"
+                rotate={2}
+              />
+            </button>
+          </div>
+        </Tooltip>
+        <Tooltip title="Yanıtla" arrow>
+          <div className="icons">
+            <button className="mail-action-btns">
+              <Icon icon="iconoir:reply" width="30" />
+            </button>
+          </div>{" "}
+        </Tooltip>
+        <Tooltip title="Sil" arrow>
+          <div className="icons">
+            <button className="mail-action-btns" onClick={handleDelete}>
+              <Icon icon="bi:trash" width="30" />
+            </button>
+          </div>
+        </Tooltip>
+      </div>
+      <div className="mail-sender">
+        <div className="user-icon-home">
+          <Icon icon="ph:user-light" width="70" />
+        </div>
+        <div>
+          <div className="mail-sender-email">
+            {answer.emailLog.senderEmail}
+          </div>
+        </div>
+      </div>
+
+      <div className="mail-title">
+        <Icon icon="uit:subject" color="#b31312" width="40" />{" "}
+        <h3>{answer.emailLog.emailSubject}</h3>
+      </div>
+
+      <p
+        dangerouslySetInnerHTML={{
+          __html: getText(answer.emailLog.sentEmailBody)
+        }}
+      />
+      <div className="mail-attachments">
+        <div className="attachment-content">
+          <Icon
+            icon="material-symbols-light:attachment"
+            color="#b31312"
+            width="30"
+          />
+        </div>
+
+        <div className="mail-attachments">
+          {answer.attachment ? (
+            <div className="inbox-mail-attachment">
+              <div>
+                {answer.attachment.contentType === "text/plain" && (
+                  <div>
+                    <a
+                      href={`data:text/plain;base64,${answer.attachment.data}`}
+                      download={answer.attachment.fileName}
+                    >
+                      {answer.attachment.fileName}
+                    </a>
+                  </div>
+                )}
+
+                {answer.attachment.contentType === "application/pdf" && (
+                  <a
+                    href={`data:application/pdf;base64,${answer.attachment.data}`}
+                    target="_blank"
+                  >
+                    {answer.attachment.fileName}{" "}
+                  </a>
+                )}
+
+                {["image/jpeg", "image/png", "image/gif"].includes(
+                  answer.attachment.contentType
+                ) && (
+                  <a
+                    href={`data:${answer.attachment.contentType};base64,${attachment.data}`}
+                    target="_blank"
+                  >
+                    {answer.attachment.fileName}{" "}
+                  </a>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+) : null}
+
       </div>
     </div>
   )
