@@ -9,7 +9,8 @@ import alertify from "alertifyjs"
 import {
   deleteSentEmail,
   getEmailById,
-  getMailAnswersById
+  getMailAnswersById,
+  sendMail
 } from "../../services/emailService"
 import { getText } from "../../helpers"
 
@@ -62,7 +63,7 @@ const Inbox = () => {
 
   const replyEmail=()=>
   {
-    
+    sendMail()
   }
 
   return sender === false ? (
@@ -115,37 +116,48 @@ const Inbox = () => {
       <p dangerouslySetInnerHTML={{ __html: getText(mail.sentEmailBody) }} />
 
       <div className="mail-attachments">
-        <Icon icon="ri:attachment-fill" width="20" height="20" />
-        {attachment.fileName} -----
-        <div>
-          {attachment.contentType === "text/plain" && (
-            <iframe
-              title="Attachment"
-              width="600"
-              height="400"
-              srcDoc={atob(attachment.data)}
-            />
-          )}
-          {attachment.contentType === "application/pdf" && (
-            <embed
-              src={`data:application/pdf;base64,${attachment.data}`}
-              type="application/pdf"
-              width="500"
-              height="500"
-            />
-          )}
-          {["image/jpeg", "image/png", "image/gif"].includes(
-            attachment.contentType
-          ) && (
-            <img
-              src={`data:${attachment.contentType};base64,${attachment.data}`}
-              alt="Attachment"
-              width="100"
-              height="100"
-            />
-          )}
+    <Icon icon="ri:attachment-fill" width="20" height="20" />
+
+    <div>
+    {attachment ? (
+        <div className="inbox-mail-attachment">
+          <div>
+            {attachment.contentType === "text/plain" && (
+              <div>
+                <a
+                  href={`data:text/plain;base64,${attachment.data}`}
+                  download={attachment.fileName}
+                >
+                  {attachment.fileName}
+                </a>
+              </div>
+            )}
+
+            {attachment.contentType === "application/pdf" && (
+              <a
+                href={`data:application/pdf;base64,${attachment.data}`}
+                target="_blank"
+              >
+                {attachment.fileName}{" "}
+              </a>
+            )}
+
+            {["image/jpeg", "image/png", "image/gif"].includes(
+              attachment.contentType
+            ) && (
+              <a
+                href={`data:${attachment.contentType};base64,${attachment.data}`}
+                target="_blank"
+              >
+                {attachment.fileName}{" "}
+              </a>
+            )}
+          </div>
         </div>
-      </div>
+      ) : null}
+    </div>
+  </div>
+
 
       <div className="mail-attachments">
         <div className="attachment-content">
@@ -228,53 +240,48 @@ const Inbox = () => {
 
       <p dangerouslySetInnerHTML={{ __html: getText(mail.sentEmailBody) }} />
       <div className="mail-attachments">
-        <div className="attachment-content">
-          <Icon
-            icon="material-symbols-light:attachment"
-            color="#b31312"
-            width="30"
-          />
-        </div>
+    <Icon icon="ri:attachment-fill" width="20" height="20" />
 
-        <div className="mail-attachments">
-          {attachment ? (
-            <div className="inbox-mail-attachment">
+    <div>
+    {attachment ? (
+        <div className="inbox-mail-attachment">
+          <div>
+            {attachment.contentType === "text/plain" && (
               <div>
-                {attachment.contentType === "text/plain" && (
-                  <div>
-                    <a
-                      href={`data:text/plain;base64,${attachment.data}`}
-                      download={attachment.fileName}
-                    >
-                      {attachment.fileName}
-                    </a>
-                  </div>
-                )}
-
-                {attachment.contentType === "application/pdf" && (
-                  <a
-                    href={`data:application/pdf;base64,${attachment.data}`}
-                    target="_blank"
-                  >
-                    {attachment.fileName}{" "}
-                  </a>
-                )}
-
-                {["image/jpeg", "image/png", "image/gif"].includes(
-                  attachment.contentType
-                ) && (
-                  <a
-                    href={`data:${attachment.contentType};base64,${attachment.data}`}
-                    target="_blank"
-                  >
-                    {attachment.fileName}{" "}
-                  </a>
-                )}
+                <a
+                  href={`data:text/plain;base64,${attachment.data}`}
+                  download={attachment.fileName}
+                >
+                  {attachment.fileName}
+                </a>
               </div>
-            </div>
-          ) : null}
+            )}
+
+            {attachment.contentType === "application/pdf" && (
+              <a
+                href={`data:application/pdf;base64,${attachment.data}`}
+                target="_blank"
+              >
+                {attachment.fileName}{" "}
+              </a>
+            )}
+
+            {["image/jpeg", "image/png", "image/gif"].includes(
+              attachment.contentType
+            ) && (
+              <a
+                href={`data:${attachment.contentType};base64,${attachment.data}`}
+                target="_blank"
+              >
+                {attachment.fileName}{" "}
+              </a>
+            )}
+          </div>
         </div>
-      </div>
+      ) : null}
+    </div>
+  </div>
+
 
       <div className="inbox-mail-summary">
         <p>

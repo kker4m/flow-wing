@@ -99,7 +99,7 @@ const Sent = () => {
                         <Icon icon="bi:repeat" />
                       )}
                     </div>{" "}
-                    <div className="delete-mail">
+                    {/* <div className="delete-mail">
                       {" "}
                       <button
                         className="delete-mail-btn"
@@ -107,7 +107,7 @@ const Sent = () => {
                       >
                         <Icon icon="iconoir:trash" />
                       </button>
-                    </div>{" "}
+                    </div>{" "} */}
                     <div className="inbox-sent-time">{timeToShow}</div>
                   </div>
                 </div>{" "}
