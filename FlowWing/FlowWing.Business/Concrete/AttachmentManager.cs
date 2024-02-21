@@ -67,7 +67,7 @@ public class AttachmentManager : IAttachmentService
         return await _attachmentRepository.GetAllAttachmentsAsync();
     }
 
-    public async Task<IEnumerable<Attachment>> GetAttachmentsByEmailLogIdAsync(int emailLogId)
+    public async Task<IEnumerable<Attachment>?> GetAttachmentsByEmailLogIdAsync(int emailLogId)
     {
         return await _attachmentRepository.GetAttachmentsByEmailLogIdAsync(emailLogId);
     }

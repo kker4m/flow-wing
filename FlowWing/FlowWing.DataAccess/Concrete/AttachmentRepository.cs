@@ -51,13 +51,13 @@ public class AttachmentRepository : IAttachmentRepository
         return await _dbContext.Attachments.AsNoTracking().ToListAsync();;
     }
 
-    public async Task<IEnumerable<Attachment>> GetAttachmentsByEmailLogIdAsync(int emailLogId)
+    public async Task<IEnumerable<Attachment>?> GetAttachmentsByEmailLogIdAsync(int emailLogId)
     {
         //get attachment id's from email log and return them
         var attachmentIds = _dbContext.EmailLogs.AsNoTracking().FirstOrDefault(x => x.Id == emailLogId)?.AttachmentIds;
         if (attachmentIds == null)
         {
-            return new List<Attachment>();
+            return null;
         }
         var attachmentIdList = attachmentIds.Split(',').Select(int.Parse).ToList();
         return await _dbContext.Attachments.AsNoTracking().Where(x => attachmentIdList.Contains(x.Id)).ToListAsync();

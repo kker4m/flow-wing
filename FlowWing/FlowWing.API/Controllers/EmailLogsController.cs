@@ -1,4 +1,5 @@
-﻿using FlowWing.Business.Abstract;
+﻿using System.Reflection;
+using FlowWing.Business.Abstract;
 using FlowWing.Entities;
 using FlowWing.API.Helpers;
 using FlowWing.API.Models;
@@ -31,7 +32,7 @@ namespace FlowWing.API.Controllers
             _emailSenderService = emailSenderService;
             _attachmentService = attachmentService;
         }
-
+        
         ///<summary>
         ///  Get emails which is comes to the user
         /// </summary>
@@ -71,6 +72,87 @@ namespace FlowWing.API.Controllers
 
             return Unauthorized();
         }
+        private class answerEmail
+        {
+            public EmailLog emailLog { get; set; }
+            public IEnumerable<Attachment>? attachments { get; set; }
+            public answerEmail? answer { get; set; }
+        }
+
+        ///<summary>
+        ///  Get email by id and the answers of the email
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetEmailAndAnswersByEmailLogId/{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetEmailAndAnswersByEmailLogId(int id)
+        {
+            IEnumerable<Attachment>? emailAttachments;
+            IEnumerable<Attachment>? answerAttachments;
+            EmailLog? emailLog;
+            EmailLog? answer;
+            List<answerEmail> answerEmails = new List<answerEmail>();
+            
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
+            {
+                emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
+                
+                if (emailLog == null)
+                {
+                    return NotFound();
+                }
+                
+                emailAttachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(emailLog.Id);
+                if (emailAttachments != null)
+                {
+                    foreach (Attachment attachment in emailAttachments)
+                    {
+                        attachment.EmailLog = emailLog;
+                    }
+                }
+                answerEmails.Add(new answerEmail
+                {
+                    emailLog = emailLog,
+                    attachments = emailAttachments,
+                    answer = null
+                });
+                
+                while (emailLog.Answers != null)
+                {
+                    answer = await _emailLogService.GetEmailLogByIdAsync(int.Parse(emailLog.Answers));
+                    answerAttachments = _attachmentService.GetAttachmentsByEmailLogIdAsync(answer.Id).Result;
+                    if (answerAttachments != null)
+                    {
+                        foreach (Attachment attachment in answerAttachments)
+                        {
+                            attachment.EmailLog = answer;
+                        }
+                    }
+
+                    answerEmails.Add( new answerEmail
+                    {
+                        emailLog = answer,
+                        attachments = answerAttachments,
+                        answer = null
+                    });
+                    emailLog = answer;
+                }
+
+                for(int i=0; i<answerEmails.Count-1; i++)
+                {
+                    answerEmails[i].answer = answerEmails[i+1];
+                }
+                
+                return Ok(answerEmails[0]);
+            }
+
+            return Unauthorized();
+        }
+
+        
+        
 
         ///<summary>
         /// Get Emails which is user sent
@@ -215,14 +297,13 @@ namespace FlowWing.API.Controllers
                     
                     createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
                     
-                    //String olan RepliedEmail.Answers column'una , ekleyerek yeni emailin id'sini ekliyoruz.
                     if (RepliedEmail.Answers == null)
                     {
                         RepliedEmail.Answers = NewEmailLog.Id.ToString();
                     }
                     else
                     {
-                        RepliedEmail.Answers += "," + NewEmailLog.Id;
+                        return BadRequest("Replied Email has already been answered");
                     }
                     _emailLogService.UpdateEmailLog(RepliedEmail);
                 }

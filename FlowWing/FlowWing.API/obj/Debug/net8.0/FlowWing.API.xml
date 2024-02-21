@@ -24,6 +24,12 @@
              </summary>
              <returns></returns>
         </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetEmailAndAnswersByEmailLogId(System.Int32)">
+            <summary>
+              Get email by id and the answers of the email
+             </summary>
+             <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserReceivedEmails">
             <summary>
              Get Emails which is user sent

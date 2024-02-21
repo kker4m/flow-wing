@@ -11,5 +11,5 @@ public interface IAttachmentService
     Task<Attachment> GetAttachmentByIdAsync(int id);
     Attachment GetAttachmentById(int id);
     Task<IEnumerable<Attachment>> GetAllAttachmentsAsync();
-    Task<IEnumerable<Attachment>> GetAttachmentsByEmailLogIdAsync(int emailLogId);
+    Task<IEnumerable<Attachment>?> GetAttachmentsByEmailLogIdAsync(int emailLogId);
 }
