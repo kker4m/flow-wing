@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FlowWing.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5d3903692ee8ee5b9a2e2202123dec5bd058a5d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a3895dff07e2987ac1cc07442411107a1ca9e56e")]
 [assembly: System.Reflection.AssemblyProductAttribute("FlowWing.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FlowWing.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

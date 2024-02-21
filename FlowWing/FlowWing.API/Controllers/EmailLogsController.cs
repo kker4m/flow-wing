@@ -59,10 +59,10 @@ namespace FlowWing.API.Controllers
                         foreach (var attachment in attachments)
                         {
                             attachment.EmailLog = email;
-                        }
-                        var attachmentResult = new { EmailLog = email, Attachments = attachments };
-                        resultEmails.Add(attachmentResult);
+                        }   
                     }
+                    
+                    resultEmails.Add(new { EmailLog = email, Attachments = attachments });
                 }
                 
                 var result = new { User = user, UserEmails = resultEmails, Username = UserEmail};
@@ -178,10 +178,9 @@ namespace FlowWing.API.Controllers
                         foreach (var attachment in attachments)
                         {
                             attachment.EmailLog = email;
-                        }
-                        var attachmentResult = new { EmailLog = email, Attachments = attachments };
-                        resultEmails.Add(attachmentResult);
+                        }   
                     }
+                    resultEmails.Add(new { EmailLog = email, Attachments = attachments });
                 }
                 var result = new { User = user, UserEmails = resultEmails, Username = UserEmail };
 
