@@ -122,22 +122,25 @@ namespace FlowWing.API.Controllers
                 while (emailLog.Answers != null)
                 {
                     answer = await _emailLogService.GetEmailLogByIdAsync(int.Parse(emailLog.Answers));
-                    answerAttachments = _attachmentService.GetAttachmentsByEmailLogIdAsync(answer.Id).Result;
-                    if (answerAttachments != null)
+                    if (answer != null)
                     {
-                        foreach (Attachment attachment in answerAttachments)
+                        answerAttachments = _attachmentService.GetAttachmentsByEmailLogIdAsync(answer.Id).Result;
+                        if (answerAttachments != null)
                         {
-                            attachment.EmailLog = answer;
+                            foreach (Attachment attachment in answerAttachments)
+                            {
+                                attachment.EmailLog = answer;
+                            }
                         }
-                    }
 
-                    answerEmails.Add( new answerEmail
-                    {
-                        emailLog = answer,
-                        attachments = answerAttachments,
-                        answer = null
-                    });
-                    emailLog = answer;
+                        answerEmails.Add(new answerEmail
+                        {
+                            emailLog = answer,
+                            attachments = answerAttachments,
+                            answer = null
+                        });
+                        emailLog = answer;
+                    }
                 }
 
                 for(int i=0; i<answerEmails.Count-1; i++)
