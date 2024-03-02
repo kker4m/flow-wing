@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.Extensions.Options;
 using NuGet.Protocol.Plugins;
+using System.Net.Mail;
 
 namespace FlowWing.API.Controllers
 {
@@ -53,7 +54,7 @@ namespace FlowWing.API.Controllers
                 foreach (var email in userEmails)
                 {
                     email.User= user;
-                    IEnumerable<Attachment?> attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(email.Id);
+                    IEnumerable<Entities.Attachment?> attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(email.Id);
                     if (attachments != null)
                     {
                         foreach (var attachment in attachments)
@@ -75,20 +76,25 @@ namespace FlowWing.API.Controllers
         private class answerEmail
         {
             public EmailLog emailLog { get; set; }
-            public IEnumerable<Attachment>? attachments { get; set; }
+            public IEnumerable<Entities.Attachment>? attachmentInfos { get; set; }
+            public EmailLog? forwardedEmailLog { get; set; }
             public answerEmail? answer { get; set; }
+
         }
 
         ///<summary>
-        ///  Get email by id and the answers of the email
+        ///  Get email by id and the answers or forwarded emails of the email
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetEmailAndAnswersByEmailLogId/{id}")]
         [Authorize]
-        public async Task<IActionResult> GetEmailAndAnswersByEmailLogId(int id)
+        public async Task<IActionResult> GetEmailInformatinByEmailLogId(int id)
         {
-            IEnumerable<Attachment>? emailAttachments;
-            IEnumerable<Attachment>? answerAttachments;
+            IEnumerable<Entities.Attachment>? emailAttachments;
+            IEnumerable<Entities.Attachment>? answerAttachments;
+            answerEmail createdAnswerEmail = null;
+            answerEmail holdingAnswerEmail = null;
+            EmailLog? forwardedEmailLog;
             EmailLog? emailLog;
             EmailLog? answer;
             List<answerEmail> answerEmails = new List<answerEmail>();
@@ -104,58 +110,82 @@ namespace FlowWing.API.Controllers
                     return NotFound();
                 }
                 
+                if (emailLog.ForwardedFrom != null)
+                {
+                    forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(emailLog.ForwardedFrom);
+                }
+                else
+                {
+                    forwardedEmailLog = null;
+                }
+
                 emailAttachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(emailLog.Id);
                 if (emailAttachments != null)
                 {
-                    foreach (Attachment attachment in emailAttachments)
+                    foreach (var attachment in emailAttachments)
                     {
                         attachment.EmailLog = emailLog;
                     }
                 }
-                answerEmails.Add(new answerEmail
+                answerEmail firstAnswerEmail = new answerEmail
                 {
                     emailLog = emailLog,
-                    attachments = emailAttachments,
+                    attachmentInfos = emailAttachments,
+                    forwardedEmailLog = forwardedEmailLog,
                     answer = null
-                });
-                
-                while (emailLog.Answers != null)
+                };
+
+                //EmailLog'un answer'larini tek tek gez ( recursive ) 
+                while (emailLog.Answer != null)
                 {
-                    answer = await _emailLogService.GetEmailLogByIdAsync(int.Parse(emailLog.Answers));
+                    answer = await _emailLogService.GetEmailLogByIdAsync(emailLog.Answer);
                     if (answer != null)
                     {
+                        if (answer.ForwardedFrom != null)
+                        {
+                            forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(answer.ForwardedFrom);
+                        }
+                        else
+                        {
+                            forwardedEmailLog = null;
+                        }
+
                         answerAttachments = _attachmentService.GetAttachmentsByEmailLogIdAsync(answer.Id).Result;
                         if (answerAttachments != null)
                         {
-                            foreach (Attachment attachment in answerAttachments)
+                            foreach (var attachment in answerAttachments)
                             {
                                 attachment.EmailLog = answer;
                             }
                         }
-
-                        answerEmails.Add(new answerEmail
+                        createdAnswerEmail = new answerEmail
                         {
                             emailLog = answer,
-                            attachments = answerAttachments,
-                            answer = null
-                        });
+                            attachmentInfos = answerAttachments,
+                            forwardedEmailLog = forwardedEmailLog,
+                        };
+
+                        if (firstAnswerEmail.answer == null)
+                        {
+                            firstAnswerEmail.answer = createdAnswerEmail;
+                            holdingAnswerEmail = createdAnswerEmail;
+                        }
+                        else
+                        {
+                            holdingAnswerEmail.answer = createdAnswerEmail;
+                            holdingAnswerEmail = createdAnswerEmail;
+                        }
+
                         emailLog = answer;
                     }
                 }
-
-                for(int i=0; i<answerEmails.Count-1; i++)
-                {
-                    answerEmails[i].answer = answerEmails[i+1];
-                }
                 
-                return Ok(answerEmails[0]);
+                return Ok(firstAnswerEmail);
             }
 
             return Unauthorized();
         }
 
-        
-        
 
         ///<summary>
         /// Get Emails which is user sent
@@ -170,12 +200,22 @@ namespace FlowWing.API.Controllers
             {
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+                EmailLog? forwardedEmailLog;
                 var userEmails = await _emailLogService.GetEmailLogsByUserIdAsync(int.Parse(UserId));
                 var resultEmails = new List<object>();
                 foreach (var email in userEmails)
                 {
                     email.User= user;
-                    IEnumerable<Attachment?> attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(email.Id);
+                    if (email.ForwardedFrom != null)
+                    {
+                        forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(email.ForwardedFrom);
+                    }
+                    else
+                    {
+                        forwardedEmailLog = null;
+                    }
+
+                    IEnumerable<Entities.Attachment?> attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(email.Id);
                     if (attachments != null)
                     {
                         foreach (var attachment in attachments)
@@ -183,7 +223,7 @@ namespace FlowWing.API.Controllers
                             attachment.EmailLog = email;
                         }   
                     }
-                    resultEmails.Add(new { EmailLog = email, Attachments = attachments });
+                    resultEmails.Add(new { EmailLog = email, ForwardedEmailLog = forwardedEmailLog, Attachments = attachments });
                 }
                 var result = new { User = user, UserEmails = resultEmails, Username = UserEmail };
 
@@ -258,7 +298,7 @@ namespace FlowWing.API.Controllers
         /// <summary>
         /// Create an Email Log
         /// </summary>
-        /// <param name="emailLog"></param>
+        /// <param name="emailLogModel"></param>
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateEmailLog([FromForm] EmailLogModel emailLogModel)
@@ -267,14 +307,13 @@ namespace FlowWing.API.Controllers
 
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
-                EmailLog NewEmailLog;
                 EmailLog createdEmailLog;
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var formFiles = HttpContext.Request.Form.Files;
                 string attachmentIds = "";
 
-                NewEmailLog = new EmailLog
+                createdEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
                     CreationDate = DateTime.UtcNow,
@@ -299,11 +338,11 @@ namespace FlowWing.API.Controllers
                         return NotFound("Replied Email Not Found");
                     }
                     
-                    createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
+                    createdEmailLog = await _emailLogService.CreateEmailLogAsync(createdEmailLog);
                     
-                    if (RepliedEmail.Answers == null)
+                    if (RepliedEmail.Answer == null)
                     {
-                        RepliedEmail.Answers = NewEmailLog.Id.ToString();
+                        RepliedEmail.Answer = createdEmailLog.Id;
                     }
                     else
                     {
@@ -313,7 +352,7 @@ namespace FlowWing.API.Controllers
                 }
                 else
                 {
-                    createdEmailLog = await _emailLogService.CreateEmailLogAsync(NewEmailLog);
+                    createdEmailLog = await _emailLogService.CreateEmailLogAsync(createdEmailLog);
                 }
                 
                 foreach (var formFile in formFiles)
@@ -323,7 +362,7 @@ namespace FlowWing.API.Controllers
                             await formFile.CopyToAsync(stream);
                             byte[] bytes = stream.ToArray();
 
-                            var attachment = new Attachment
+                            var attachment = new Entities.Attachment
                             {
                                 EmailLogId = createdEmailLog.Id,
                                 FileName = formFile.FileName,
@@ -345,6 +384,82 @@ namespace FlowWing.API.Controllers
                 }
                 
                 _emailSenderService.SendEmail(emailLogModel.RecipientsEmail, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog);
+
+
+                return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
+            }
+            return Unauthorized();
+        }
+
+        /// <summary>
+        /// Create an Forwarded Email Log
+        /// </summary>
+        /// <param name="forwardedEmailLogModel"></param>
+        /// <returns></returns>
+        [HttpPost("CreateForwardedEmailLog")]
+        public async Task<IActionResult> CreateForwardedEmailLog([FromForm] ForwardedEmailLogModel forwardedEmailLogModel)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
+            {
+                EmailLog createdEmailLog;
+                EmailLog? forwardedEmailLog;
+                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
+                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+                var formFiles = HttpContext.Request.Form.Files;
+                string attachmentIds = "";
+
+                forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(forwardedEmailLogModel.ForwardedEmailId);
+                if (forwardedEmailLog == null)
+                {
+                    return (BadRequest("Iletilmek istenen mail bulunamadi."));
+                }
+
+                createdEmailLog = new EmailLog
+                {
+                    UserId = int.Parse(UserId),
+                    CreationDate = DateTime.UtcNow,
+                    SentDateTime = DateTime.UtcNow,
+                    RecipientsEmail = forwardedEmailLogModel.RecipientsEmail,
+                    SenderEmail = UserEmail,
+                    EmailSubject = forwardedEmailLog.EmailSubject,
+                    SentEmailBody = forwardedEmailLogModel.EmailBody,
+                    ForwardedFrom = forwardedEmailLogModel.ForwardedEmailId,
+                    Status = true,
+                    IsScheduled = false,
+                    User = user
+                };
+                createdEmailLog = await _emailLogService.CreateEmailLogAsync(createdEmailLog);
+
+                foreach (var formFile in formFiles)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        await formFile.CopyToAsync(stream);
+                        byte[] bytes = stream.ToArray();
+
+                        var attachment = new Entities.Attachment
+                        {
+                            EmailLogId = createdEmailLog.Id,
+                            FileName = formFile.FileName,
+                            FileSize = formFile.Length,
+                            ContentType = formFile.ContentType,
+                            Data = bytes,
+                        };
+
+                        await _attachmentService.CreateAttachmentAsync(attachment);
+                        attachmentIds += attachment.Id + ",";
+                    }
+                }
+
+                if (attachmentIds.Length > 0)
+                {
+                    attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                    createdEmailLog.AttachmentIds = attachmentIds;
+                    _emailLogService.UpdateEmailLog(createdEmailLog);
+                }
+                _emailSenderService.SendEmail(createdEmailLog.RecipientsEmail, createdEmailLog.EmailSubject, createdEmailLog.SentEmailBody, createdEmailLog);
 
 
                 return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);

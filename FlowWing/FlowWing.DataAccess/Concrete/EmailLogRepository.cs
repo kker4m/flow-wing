@@ -38,8 +38,12 @@ namespace FlowWing.DataAccess.Concrete
             return await _dbContext.EmailLogs.AsNoTracking().ToListAsync();
         }
         
-        public async Task<EmailLog> GetEmailLogByIdAsync(int id)
+        public async Task<EmailLog> GetEmailLogByIdAsync(int? id)
         {
+            if (id == null)
+            {
+                return null;
+            }
             return await _dbContext.EmailLogs.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
         public EmailLog GetEmailLogById(int id)
