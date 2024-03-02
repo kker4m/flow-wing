@@ -51,7 +51,7 @@ namespace FlowWing.Business.Concrete
             return await _emailLogRepository.GetAllEmailLogsAsync();
         }
 
-        public async Task<EmailLog> GetEmailLogByIdAsync(int? id)
+        public async Task<EmailLog> GetEmailLogByIdAsync(int id)
         { 
           return await _emailLogRepository.GetEmailLogByIdAsync(id);
         }

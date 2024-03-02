@@ -35,9 +35,8 @@ namespace FlowWing.Entities
         [Required]
         public bool IsScheduled { get; set; }
         
-        public int? Answer { get; set; }
-        public int? ForwardedFrom { get; set; }
-
+        public String? Answers { get; set; }
+        
         [ForeignKey("UserId")] 
         public virtual User User { get; set; }
 

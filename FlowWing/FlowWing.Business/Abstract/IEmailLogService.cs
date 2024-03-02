@@ -9,7 +9,7 @@ namespace FlowWing.Business.Abstract
 {
     public interface IEmailLogService
     {
-        Task<EmailLog> GetEmailLogByIdAsync(int? id);
+        Task<EmailLog> GetEmailLogByIdAsync(int id);
         Task<IEnumerable<EmailLog>> GetAllEmailLogsAsync();
         Task<EmailLog> CreateEmailLogAsync(EmailLog emailLog);
         Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog);
