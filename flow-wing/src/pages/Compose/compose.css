@@ -78,7 +78,7 @@ textarea {
   display: flex;
   flex-direction: column-reverse;
   align-items: flex-end;
-} .ql-tooltip {
+}
+.ql-tooltip {
   left: 100px !important;
 }
-

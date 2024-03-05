@@ -44,7 +44,7 @@ const Home = () => {
     }
   }
   // COLOR ARRAY FOR HR ELEMENT
-  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"] // İstediğiniz renkleri ekleyin
+  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"]
 
   if (mails.length === 0) {
     return <EmptyPage />

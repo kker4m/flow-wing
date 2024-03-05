@@ -24,7 +24,6 @@ const Compose = () => {
   const [isRepeating, setIsRepeating] = useState(false)
   const [isScheduled, setIsScheduled] = useState(false)
 
-  
   const toolbarOptions = {
     toolbar: [
       [{ font: [] }],
@@ -317,7 +316,6 @@ const Compose = () => {
             value={formik.values.emailBody}
             onChange={(value) => formik.setFieldValue("emailBody", value)}
             required
-            
           />
         </div>
         {formik.errors.emailBody && formik.touched.emailBody && (

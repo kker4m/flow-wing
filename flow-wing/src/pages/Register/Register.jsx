@@ -21,6 +21,7 @@ const Register = () => {
   const handleRegister = (values) => {
     dispatch(registerUser(values)).then((result) => {
       if (result.payload) {
+        alertify.success("Kayıt oluşturuldu")
         navigate("/login")
       }
     })

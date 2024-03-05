@@ -5,7 +5,7 @@ const EmptyPage = () => {
   return (
     <div className="spinner-content">
       <h3>Burası şimdilik boş</h3>
-      <span class="loader-empty-page"></span>
+      <span className="loader-empty-page"></span>
     </div>
   )
 }

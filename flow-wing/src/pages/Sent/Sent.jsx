@@ -5,6 +5,7 @@ import Divider from "@mui/material/Divider"
 import "./sent.css"
 import { excerpt, getText } from "../../helpers"
 import { deleteSentEmail, getSentMails } from "../../services/emailService"
+import EmptyPage from "../../components/EmptyPage"
 
 const Sent = () => {
   const [sentMails, setSentMails] = useState([])
@@ -23,9 +24,12 @@ const Sent = () => {
       setSentMails(sortedMails)
     })
   }, [])
-
+  // SPINNER
+  if (sentMails.length === 0) {
+    return <EmptyPage />
+  }
   // COLOR ARRAY FOR HR ELEMENT
-  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"] // İstediğiniz renkleri ekleyin
+  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"]
 
   // delete email
   const handleDelete = (id) => {
@@ -36,6 +40,7 @@ const Sent = () => {
       navigate("/sent")
     })
   }
+
   return (
     <div className="sent-mail-page-content">
       <h2>Gönderilmiş Mailler</h2>

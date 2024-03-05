@@ -87,3 +87,19 @@
 .mail-answer-content {
   padding-left: 30px;
 }
+.forward-modal-form span {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+.forward-modal-form {
+  display: flex;
+  flex-direction: column;
+}
+.reply-modal-form span {
+  font-weight: bold;
+}
+.reply-modal-form {
+  display: flex;
+  flex-direction: column;
+}

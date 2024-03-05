@@ -12,6 +12,7 @@ import Trash from "./pages/Trash/Trash"
 import RequireAuth from "./components/RequireAuth"
 import {
   COMPOSE_NEW_ROUTE,
+  ERROR_ROUTE,
   HOME_ROUTE,
   INBOX_ROUTE,
   LOGIN_ROUTE,
@@ -19,6 +20,7 @@ import {
   SENT_ROUTE,
   TRASH_ROUTE
 } from "./routes"
+import ErrorPage from "./pages/404/ErrorPage"
 
 function App() {
   return (
@@ -91,6 +93,7 @@ function App() {
       />
       <Route path={REGISTER_ROUTE} element={<Register />} />
       <Route path="/" element={<Navigate to="/login" />} />
+      <Route path={ERROR_ROUTE} element={<ErrorPage />} />
     </Routes>
   )
 }

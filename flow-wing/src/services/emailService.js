@@ -18,6 +18,21 @@ const sendMail = (values) => {
   return apiAxios.post("EmailLogs", mailContent)
 }
 
+const replyMail = (values) => {
+  const { recipientsEmail, emailSubject, emailBody, RepliedEmailId, file } =
+    values
+
+  // Convert values to strings if necessary
+  const mailContent = {
+    recipientsEmail: String(recipientsEmail),
+    emailSubject: String(emailSubject),
+    emailBody: String(emailBody),
+    attachmentIds: file,
+    RepliedEmailId: RepliedEmailId
+  }
+
+  return apiAxios.post("EmailLogs", mailContent)
+}
 const sendScheduledMail = (values) => {
   const { sentDateTime, recipientsEmail, emailSubject, emailBody } = values
 
@@ -73,6 +88,13 @@ const sendScheduledRepeatingMail = (values) => {
 const getMailAnswersById = (id) => {
   return apiAxios.get("EmailLogs/GetEmailAndAnswersByEmailLogId/" + id)
 }
+
+const getForwardedMailById = (id) => {
+  return apiAxios.get("EmailLogs/GetEmailAndAnswersByEmailLogId/" + id)
+}
+const forwardEmail = (values) => {
+  return apiAxios.post("EmailLogs/CreateForwardedEmailLog", values)
+}
 export {
   getAllUsers,
   getEmailById,
@@ -82,5 +104,8 @@ export {
   sendScheduledMail,
   sendScheduledRepeatingMail,
   deleteSentEmail,
-  getMailAnswersById
+  getMailAnswersById,
+  replyMail,
+  forwardEmail,
+  getForwardedMailById
 }
