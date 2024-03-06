@@ -13,7 +13,6 @@ import {
   getForwardedMailById,
   getMailAnswersById,
   replyMail,
-  sendMail
 } from "../../services/emailService"
 import { formatDate, getText } from "../../helpers"
 import { getUsers } from "../../services/userService"
@@ -34,7 +33,6 @@ const Inbox = () => {
   const [forwardedEmailMessage, setForwardedEmailMessage] = useState("")
   const [forwardedMailId, setForwardedMailId] = useState("")
   const [forwardedFrom, setForwardedFrom] = useState("")
-  const [mailAnswerId, setMailAnswerId] = useState("")
   const [users, setUsers] = useState([])
   let navigate = useNavigate()
   let { id } = useParams()
@@ -65,20 +63,20 @@ const Inbox = () => {
     setForwardModalOpen(true)
   }
   const handleOk = () => {
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    if (!repliedMailBody) {
+      alertify.error("Lütfen geçerli bir mesaj girin")
+    } else {
+      replyEmail()
       setOpen(false)
-    }, 1000)
-    replyEmail()
+    }
   }
   const handleForwardOk = () => {
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    if (!forwardTo || !forwardedEmailMessage) {
+      alertify.error("Lütfen tüm alanları doldurun")
+    } else {
       setForwardModalOpen(false)
-    }, 1000)
-    handleForward()
+      handleForward()
+    }
   }
   const handleCancel = () => {
     setOpen(false)
@@ -106,38 +104,37 @@ const Inbox = () => {
   }
 
   // GET SINGLE MAIL BY ID
- 
- useEffect(() => {
-  getEmailById(id).then((res) => {
-    setMail(res.data.emailLog)
-    console.log("get mail by id", res.data)
-    if (res.data.attachments && res.data.attachments.length > 0) {
-      setAttachment(res.data.attachments[0])
-    }
-    console.log("attachment: ", attachment)
-    setSender(res.data.sender)
-    console.log("mail sender", sender)
-    setUser(res.data.emailLog.user.username)
-    console.log("user", res.data.emailLog.user.username)
-   
-  })
 
-  getMailAnswersById(id).then((response) => {
-    console.log("get answerın içindesin şu an")
-    console.log(" answer : ", response.data.answer)
-    setAnswer(response.data.answer) 
-    setForwardedMailId(response.data.emailLog.forwardedFrom)
-  })
+  useEffect(() => {
+    getEmailById(id).then((res) => {
+      setMail(res.data.emailLog)
+      console.log("get mail by id", res.data)
+      if (res.data.attachments && res.data.attachments.length > 0) {
+        setAttachment(res.data.attachments[0])
+      }
+      console.log("attachment: ", attachment)
+      setSender(res.data.sender)
+      console.log("mail sender", sender)
+      setUser(res.data.emailLog.user.username)
+      console.log("user", res.data.emailLog.user.username)
+    })
 
-  getForwardedMailById(forwardedMailId).then((res) => {
-    console.log("get forwardın içindesin şu an")
-         console.log("forwarded mail ", res.data.emailLog.forwardedFrom)
-         setForwardedFrom(res.data.emailLog)
-         setForwardedMailId(res.data.emailLog.forwardedFrom)
-       })
+    getMailAnswersById(id).then((response) => {
+      console.log("get answerın içindesin şu an")
+      console.log(" answer : ", response.data.answer)
+      setAnswer(response.data.answer)
+      setForwardedMailId(response.data.emailLog.forwardedFrom)
+    })
 
-  return () => {}
-}, [mail?.forwardedFrom])
+    getForwardedMailById(forwardedMailId).then((res) => {
+      console.log("get forwardın içindesin şu an")
+      console.log("forwarded mail ", res.data.emailLog.forwardedFrom)
+      setForwardedFrom(res.data.emailLog)
+      setForwardedMailId(res.data.emailLog.forwardedFrom)
+    })
+
+    return () => {}
+  }, [mail?.forwardedFrom])
 
   // GET SINGLE MAIL'S ANSWERS
 
@@ -185,9 +182,11 @@ const Inbox = () => {
       RepliedEmailId: mail.answer ? mail.answer : mail.id,
       file: []
     }
+
     replyMail(values).then((res) => {
       setMail(res.data.emailLog)
     })
+
     navigate()
   }
 
@@ -201,11 +200,15 @@ const Inbox = () => {
       ForwardedEmailId: mail.id,
       file: []
     }
+    console.log("handleForward'ın içindesin")
     forwardEmail(values).then((res) => {
+      console.log("forward mail fonksiyonunun içindesin")
       if (res.status === 201) {
         alertify.success("Mail iletildi")
       }
     })
+
+    navigate()
   }
   return sender === false ? (
     <div className="inbox-page-content">
@@ -231,7 +234,7 @@ const Inbox = () => {
             <Button key="back" onClick={handleCancel}>
               Geri
             </Button>,
-            <Button key="submit" type="primary" loading={loading}>
+            <Button key="submit" type="primary" onClick={handleForwardOk}>
               Gönder
             </Button>
           ]}
@@ -241,7 +244,7 @@ const Inbox = () => {
             <Mentions
               allowClear
               style={{ height: 50, border: "none" }}
-              onChange={(e) => setForwardTo(e.target.value)}
+              onChange={(value) => setForwardTo(value)}
               onSelect={onMentionSelect}
               required
               options={options}
@@ -252,8 +255,8 @@ const Inbox = () => {
               theme="bubble"
               name="emailBody"
               style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
-              onChange={(e) => {
-                setForwardedEmailMessage(e.target.value)
+              onChange={(value) => {
+                setForwardedEmailMessage(value)
               }}
               required
             />
@@ -268,7 +271,7 @@ const Inbox = () => {
             </p>
             <p>
               {" "}
-              <span>Tarih: </span> {mail.sentDateTime}{" "}
+              <span>Tarih: </span> {formatDate(mail.sentDateTime)}{" "}
             </p>
             <p>
               {" "}
@@ -321,7 +324,7 @@ const Inbox = () => {
               theme="bubble"
               name="emailBody"
               style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
-              onChange={(e) => setRepliedMailBody(e.target.value)}
+              onChange={(value) => setRepliedMailBody(value)}
               required
             />
           </form>
@@ -336,7 +339,7 @@ const Inbox = () => {
       </div>
       <div className="mail-sender">
         <div className="user-icon-home">
-          <Icon icon="ph:user-light" width="70" />
+          <Icon icon="ph:user-light" width="60" />
         </div>
         <div>
           <div className="icon-with-text">
@@ -403,11 +406,11 @@ const Inbox = () => {
       {/* FORWARDED */}
 
       {forwardedFrom ? (
-        <div>
-          ----- Şu mesajdan iletildi -----
-          <p>Gönderen: {forwardedFrom.senderEmail}</p>
-          <p>Tarih: {formatDate(forwardedFrom.sentDateTime)}</p>
-          <p>Konu: {forwardedFrom.emailSubject}</p>
+        <div className="forwarded-from-section">
+       <span >----- Şu mesajdan iletildi -----</span>   
+       <span>Gönderen: </span>    <p>{forwardedFrom.senderEmail}</p>
+       <span>Tarih:</span>    <p> {formatDate(forwardedFrom.sentDateTime)}</p>
+       <span>Konu:</span>    <p> {forwardedFrom.emailSubject}</p>
           <p
             dangerouslySetInnerHTML={{
               __html: getText(forwardedFrom.sentEmailBody)
@@ -484,7 +487,7 @@ const Inbox = () => {
             </p>
             <p>
               {" "}
-              <span>Tarih: </span> {mail.sentDateTime}{" "}
+              <span>Tarih: </span> {formatDate(mail.sentDateTime)}{" "}
             </p>
             <p>
               {" "}
@@ -647,7 +650,11 @@ const Inbox = () => {
                       <Button key="back" onClick={handleCancel}>
                         Geri
                       </Button>,
-                      <Button key="submit" type="primary" loading={loading}>
+                      <Button
+                        key="submit"
+                        type="primary"
+                        onClick={handleForwardOk}
+                      >
                         İlet
                       </Button>
                     ]}
@@ -683,8 +690,7 @@ const Inbox = () => {
                         <span>Gönderen:</span> {mail.senderEmail}
                       </p>
                       <p>
-                        {" "}
-                        <span>Tarih: </span> {mail.sentDateTime}{" "}
+                        <span>Tarih: </span> {formatDate(mail.sentDateTime)}{" "}
                       </p>
                       <p>
                         {" "}
@@ -852,7 +858,11 @@ const Inbox = () => {
                     <Button key="back" onClick={handleCancel}>
                       Geri
                     </Button>,
-                    <Button key="submit" type="primary" loading={loading}>
+                    <Button
+                      key="submit"
+                      type="primary"
+                      onClick={handleForwardOk}
+                    >
                       İlet
                     </Button>
                   ]}
@@ -889,7 +899,7 @@ const Inbox = () => {
                     </p>
                     <p>
                       {" "}
-                      <span>Tarih: </span> {mail.sentDateTime}{" "}
+                      <span>Tarih: </span> {formatDate(mail.sentDateTime)}{" "}
                     </p>
                     <p>
                       {" "}
@@ -988,11 +998,11 @@ const Inbox = () => {
                 </div>
 
                 {forwardedFrom ? (
-                  <div>
-                    ----- Şu mesajdan iletildi -----
-                    <p>Gönderen: {forwardedFrom.senderEmail}</p>
-                    <p>Tarih: {formatDate(forwardedFrom.sentDateTime)}</p>
-                    <p>Konu: {forwardedFrom.emailSubject}</p>
+                  <div className="forwarded-from-section">
+                  <span>----- Şu mesajdan iletildi -----</span>  
+                  <span>Gönderen:</span> <p> {forwardedFrom.senderEmail}</p>
+                  <span>Tarih:</span> <p> {formatDate(forwardedFrom.sentDateTime)}</p>
+                  <span>Konu: </span> <p>{forwardedFrom.emailSubject}</p>
                     <p
                       dangerouslySetInnerHTML={{
                         __html: getText(forwardedFrom.sentEmailBody)
