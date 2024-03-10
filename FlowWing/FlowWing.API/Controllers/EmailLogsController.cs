@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.Extensions.Options;
 using NuGet.Protocol.Plugins;
 using System.Net.Mail;
+using MimeKit;
 
 namespace FlowWing.API.Controllers
 {
@@ -25,7 +26,7 @@ namespace FlowWing.API.Controllers
         private readonly EmailSenderService _emailSenderService;
         private readonly IAttachmentService _attachmentService;
 
-        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, EmailSenderService emailSenderService,IAttachmentService attachmentService)
+        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, EmailSenderService emailSenderService, IAttachmentService attachmentService)
         {
             _emailLogService = emailLogService;
             _userService = userService;
@@ -33,7 +34,7 @@ namespace FlowWing.API.Controllers
             _emailSenderService = emailSenderService;
             _attachmentService = attachmentService;
         }
-        
+
         ///<summary>
         ///  Get emails which is comes to the user
         /// </summary>
@@ -46,6 +47,7 @@ namespace FlowWing.API.Controllers
 
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
+                bool Sender;
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 //find attachments by user's email
@@ -53,20 +55,34 @@ namespace FlowWing.API.Controllers
                 var resultEmails = new List<object>();
                 foreach (var email in userEmails)
                 {
-                    email.User= user;
+                    email.User = user;
                     IEnumerable<Entities.Attachment?> attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(email.Id);
                     if (attachments != null)
                     {
                         foreach (var attachment in attachments)
                         {
                             attachment.EmailLog = email;
-                        }   
+                        }
                     }
-                    
-                    resultEmails.Add(new { EmailLog = email, Attachments = attachments });
+
+                    if (email.SenderEmail == UserEmail)
+                    {
+                        Sender = true;
+                    }
+                    else if (email.RecipientsEmail.Contains(UserEmail))
+                    {
+                        Sender = false;
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+
+
+                    resultEmails.Add(new { EmailLog = email, Sender = Sender, Attachments = attachments });
                 }
-                
-                var result = new { User = user, UserEmails = resultEmails, Username = UserEmail};
+
+                var result = new { User = user, UserEmails = resultEmails, Username = UserEmail };
 
                 return Ok(result);
             }
@@ -98,18 +114,18 @@ namespace FlowWing.API.Controllers
             EmailLog? emailLog;
             EmailLog? answer;
             List<answerEmail> answerEmails = new List<answerEmail>();
-            
+
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
                 emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
-                
+
                 if (emailLog == null)
                 {
                     return NotFound();
                 }
-                
+
                 if (emailLog.ForwardedFrom != null)
                 {
                     forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(emailLog.ForwardedFrom);
@@ -179,7 +195,7 @@ namespace FlowWing.API.Controllers
                         emailLog = answer;
                     }
                 }
-                
+
                 return Ok(firstAnswerEmail);
             }
 
@@ -198,6 +214,7 @@ namespace FlowWing.API.Controllers
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
+                bool Sender;
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 EmailLog? forwardedEmailLog;
@@ -205,7 +222,7 @@ namespace FlowWing.API.Controllers
                 var resultEmails = new List<object>();
                 foreach (var email in userEmails)
                 {
-                    email.User= user;
+                    email.User = user;
                     if (email.ForwardedFrom != null)
                     {
                         forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(email.ForwardedFrom);
@@ -215,15 +232,29 @@ namespace FlowWing.API.Controllers
                         forwardedEmailLog = null;
                     }
 
+
+                    if (email.SenderEmail == UserEmail)
+                    {
+                        Sender = true;
+                    }
+                    else if (email.RecipientsEmail.Contains(UserEmail))
+                    {
+                        Sender = false;
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+
                     IEnumerable<Entities.Attachment?> attachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(email.Id);
                     if (attachments != null)
                     {
                         foreach (var attachment in attachments)
                         {
                             attachment.EmailLog = email;
-                        }   
+                        }
                     }
-                    resultEmails.Add(new { EmailLog = email, ForwardedEmailLog = forwardedEmailLog, Attachments = attachments });
+                    resultEmails.Add(new { EmailLog = email, Sender = Sender, ForwardedEmailLog = forwardedEmailLog, Attachments = attachments });
                 }
                 var result = new { User = user, UserEmails = resultEmails, Username = UserEmail };
 
@@ -262,7 +293,7 @@ namespace FlowWing.API.Controllers
                 {
                     return NotFound();
                 }
-                
+
                 var emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
                 emailLog.User = user;
 
@@ -326,20 +357,20 @@ namespace FlowWing.API.Controllers
                     IsScheduled = false,
                     User = user
                 };
-                
+
                 if (emailLogModel.RepliedEmailId != null)
                 {
                     int RepliedEmailId = (int)emailLogModel.RepliedEmailId;
                     EmailLog RepliedEmail = await _emailLogService.GetEmailLogByIdAsync(RepliedEmailId);
-                    
-                    if(RepliedEmail == null)
-                    { 
+
+                    if (RepliedEmail == null)
+                    {
                         //RepliedEmailId'si verilen email log bulunamadıysa kullaniciya bu durumu bildiriyoruz.
                         return NotFound("Replied Email Not Found");
                     }
-                    
+
                     createdEmailLog = await _emailLogService.CreateEmailLogAsync(createdEmailLog);
-                    
+
                     if (RepliedEmail.Answer == null)
                     {
                         RepliedEmail.Answer = createdEmailLog.Id;
@@ -354,23 +385,23 @@ namespace FlowWing.API.Controllers
                 {
                     createdEmailLog = await _emailLogService.CreateEmailLogAsync(createdEmailLog);
                 }
-                
+
                 foreach (var formFile in formFiles)
                 {
                     using (var stream = new MemoryStream())
                     {
-                            await formFile.CopyToAsync(stream);
-                            byte[] bytes = stream.ToArray();
+                        await formFile.CopyToAsync(stream);
+                        byte[] bytes = stream.ToArray();
 
-                            var attachment = new Entities.Attachment
-                            {
-                                EmailLogId = createdEmailLog.Id,
-                                FileName = formFile.FileName,
-                                FileSize = formFile.Length,
-                                ContentType = formFile.ContentType,
-                                Data = bytes,
-                            };
-                        
+                        var attachment = new Entities.Attachment
+                        {
+                            EmailLogId = createdEmailLog.Id,
+                            FileName = formFile.FileName,
+                            FileSize = formFile.Length,
+                            ContentType = formFile.ContentType,
+                            Data = bytes,
+                        };
+
                         await _attachmentService.CreateAttachmentAsync(attachment);
                         attachmentIds += attachment.Id + ",";
                     }
@@ -382,7 +413,7 @@ namespace FlowWing.API.Controllers
                     createdEmailLog.AttachmentIds = attachmentIds;
                     _emailLogService.UpdateEmailLog(createdEmailLog);
                 }
-                
+
                 _emailSenderService.SendEmail(emailLogModel.RecipientsEmail, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog);
 
 
