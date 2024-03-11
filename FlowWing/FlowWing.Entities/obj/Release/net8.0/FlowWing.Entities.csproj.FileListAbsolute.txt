@@ -1,0 +1,12 @@
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\bin\Release\net8.0\FlowWing.Entities.deps.json
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\bin\Release\net8.0\FlowWing.Entities.dll
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\bin\Release\net8.0\FlowWing.Entities.pdb
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\FlowWing.Entities.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\FlowWing.Entities.AssemblyInfoInputs.cache
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\FlowWing.Entities.AssemblyInfo.cs
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\FlowWing.Entities.csproj.CoreCompileInputs.cache
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\FlowWing.Entities.sourcelink.json
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\FlowWing.Entities.dll
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\refint\FlowWing.Entities.dll
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\FlowWing.Entities.pdb
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Entities\obj\Release\net8.0\ref\FlowWing.Entities.dll

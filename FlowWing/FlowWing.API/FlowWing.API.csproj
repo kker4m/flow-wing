@@ -13,23 +13,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.7" />
-    <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.0" />
-    <PackageReference Include="Hangfire.PostgreSql" Version="1.20.5" />
-    <PackageReference Include="Hangfire.PostgreSql.Npgsql5" Version="1.19.11" />
-    <PackageReference Include="MailKit" Version="4.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
+    <PackageReference Include="Hangfire" Version="1.8.11" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.20.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="NCrontab" Version="3.3.3" />
-    <PackageReference Include="Npgsql" Version="8.0.1" />
+    <PackageReference Include="Npgsql" Version="8.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="System.Net.Mail" Version="1.0.0-rtm-00002" />
   </ItemGroup>
 
   <ItemGroup>

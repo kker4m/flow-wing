@@ -25,7 +25,13 @@ namespace FlowWing.DataAccess.Concrete
             await _dbContext.SaveChangesAsync();
             return emailLog;
         }
+        public EmailLog CreateEmailLog(EmailLog emailLog)
+        {
+            _dbContext.EmailLogs.Add(emailLog);
+            _dbContext.SaveChanges();
+            return emailLog;
 
+        }
         public async Task<EmailLog> DeleteEmailLogAsync(EmailLog emailLog)
         {
             _dbContext.EmailLogs.Remove(emailLog);

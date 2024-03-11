@@ -24,9 +24,9 @@
              </summary>
              <returns></returns>
         </member>
-        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetEmailAndAnswersByEmailLogId(System.Int32)">
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetEmailInformatinByEmailLogId(System.Int32)">
             <summary>
-              Get email by id and the answers of the email
+              Get email by id and the answers or forwarded emails of the email
              </summary>
              <returns></returns>
         </member>
@@ -53,7 +53,14 @@
             <summary>
             Create an Email Log
             </summary>
-            <param name="emailLog"></param>
+            <param name="emailLogModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.CreateForwardedEmailLog(FlowWing.API.Models.ForwardedEmailLogModel)">
+            <summary>
+            Create an Forwarded Email Log
+            </summary>
+            <param name="forwardedEmailLogModel"></param>
             <returns></returns>
         </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.UpdateEmailLog(FlowWing.API.Models.EmailLogModel,System.Int32)">

@@ -8,7 +8,6 @@ using FlowWing.DataAccess;
 using FlowWing.DataAccess.Abstract;
 using FlowWing.DataAccess.Concrete;
 using Hangfire;
-using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -18,7 +17,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
 
 namespace FlowWing.API
 {
@@ -36,7 +34,7 @@ namespace FlowWing.API
         {
             services.AddHangfire(config =>
                 config.UsePostgreSqlStorage(c =>c.UseNpgsqlConnection(
-                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;\r\n")));
+                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=123;\r\n")));
             
             services.AddHangfireServer();
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

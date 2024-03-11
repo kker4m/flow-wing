@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FlowWing.API</name>
+    </assembly>
+    <members>
+        <member name="M:FlowWing.API.Controllers.AuthController.SignUp(FlowWing.API.Models.SignUpViewModel)">
+            <summary>
+            Kullanıcı kaydı işlemleri burada gerçekleştirilir
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.AuthController.Login(FlowWing.API.Models.LoginViewModel)">
+            <summary>
+            Kullanıcı giriş işlemleri burada gerçekleştirilir
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserSentEmails">
+            <summary>
+              Get emails which is comes to the user
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetEmailInformatinByEmailLogId(System.Int32)">
+            <summary>
+              Get email by id and the answers or forwarded emails of the email
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserReceivedEmails">
+            <summary>
+             Get Emails which is user sent
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetAllEmailLogs">
+            <summary>
+            Get All Email Logs
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetEmailLogById(System.Int32)">
+            <summary>
+            Get Email Log By Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.CreateEmailLog(FlowWing.API.Models.EmailLogModel)">
+            <summary>
+            Create an Email Log
+            </summary>
+            <param name="emailLogModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.CreateForwardedEmailLog(FlowWing.API.Models.ForwardedEmailLogModel)">
+            <summary>
+            Create an Forwarded Email Log
+            </summary>
+            <param name="forwardedEmailLogModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.UpdateEmailLog(FlowWing.API.Models.EmailLogModel,System.Int32)">
+            <summary>
+            Update an Email Log
+            </summary>
+            <param name="emailLogModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.DeleteEmailLog(System.Int32)">
+            <summary>
+            Delete an Email Log
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.GetAllScheduledEmails">
+            <summary>
+            Get All Scheduled Emails
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.GetScheduledEmailById(System.Int32)">
+            <summary>
+            Get Scheduled Email By Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.CreateScheduledEmail(FlowWing.API.Models.ScheduledEmailLogModel)">
+            <summary>
+            Create an Scheduled Email
+            </summary>
+            <param name="scheduledEmail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.CreateScheduledRepeatingEmail(FlowWing.API.Models.ScheduledRepeatingEmailModel)">
+            <summary>
+            Create an Repeating scheduled email
+            </summary>
+            <param name="repeatingEmail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledEmail(FlowWing.API.Models.ScheduledEmailLogModel,System.Int32)">
+            <summary>
+            Update an Scheduled Email
+            </summary>
+            <param name="scheduledEmail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledRepeatingEmail(FlowWing.API.Models.ScheduledRepeatingEmailModel,System.Int32)">
+            <summary>
+            Update an Scheduled Repeating Email
+            </summary>
+            <param name="scheduledRepeatingEmail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.DeleteScheduledEmail(System.Int32)">
+            <summary>
+            Delete an Scheduled Email
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.DeleteScheduledRepeatingEmail(System.Int32)">
+            <summary>
+            Delete an Scheduled Repeating Email
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.GetAllUsers">
+            <summary>
+            Get All Users
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.GetUserById(System.Int32)">
+            <summary>
+            Get User By Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.GetUserLogs">
+            <summary>
+            Authorize olmus user'in user loglarini getiren method
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.CreateUser(FlowWing.Entities.User)">
+            <summary>
+            Create an User
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.UpdateUser(FlowWing.Entities.User)">
+            <summary>
+            Update an User
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.UsersController.DeleteUser(System.Int32)">
+            <summary>
+            Delete an User
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

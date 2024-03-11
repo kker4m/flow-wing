@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FlowWing.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b686c1f17eea651e7d8eb3f83270290e87f8bff")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20c1215c3d264fd4081b5846786316d5a6868f41")]
 [assembly: System.Reflection.AssemblyProductAttribute("FlowWing.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FlowWing.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

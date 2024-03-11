@@ -31,6 +31,11 @@ namespace FlowWing.Business.Concrete
                 return emailLog;
             }
         }
+        public EmailLog CreateEmailLog(EmailLog emailLog)
+        {
+            _emailLogRepository.CreateEmailLog(emailLog);
+            return emailLog;
+        }
 
         public async Task<EmailLog> DeleteEmailLogAsync(int id)
         {

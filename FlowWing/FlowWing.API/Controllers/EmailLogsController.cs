@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.Extensions.Options;
 using NuGet.Protocol.Plugins;
-using System.Net.Mail;
-using MimeKit;
 
 namespace FlowWing.API.Controllers
 {
@@ -23,16 +21,16 @@ namespace FlowWing.API.Controllers
         private IEmailLogService _emailLogService;
         private IUserService _userService;
         private readonly AppSettings _appSettings;
-        private readonly EmailSenderService _emailSenderService;
         private readonly IAttachmentService _attachmentService;
+        private readonly EmailSenderService _emailSenderService;
 
-        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, EmailSenderService emailSenderService, IAttachmentService attachmentService)
+        public EmailLogsController(IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, IAttachmentService attachmentService, EmailSenderService emailSenderService)
         {
             _emailLogService = emailLogService;
             _userService = userService;
             _appSettings = appSettings.Value;
-            _emailSenderService = emailSenderService;
             _attachmentService = attachmentService;
+            _emailSenderService = emailSenderService;
         }
 
         ///<summary>
@@ -113,15 +111,13 @@ namespace FlowWing.API.Controllers
             EmailLog? forwardedEmailLog;
             EmailLog? emailLog;
             EmailLog? answer;
-            List<answerEmail> answerEmails = new List<answerEmail>();
-
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
             {
                 emailLog = await _emailLogService.GetEmailLogByIdAsync(id);
 
-                if (emailLog == null)
+                if (emailLog == null || !emailLog.Status)
                 {
                     return NotFound();
                 }
@@ -157,6 +153,11 @@ namespace FlowWing.API.Controllers
                     answer = await _emailLogService.GetEmailLogByIdAsync(emailLog.Answer);
                     if (answer != null)
                     {
+                        if (answer.Status == false)
+                        {
+                            break;
+                        }
+
                         if (answer.ForwardedFrom != null)
                         {
                             forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(answer.ForwardedFrom);
@@ -344,6 +345,14 @@ namespace FlowWing.API.Controllers
                 var formFiles = HttpContext.Request.Form.Files;
                 string attachmentIds = "";
 
+                foreach (string recipient in emailLogModel.RecipientsEmail.Split(','))
+                {
+                    if (!recipient.Contains("@arcelik.com"))
+                    {
+                        return BadRequest("Yalnızca arcelik maillerine mail gönderilebilmektedir");
+                    }
+                }
+
                 createdEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
@@ -363,7 +372,7 @@ namespace FlowWing.API.Controllers
                     int RepliedEmailId = (int)emailLogModel.RepliedEmailId;
                     EmailLog RepliedEmail = await _emailLogService.GetEmailLogByIdAsync(RepliedEmailId);
 
-                    if (RepliedEmail == null)
+                    if (RepliedEmail == null) 
                     {
                         //RepliedEmailId'si verilen email log bulunamadıysa kullaniciya bu durumu bildiriyoruz.
                         return NotFound("Replied Email Not Found");
@@ -414,7 +423,7 @@ namespace FlowWing.API.Controllers
                     _emailLogService.UpdateEmailLog(createdEmailLog);
                 }
 
-                _emailSenderService.SendEmail(emailLogModel.RecipientsEmail, emailLogModel.EmailSubject, emailLogModel.EmailBody, createdEmailLog);
+                await _emailSenderService.UpdateStatus(createdEmailLog);
 
 
                 return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);
@@ -440,6 +449,14 @@ namespace FlowWing.API.Controllers
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var formFiles = HttpContext.Request.Form.Files;
                 string attachmentIds = "";
+
+                foreach (string recipient in forwardedEmailLogModel.RecipientsEmail.Split(','))
+                {
+                    if (!recipient.Contains("@arcelik.com"))
+                    {
+                        return BadRequest("Yalnızca arcelik maillerine mail gönderilebilmektedir");
+                    }
+                }
 
                 forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(forwardedEmailLogModel.ForwardedEmailId);
                 if (forwardedEmailLog == null)
@@ -490,7 +507,7 @@ namespace FlowWing.API.Controllers
                     createdEmailLog.AttachmentIds = attachmentIds;
                     _emailLogService.UpdateEmailLog(createdEmailLog);
                 }
-                _emailSenderService.SendEmail(createdEmailLog.RecipientsEmail, createdEmailLog.EmailSubject, createdEmailLog.SentEmailBody, createdEmailLog);
+                //_emailSenderService.SendEmail(createdEmailLog.RecipientsEmail, createdEmailLog.EmailSubject, createdEmailLog.SentEmailBody, createdEmailLog);
 
 
                 return CreatedAtAction(nameof(GetEmailLogById), new { id = createdEmailLog.Id }, createdEmailLog);

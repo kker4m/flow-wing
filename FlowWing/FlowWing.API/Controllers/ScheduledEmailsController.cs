@@ -9,7 +9,6 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Asn1.X509;
 
 namespace FlowWing.API.Controllers
 {
@@ -81,7 +80,15 @@ namespace FlowWing.API.Controllers
                 (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var formFiles = HttpContext.Request.Form.Files;
-                
+
+                foreach (string recipient in scheduledEmail.RecipientsEmail.Split(','))
+                {
+                    if (!recipient.Contains("@arcelik.com"))
+                    {
+                        return BadRequest("Yalnızca arcelik maillerine mail gönderilebilmektedir");
+                    }
+                }
+
                 newEmailLog = new EmailLog
                 {
                     UserId = int.Parse(UserId),
@@ -161,7 +168,13 @@ namespace FlowWing.API.Controllers
                 EmailLog createdEmailLog;
                 ScheduledEmail createdScheduledEmail;
                 String attachmentIds = "";
-                
+                foreach (string recipient in scheduledRepeatingEmailModel.RecipientsEmail.Split(','))
+                {
+                    if (!recipient.Contains("@arcelik.com"))
+                    {
+                        return BadRequest("Yalnızca arcelik maillerine mail gönderilebilmektedir");
+                    }
+                }
                 User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
                 var formFiles = HttpContext.Request.Form.Files;
                 newEmailLog = new EmailLog
@@ -210,15 +223,13 @@ namespace FlowWing.API.Controllers
                         attachmentIds += attachment.Id + ",";
                     }
                 }
-                
+                createdEmailLog.repeatingLogId = createdScheduledEmail.Id;
                 if (attachmentIds.Length > 0)
                 {
                     attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
                     createdEmailLog.AttachmentIds = attachmentIds;
-                    _emailLogService.UpdateEmailLog(createdEmailLog);
                 }
-
-                // Hangfire'da işi planla
+                
                 _scheduledMailHelper.ScheduleRepeatingEmail(createdEmailLog, scheduledRepeatingEmailModel);
                 
                 return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);

@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/home/kerem/RiderProjects/flow-wing/FlowWing/FlowWing.Entities/FlowWing.Entities.csproj": {}
+    "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {}
   },
   "projects": {
-    "/home/kerem/RiderProjects/flow-wing/FlowWing/FlowWing.Entities/FlowWing.Entities.csproj": {
+    "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/kerem/RiderProjects/flow-wing/FlowWing/FlowWing.Entities/FlowWing.Entities.csproj",
+        "projectUniqueName": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj",
         "projectName": "FlowWing.Entities",
-        "projectPath": "/home/kerem/RiderProjects/flow-wing/FlowWing/FlowWing.Entities/FlowWing.Entities.csproj",
-        "packagesPath": "/home/kerem/.nuget/packages/",
-        "outputPath": "/home/kerem/RiderProjects/flow-wing/FlowWing/FlowWing.Entities/obj/",
+        "projectPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj",
+        "packagesPath": "C:\\Users\\linux\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/kerem/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\linux\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -32,6 +34,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -48,18 +55,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.1, 8.0.1]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

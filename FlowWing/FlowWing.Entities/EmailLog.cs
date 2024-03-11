@@ -15,6 +15,7 @@ namespace FlowWing.Entities
         public int Id { get; set; }
         [Required]
         public int UserId { get; set; }
+        public int? repeatingLogId { get; set; }
         [Required]
         public DateTime CreationDate { get; set; }
         
@@ -40,6 +41,5 @@ namespace FlowWing.Entities
 
         [ForeignKey("UserId")] 
         public virtual User User { get; set; }
-
     }
 }

@@ -151,7 +151,7 @@
   },
   {
     "ContainingType": "FlowWing.API.Controllers.EmailLogsController",
-    "Method": "GetEmailAndAnswersByEmailLogId",
+    "Method": "GetEmailInformatinByEmailLogId",
     "RelativePath": "api/EmailLogs/GetEmailAndAnswersByEmailLogId/{id}",
     "HttpMethod": "GET",
     "IsController": true,

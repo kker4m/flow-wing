@@ -10,6 +10,7 @@ namespace FlowWing.DataAccess.Abstract
     public interface IEmailLogRepository
     {
         Task<EmailLog> CreateEmailLogAsync(EmailLog emailLog);
+        EmailLog CreateEmailLog(EmailLog emailLog);
         Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog);
         EmailLog UpdateEmailLog(EmailLog emailLog);
         Task<EmailLog> DeleteEmailLogAsync(EmailLog emailLog);
