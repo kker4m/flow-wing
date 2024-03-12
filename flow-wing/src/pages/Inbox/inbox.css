@@ -26,12 +26,14 @@
 
 .mail-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  margin-bottom: 25px;
+  margin-top: 20px;
 }
 
 .mail-actions .icons {
   margin-right: 20px;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .mail-sender {
@@ -89,7 +91,6 @@
 }
 .forward-modal-form span {
   display: flex;
-  flex-direction: column;
   font-weight: bold;
 }
 .forward-modal-form {
@@ -98,12 +99,21 @@
 }
 .reply-modal-form span {
   font-weight: bold;
+  font-size: 16px;
 }
 .reply-modal-form {
   display: flex;
   flex-direction: column;
 }
-.forwarded-from-section span{
+/* .forwarded-from-section span{
   font-weight: bold;
-  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+} */
+.user-icon-inbox {
+  margin: 40px;
+}
+.user-icon-inbox span {
+  font-size: 30px;
+  padding: 6px;
 }

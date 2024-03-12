@@ -9,6 +9,7 @@ import EmptyPage from "../../components/EmptyPage"
 
 const Sent = () => {
   const [sentMails, setSentMails] = useState([])
+  const [mailCount, setMailCount] = useState(0)
   let navigate = useNavigate()
   let { id } = useParams()
 
@@ -20,7 +21,7 @@ const Sent = () => {
         (a, b) =>
           new Date(b.emailLog.sentDateTime) - new Date(a.emailLog.sentDateTime)
       )
-
+      setMailCount(response.data.userEmails.length)
       setSentMails(sortedMails)
     })
   }, [])
@@ -43,7 +44,7 @@ const Sent = () => {
 
   return (
     <div className="sent-mail-page-content">
-      <h2>Gönderilmiş Mailler</h2>
+      <h2>{mailCount} mesaj</h2>
       <div className="sent">
         {sentMails.map((item, index) => {
           // to format date
@@ -69,8 +70,8 @@ const Sent = () => {
 
           return (
             <>
-              <Link to={`/inbox/${item.emailLog.id}`} key={index}>
-                <div className="sent-mail-content">
+              <Link to={`/sentbox/${item.emailLog.id}`}>
+                <div className="sent-mail-content" key={index}>
                   <hr
                     style={{
                       border: `1px solid ${colors[index % colors.length]}`

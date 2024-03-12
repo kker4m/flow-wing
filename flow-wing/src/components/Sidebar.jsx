@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react"
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
-import { Button, Menu } from "antd"
+import { Avatar, Button, Divider, Dropdown, Menu } from "antd"
 import { Icon } from "@iconify/react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   COMPOSE_NEW_ROUTE,
   HOME_ROUTE,
   SENT_ROUTE,
   TRASH_ROUTE
 } from "../routes"
+import { useDispatch, useSelector } from "react-redux"
+import { logoutUser } from "../Redux/authSlice"
+import "./sidebar.css"
+
 function getItem(label, key, icon, children, type) {
   return {
     key,
@@ -42,6 +46,19 @@ const items = [
   )
 ]
 const Sidebar = () => {
+  const [open, setOpen] = useState(false)
+
+  // Use the useDispatch hook to get the dispatch function
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  // Logout function
+  const handleLogout = () => {
+    dispatch(logoutUser())
+    navigate("/login")
+  }
+  // Use the useSelector hook to get the user from the Redux store
+  const user = useSelector((state) => state.user.user)
+
   const location = useLocation()
 
   useEffect(() => {
@@ -71,6 +88,28 @@ const Sidebar = () => {
         width: 256
       }}
     >
+      <div className="user-section-sidebar">
+        <div className="user-icon-display" onClick={() => setOpen(!open)}>
+          {" "}
+          <Avatar
+            size={64}
+            style={{ backgroundColor: "#fde3cf", color: "#f56a00" }}
+          >
+            <div className="user-name-display">
+              {user ? <>{user.username.charAt(0)}</> : <div>Kullanıcı yok</div>}
+            </div>
+          </Avatar>
+          {open === true ? (
+            <div>
+              <button className="logout-btn-sidebar" onClick={handleLogout}>
+                Çıkış Yap
+              </button>
+            </div>
+          ) : null}
+        </div>
+
+        <Divider />
+      </div>
       <Menu
         defaultSelectedKeys={["1"]}
         defaultOpenKeys={["sub1"]}
@@ -80,6 +119,17 @@ const Sidebar = () => {
         onSelect={({ key }) => setStoredSelectedKey(key)}
         style={{ fontSize: "16px", width: 256 }}
       />
+
+      <div className="logo-section">
+        <Link to="/home">
+          {" "}
+          <img
+            className="logo-img"
+            src="https://res.cloudinary.com/dirtkkfqn/image/upload/v1703573682/arcelik_logo_lztrqj.png"
+            alt="Logo"
+          />
+        </Link>
+      </div>
     </div>
   )
 }

@@ -10,6 +10,8 @@ import { excerpt, getText } from "../../helpers"
 
 const Home = () => {
   const [mails, setMails] = useState([])
+  const [mailCount, setMailCount] = useState(0)
+  const [sender, setSender] = useState([])
   let navigate = useNavigate()
 
   // Get all e-mails
@@ -23,11 +25,17 @@ const Home = () => {
         )
 
         setMails(sortedMails)
+        console.log("home response", response.data.userEmails)
+        setMailCount(response.data.userEmails.length)
+
+        setSender(response.data.userEmails.map(mail=>setSender(mail.sender)))
+        console.log("home senders",sender)
       })
     } catch (error) {
       console.error("Error fetching mails:", error)
     }
-  }, [])
+  }, [mailCount])
+
 
   // DELETE AN EMAIL
   const handleDelete = (id) => {
@@ -49,9 +57,9 @@ const Home = () => {
   if (mails.length === 0) {
     return <EmptyPage />
   }
-  return (
+  return sender.map(sender=>sender===false ? (
     <div className="sent-mail-page-content">
-      <h2>Gelen Mailler</h2>
+      <h2>{mailCount} mesaj</h2>
       <div className="inbox">
         {mails.map((item, index) => {
           // to format date
@@ -134,7 +142,7 @@ const Home = () => {
         })}
       </div>
     </div>
-  )
+  ): null)
 }
 
 export default Home

@@ -17,10 +17,12 @@ import {
   INBOX_ROUTE,
   LOGIN_ROUTE,
   REGISTER_ROUTE,
+  SENTBOX_ROUTE,
   SENT_ROUTE,
   TRASH_ROUTE
 } from "./routes"
 import ErrorPage from "./pages/404/ErrorPage"
+import Sentbox from "./pages/Sentbox/Sentbox"
 
 function App() {
   return (
@@ -76,6 +78,17 @@ function App() {
             {" "}
             <_Layout>
               <Inbox />{" "}
+            </_Layout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={SENTBOX_ROUTE}
+        element={
+          <RequireAuth>
+            {" "}
+            <_Layout>
+              <Sentbox />{" "}
             </_Layout>
           </RequireAuth>
         }

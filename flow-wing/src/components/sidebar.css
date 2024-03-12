@@ -1,0 +1,56 @@
+.user-section-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 40px;
+  margin-bottom: 0px;
+  cursor: pointer;
+}
+.ant-dropdown {
+  border: none;
+}
+
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled) {
+  color: black;
+}
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+  color: black;
+}
+.logout-btn {
+  background-color: inherit;
+  margin: 40px;
+  width: 100px;
+  height: 35px;
+  font-size: 16px;
+  border-radius: 30px;
+}
+.logout-btn:hover {
+  cursor: pointer;
+}
+.user-icon {
+  border: 1px solid;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Make border-radius 50% for a perfect circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px;
+}
+.logo-section {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+}
+.logout-btn-sidebar {
+  background-color: inherit;
+  border: none;
+  height: 30px;
+  width: 80px;
+  margin-right: 5px;
+  margin-top: 10px;
+  border-radius: 20%;
+}
+.logout-btn-sidebar:hover {
+  background-color: #eeeeee;
+}
