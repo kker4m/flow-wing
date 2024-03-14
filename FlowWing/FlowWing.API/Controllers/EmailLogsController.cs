@@ -195,6 +195,11 @@ namespace FlowWing.API.Controllers
 
                         emailLog = answer;
                     }
+                    else if(answer == null)
+                    {
+                        return BadRequest("Email's answer not found");
+                    }
+                
                 }
 
                 return Ok(firstAnswerEmail);
