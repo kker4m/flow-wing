@@ -12,7 +12,7 @@ namespace FlowWing.DataAccess.Abstract
         Task<ScheduledEmail> CreateScheduledEmailAsync(ScheduledEmail scheduledEmail);
         Task<ScheduledEmail> UpdateScheduledEmailAsync(ScheduledEmail scheduledEmail);
         Task<ScheduledEmail> DeleteScheduledEmailAsync(ScheduledEmail scheduledEmail);
-
+        Task<ScheduledEmail> GetScheduledEmailByEmailLogId(int id);
         Task<IEnumerable<ScheduledEmail>> GetRepeatingScheduledMailsAsync();
         Task<ScheduledEmail> GetScheduledEmailByIdAsync(int id);
         Task<IEnumerable<ScheduledEmail>> GetAllScheduledEmailsAsync();

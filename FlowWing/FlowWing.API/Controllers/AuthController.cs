@@ -40,6 +40,7 @@ namespace FlowWing.API.Controllers
                     Email = model.Email,
                     Password = model.Password,
                     Username = model.Username,
+                    IsApplicationUser = false,
                     LastLoginDate = DateTime.Now,
                     CreationDate = DateTime.Now
                 };
@@ -70,7 +71,7 @@ namespace FlowWing.API.Controllers
             User user = await _userService.GetUserByEmailAsync(model.Email);
             if (user == null)
             {
-                return BadRequest("Yanlis email veya sifre");
+                return NotFound();
             }
             String password = PasswordHasher.HashPassword(model.Password);
 

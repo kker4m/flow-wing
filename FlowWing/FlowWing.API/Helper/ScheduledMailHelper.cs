@@ -11,52 +11,52 @@ namespace FlowWing.API.Helpers;
 
 public class ScheduledMailHelper
 {
-    private readonly IBackgroundJobClient _backgroundJobClient;
-    private readonly AppSettings _appSettings;
     private readonly EmailSenderService _emailSenderService;
+    private readonly IScheduledEmailService _scheduledEmailService;
 
-    public ScheduledMailHelper(IBackgroundJobClient backgroundJobClient, IOptions<AppSettings> appSettings, EmailSenderService emailSenderService)
+    public ScheduledMailHelper(EmailSenderService emailSenderService, IScheduledEmailService scheduledEmailService)
     {
         _emailSenderService = emailSenderService;
-        _backgroundJobClient = backgroundJobClient;
-        _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
+        _scheduledEmailService = scheduledEmailService;
     }
     
     public void ScheduleRepeatingEmail(EmailLog emailLog, ScheduledRepeatingEmailModel scheduledRepeatingEmailModel)
     {
+        _emailSenderService.UpdateStatus(emailLog);
         //Hangfire'da işi planla, NextSendingDate'de ilk maili gonder
-        BackgroundJob.Schedule(
-            () => SendRepeatingEmail(emailLog, scheduledRepeatingEmailModel),
+        BackgroundJob.Schedule($"ScheduledEmailJob_{emailLog.Id}",
+            () => SendRepeatingEmail(emailLog),
             scheduledRepeatingEmailModel.NextSendingDate
         );
     }
     public async Task ScheduleScheduledEmail(EmailLog createdEmailLog, ScheduledEmailLogModel scheduledEmail)
     {
         // Hangfire'da işi planla
-        BackgroundJob.Schedule(() => _emailSenderService.SendEmail(scheduledEmail.RecipientsEmail,scheduledEmail.EmailSubject,scheduledEmail.EmailBody,createdEmailLog,scheduledEmail.Attachments)
+        BackgroundJob.Schedule($"ScheduledEmailJob_{createdEmailLog.Id}",() => _emailSenderService.UpdateStatus(createdEmailLog)
             ,scheduledEmail.SentDateTime);
     }
-    public async Task SendRepeatingEmail(EmailLog emailLog, ScheduledRepeatingEmailModel scheduledRepeatingEmailModel)
+    public async Task SendRepeatingEmail(EmailLog emailLog)
     {
-        // E-postayı gönder
-        // RecipientsEmail'i virgulden ayir, her bir aliciya ayri ayri gonder
-        _emailSenderService.SendEmail(emailLog.RecipientsEmail, emailLog.EmailSubject, emailLog.SentEmailBody, emailLog,scheduledRepeatingEmailModel.Attachments);
+        ScheduledEmail scheduledEmail = await _scheduledEmailService.GetScheduledEmailByEmailLogId(emailLog.Id);
+        await _emailSenderService.CreateRepeatingEmailLog(emailLog,scheduledEmail.Id);
 
-        // Eğer EndDate'den önceyse, işlemi sona erdir
-        if (DateTime.UtcNow < scheduledRepeatingEmailModel.RepeatEndDate)
+        if (DateTime.UtcNow < scheduledEmail.RepeatEndDate)
         {
-            DateTime repeatInterval = AddUserInputToUtcNow(scheduledRepeatingEmailModel.RepeatInterval);
-            // Yeniden planla
+            _emailSenderService.UpdateStatus(emailLog);
+            scheduledEmail.LastSendingDate = DateTime.UtcNow;
+            await _scheduledEmailService.UpdateScheduledEmailAsync(scheduledEmail);
+            scheduledEmail.NextSendingDate = AddUserInputToUtcNow(scheduledEmail.RepeatInterval);
+            int minutes = ConvertUserInputToMinutes(scheduledEmail.RepeatInterval);
+
             RecurringJob.AddOrUpdate(
-                $"RepeatingEmailJob_{emailLog.Id}",
-                () => SendRepeatingEmail(emailLog, scheduledRepeatingEmailModel),
-                Cron.MinuteInterval(repeatInterval.Minute)
+                $"ScheduledEmailJob_{emailLog.Id}",
+                () => SendRepeatingEmail(emailLog),
+                Cron.MinuteInterval(minutes)
             );
         }
         else
         {
-            // Eğer EndDate geçmişse, planı sil
-            RecurringJob.RemoveIfExists($"RepeatingEmailJob_{emailLog.Id}");
+            RecurringJob.RemoveIfExists($"ScheduledEmailJob_{emailLog.Id}");
         }
     }
     
@@ -112,5 +112,39 @@ public class ScheduledMailHelper
 
         return userDateTime;
     }
+    static int ConvertUserInputToMinutes(string userInput)
+    {
+        // Kullanıcıdan alınan stringi ayırma işlemi
+        string[] parts = userInput.Split('-');
 
+        if (parts.Length != 4)
+        {
+            // Hatalı giriş durumu
+            throw new ArgumentException("Geçersiz tarih formatı. Doğru format: Month-Day-Hour-Minute");
+        }
+
+        // Kullanıcıdan alınan bilgileri parçalara ayırıp int'e çevirme
+        if (!int.TryParse(parts[0], out int month) ||
+            !int.TryParse(parts[1], out int day) ||
+            !int.TryParse(parts[2], out int hour) ||
+            !int.TryParse(parts[3], out int minute))
+        {
+            throw new ArgumentException("Geçersiz tarih formatı. Doğru format: Month-Day-Hour-Minute");
+        }
+
+        // Validate that month, day, hour, and minute are within appropriate ranges
+        if (month < 0 || day < 0 || hour < 0 || minute < 0)
+        {
+            throw new ArgumentException("Geçersiz tarih formatı. Doğru format: Month-Day-Hour-Minute");
+        }
+
+        // Kullanıcıdan alınan bilgileri dakika cinsinden toplama
+        int totalMinutes = 0;
+        totalMinutes += month * 30 * 24 * 60;  // Her ayı 30 gün olarak kabul ediyoruz
+        totalMinutes += day * 24 * 60;
+        totalMinutes += hour * 60;
+        totalMinutes += minute;
+
+        return totalMinutes;
+    }
 }

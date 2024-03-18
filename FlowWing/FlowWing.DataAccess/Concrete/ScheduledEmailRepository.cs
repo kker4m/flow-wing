@@ -47,6 +47,10 @@ namespace FlowWing.DataAccess.Concrete
         {
             return await _dbContext.ScheduledEmails.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
+        public async Task<ScheduledEmail> GetScheduledEmailByEmailLogId(int id)
+        {
+            return await _dbContext.ScheduledEmails.AsNoTracking().FirstOrDefaultAsync(x => x.EmailLogId == id);
+        }
 
         public async Task<ScheduledEmail> UpdateScheduledEmailAsync(ScheduledEmail scheduledEmail)
         {

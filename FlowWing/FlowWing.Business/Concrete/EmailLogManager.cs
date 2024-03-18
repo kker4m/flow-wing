@@ -31,6 +31,11 @@ namespace FlowWing.Business.Concrete
                 return emailLog;
             }
         }
+        public EmailLog CreateEmailLog(EmailLog emailLog)
+        {
+            _emailLogRepository.CreateEmailLog(emailLog);
+            return emailLog;
+        }
 
         public async Task<EmailLog> DeleteEmailLogAsync(int id)
         {
@@ -51,18 +56,22 @@ namespace FlowWing.Business.Concrete
             return await _emailLogRepository.GetAllEmailLogsAsync();
         }
 
-        public async Task<EmailLog> GetEmailLogByIdAsync(int id)
+        public async Task<EmailLog> GetEmailLogByIdAsync(int? id)
         { 
           return await _emailLogRepository.GetEmailLogByIdAsync(id);
         }
-        
+
+        public async Task<EmailLog> GetEmailLogByScheduledEmailIdAsync(int scheduledEmailId)
+        { 
+            return await _emailLogRepository.GetEmailLogByScheduledEmailIdAsync(scheduledEmailId);
+        }
         public async Task<IEnumerable<EmailLog>> GetEmailLogsByUserIdAsync(int userId)
         {
             return await _emailLogRepository.GetEmailLogsByUserIdAsync(userId);
         }
         
         public async Task<IEnumerable<EmailLog>> GetEmailLogsByRecipientsEmailAsync(string recipientEmail)
-        {
+        {   
             return await _emailLogRepository.GetEmailLogsByRecipientsEmailAsync(recipientEmail);
         }
         public async Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog)

@@ -2,82 +2,66 @@ using FlowWing.Business.Abstract;
 using Microsoft.Extensions.Options;
 
 namespace FlowWing.API.Helpers;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
 using System;
 using System.Threading.Tasks;
 using FlowWing.Entities;
+using FlowWing.API.Controllers;
+using FlowWing.DataAccess.Abstract;
+using FlowWing.API.Models;
+using NuGet.Common;
+using System.Net.Mail;
 
 public class EmailSenderService
 {
     private IEmailLogService _emailLogService;
-    private readonly AppSettings _appSettings;
-    private readonly string _smtpServer;
-    private readonly int _smtpPort;
-    private readonly string _senderEmail;
-    private readonly string _senderPassword;
+    private IUserService _userRepository;
 
-    public EmailSenderService(IOptions<AppSettings> appSettings, IEmailLogService emailLogService)
+    public EmailSenderService(IEmailLogService emailLogService, IUserService userRepository)
     {
         _emailLogService = emailLogService;
-        _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
-
-        _smtpServer = _appSettings.EmailConnectionServices._smtpServer;
-        _smtpPort = _appSettings.EmailConnectionServices._smtpPort;
-        _senderEmail = _appSettings.EmailConnectionServices._senderEmail;
-        _senderPassword = _appSettings.EmailConnectionServices._senderPassword;
+        _userRepository = userRepository;
     }
 
-    public async Task SendEmail(string recipientEmail, string subject, string body, EmailLog _emailLog, List<string> attachments)
+    public async Task UpdateStatus(EmailLog _emailLog)
     {
-        try
+        if (_emailLog.Status == false)
         {
-            var message = new MimeMessage();
-            message.From.Add(MailboxAddress.Parse(_senderEmail));
-            
-            foreach(var recipient in recipientEmail.Split(','))
-            {
-                message.To.Add(MailboxAddress.Parse(recipient));
-            }
-
-            message.Subject = subject;
-
-            var multipart = new Multipart("mixed");
-
-            multipart.Add(new TextPart("plain") { Text = body });
-
-            foreach (var attachmentPath in attachments)
-            {
-                var attachment = new MimePart
-                {
-                    Content = new MimeContent(File.OpenRead(attachmentPath), ContentEncoding.Default),
-                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-                    ContentTransferEncoding = ContentEncoding.Base64,
-                    FileName = Path.GetFileName(attachmentPath)
-                };
-
-                multipart.Add(attachment);
-            }
-
-            message.Body = multipart;
-
-            using var smtpClient = new SmtpClient();
-            await smtpClient.ConnectAsync(_smtpServer, _smtpPort, SecureSocketOptions.StartTls);
-            await smtpClient.AuthenticateAsync(_senderEmail, _senderPassword);
-            await smtpClient.SendAsync(message);
-            await smtpClient.DisconnectAsync(true);
-
-            if (_emailLog.Status == false)
-            {
-                _emailLog.Status = true;
-                await _emailLogService.UpdateEmailLogAsync(_emailLog);
-            }
+            _emailLog.Status = true;
+            await _emailLogService.UpdateEmailLogAsync(_emailLog);
         }
-        catch (Exception ex)
+    }
+
+    public async Task CreateRepeatingEmailLog(EmailLog emailLog,int scheduledEmailId)
+    {
+        EmailLog createdEmailLog;
+        string? attachmentIds = "";
+        User user = await _userRepository.GetUserByIdAsync(emailLog.UserId);
+        createdEmailLog = new EmailLog
         {
-            Console.WriteLine($"E-posta gönderme hatası: {ex.Message}");
-            // Hata yönetimi yapilabilir
+            UserId = user.Id,
+            CreationDate = DateTime.UtcNow,
+            SentDateTime = DateTime.UtcNow,
+            RecipientsEmail = emailLog.RecipientsEmail,
+            SenderEmail = emailLog.SenderEmail,
+            EmailSubject = emailLog.EmailSubject,
+            SentEmailBody = emailLog.SentEmailBody,
+            Status = true,
+            IsScheduled = true,
+            User = user,
+            repeatingLogId = scheduledEmailId
+        };
+
+        createdEmailLog = _emailLogService.CreateEmailLog(createdEmailLog);
+        attachmentIds = emailLog.AttachmentIds;
+
+        if (attachmentIds != null)
+        {
+            if (attachmentIds.Length > 0)
+            {
+                attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                createdEmailLog.AttachmentIds = attachmentIds;
+                _emailLogService.UpdateEmailLog(createdEmailLog);
+            }
         }
     }
 }

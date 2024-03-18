@@ -15,6 +15,7 @@ namespace FlowWing.Entities
         public int Id { get; set; }
         [Required]
         public int UserId { get; set; }
+        public int? repeatingLogId { get; set; }
         [Required]
         public DateTime CreationDate { get; set; }
         
@@ -27,13 +28,18 @@ namespace FlowWing.Entities
         public string EmailSubject { get; set; }
         [Required]
         public string SentEmailBody { get; set; }
+        
+        public string? AttachmentIds { get; set; }
+        
         [Required]
         public bool Status { get; set; }
         [Required]
         public bool IsScheduled { get; set; }
         
+        public int? Answer { get; set; }
+        public int? ForwardedFrom { get; set; }
+
         [ForeignKey("UserId")] 
         public virtual User User { get; set; }
-
     }
 }

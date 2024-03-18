@@ -24,6 +24,12 @@
              </summary>
              <returns></returns>
         </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.GetEmailInformatinByEmailLogId(System.Int32)">
+            <summary>
+              Get email by id and the answers or forwarded emails of the email
+             </summary>
+             <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserReceivedEmails">
             <summary>
              Get Emails which is user sent
@@ -47,7 +53,14 @@
             <summary>
             Create an Email Log
             </summary>
-            <param name="emailLog"></param>
+            <param name="emailLogModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.EmailLogsController.CreateForwardedEmailLog(FlowWing.API.Models.ForwardedEmailLogModel)">
+            <summary>
+            Create an Forwarded Email Log
+            </summary>
+            <param name="forwardedEmailLogModel"></param>
             <returns></returns>
         </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.UpdateEmailLog(FlowWing.API.Models.EmailLogModel,System.Int32)">
@@ -91,16 +104,30 @@
             <param name="repeatingEmail"></param>
             <returns></returns>
         </member>
-        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledEmail(FlowWing.Entities.ScheduledEmail)">
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledEmail(FlowWing.API.Models.ScheduledEmailLogModel,System.Int32)">
             <summary>
             Update an Scheduled Email
             </summary>
             <param name="scheduledEmail"></param>
             <returns></returns>
         </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.UpdateScheduledRepeatingEmail(FlowWing.API.Models.ScheduledRepeatingEmailModel,System.Int32)">
+            <summary>
+            Update an Scheduled Repeating Email
+            </summary>
+            <param name="scheduledRepeatingEmail"></param>
+            <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.DeleteScheduledEmail(System.Int32)">
             <summary>
             Delete an Scheduled Email
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.DeleteScheduledRepeatingEmail(System.Int32)">
+            <summary>
+            Delete an Scheduled Repeating Email
             </summary>
             <param name="id"></param>
             <returns></returns>

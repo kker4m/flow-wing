@@ -25,7 +25,13 @@ namespace FlowWing.DataAccess.Concrete
             await _dbContext.SaveChangesAsync();
             return emailLog;
         }
+        public EmailLog CreateEmailLog(EmailLog emailLog)
+        {
+            _dbContext.EmailLogs.Add(emailLog);
+            _dbContext.SaveChanges();
+            return emailLog;
 
+        }
         public async Task<EmailLog> DeleteEmailLogAsync(EmailLog emailLog)
         {
             _dbContext.EmailLogs.Remove(emailLog);
@@ -38,8 +44,12 @@ namespace FlowWing.DataAccess.Concrete
             return await _dbContext.EmailLogs.AsNoTracking().ToListAsync();
         }
         
-        public async Task<EmailLog> GetEmailLogByIdAsync(int id)
+        public async Task<EmailLog> GetEmailLogByIdAsync(int? id)
         {
+            if (id == null)
+            {
+                return null;
+            }
             return await _dbContext.EmailLogs.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
         public EmailLog GetEmailLogById(int id)
@@ -56,7 +66,12 @@ namespace FlowWing.DataAccess.Concrete
             //Return all the email logs that user have as a list
             return await _dbContext.EmailLogs.AsNoTracking().Where(x => x.UserId == userId).ToListAsync();
         }
-
+        
+        public async Task<EmailLog> GetEmailLogByScheduledEmailIdAsync(int scheduledEmailId)
+        {
+            return await _dbContext.ScheduledEmails.AsNoTracking().Where(x => x.Id == scheduledEmailId).Select(x => x.EmailLog).FirstOrDefaultAsync();
+        }
+        
         public async Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog)
         {
             _dbContext.Entry(emailLog).State = EntityState.Modified;
