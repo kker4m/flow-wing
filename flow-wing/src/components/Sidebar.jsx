@@ -120,7 +120,7 @@ const Sidebar = () => {
         style={{ fontSize: "16px", width: 256 }}
       />
 
-      <div className="logo-section">
+      {/* <div className="logo-section">
         <Link to="/home">
           {" "}
           <img
@@ -129,7 +129,7 @@ const Sidebar = () => {
             alt="Logo"
           />
         </Link>
-      </div>
+      </div> */}
     </div>
   )
 }

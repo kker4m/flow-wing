@@ -9,6 +9,7 @@ import alertify from "alertifyjs"
 import {
   deleteSentEmail,
   forwardEmail,
+  getEmailAndAnswersByEmailLogId,
   getEmailById,
   getForwardedMailById,
   getMailAnswersById,
@@ -21,7 +22,7 @@ import { HOME_ROUTE } from "../../routes/index"
 
 const Inbox = () => {
   const [mail, setMail] = useState(null)
-  const [attachment, setAttachment] = useState("")
+  const [attachments, setAttachments] = useState([])
   const [sender, setSender] = useState(true)
   const [user, setUser] = useState("")
   const [answer, setAnswer] = useState("")
@@ -40,17 +41,18 @@ const Inbox = () => {
 
   // GET USERS FOR MENTION
   useEffect(() => {
-    getUsers()
-      .then((res) => {
-        setUsers(res.data)
-      })
-      .catch((error) => {
-        console.error("Error fetching users:", error)
-      })
+    getUsers().then((res) => {
+      setUsers(res.data)
+    })
 
     return () => {}
   }, [])
 
+  // GET ANSWER INFOS
+
+  useEffect(() => {
+    return () => {}
+  }, [])
   const options = users.map((user) => ({
     value: user.email,
     label: user.email
@@ -110,27 +112,32 @@ const Inbox = () => {
   useEffect(() => {
     getEmailById(id).then((res) => {
       setMail(res.data.emailLog)
-      console.log("get mail by id", res.data)
-      if (res.data.attachments && res.data.attachments.length > 0) {
-        setAttachment(res.data.attachments[0])
-      }
-      console.log("attachment: ", attachment)
+      //console.log("get mail by id", res.data)
+
+      setAttachments(res.data.attachments)
+      console.log("attachment: ", res.data.attachments)
+      console.log("attachment2: ", attachments)
       setSender(res.data.sender)
-      console.log("mail sender", sender)
+      //console.log("mail sender", sender)
       setUser(res.data.emailLog.user.username)
-      console.log("user", res.data.emailLog.user.username)
+      //console.log("user", res.data.emailLog.user.username)
+      
     })
 
-    getMailAnswersById(id).then((response) => {
-      console.log("get answerın içindesin şu an")
-      console.log(" answer : ", response.data.answer)
+    getEmailAndAnswersByEmailLogId(id).then((response) => {
+      console.log("info endpoint :", response)
+      
+      console.log("forwarded mail ", response.data.forwardedEmailLog)
+      setForwardedFrom(response.data.forwardedEmailLog)
+    console.log(" answer : ", response.data.answer)
       setAnswer(response.data.answer)
+      console.log( "answer emaillog ", answer?.emailLog?.sentEmailBody)
       setForwardedMailId(response.data.emailLog.forwardedFrom)
+      console.log("forwarded mail id", forwardedMailId)
     })
-
+ 
     getForwardedMailById(forwardedMailId).then((res) => {
-      console.log("get forwardın içindesin şu an")
-      console.log("forwarded mail ", res.data.emailLog.forwardedFrom)
+      console.log("forwarded mail ", res.data.forwardedEmailLog)
       setForwardedFrom(res.data.emailLog)
       setForwardedMailId(res.data.emailLog.forwardedFrom)
     })
@@ -189,25 +196,29 @@ const Inbox = () => {
       console.log("forward mail fonksiyonunun içindesin")
       if (res.status === 201) {
         alertify.success("Mail iletildi")
-      }
+      } else alertify.error(res.message)
     })
 
     navigate()
   }
-  return sender === false ? (
+
+  return (
     <div className="inbox-page-content">
+      {/* MAIL ACTIONS  */}
+
       <div className="mail-actions">
         <Tooltip title="İlet" arrow onClick={showForwardModal}>
           <div className="icons">
             <button className="mail-action-btns">
               <Icon
                 icon="solar:multiple-forward-right-bold-duotone"
-                width="35"
-                height="35"
+                width="25"
+                height="25"
               />
             </button>
           </div>
         </Tooltip>
+
         {/* MODAL FOR FORWARD EMAIL */}
         <Modal
           open={forwardMOdalOpen}
@@ -266,10 +277,11 @@ const Inbox = () => {
             />
           </form>
         </Modal>
+
         <Tooltip title="Yanıtla" arrow onClick={showModal}>
           <div className="icons">
             <button className="mail-action-btns">
-              <Icon icon="ic:round-reply" width="40" height="40" />
+              <Icon icon="ic:round-reply" width="30" height="30" />
             </button>
           </div>{" "}
         </Tooltip>
@@ -325,14 +337,13 @@ const Inbox = () => {
         <Tooltip title="Sil" arrow>
           <div className="icons">
             <button className="mail-action-btns" onClick={handleDelete}>
-              <Icon icon="iconoir:trash-solid" width="35" height="35" />
+              <Icon icon="iconoir:trash-solid" width="25" height="25" />
             </button>
           </div>
         </Tooltip>
       </div>
-
       <Divider />
-
+      {/* MAIL SECTION */}
       <div className="mail-sender">
         <div className="user-icon-inbox">
           <Avatar
@@ -352,208 +363,233 @@ const Inbox = () => {
       </div>
 
       <div className="mail-title">
-        <h3>{mail.emailSubject}</h3>
+        <p>{mail.emailSubject}</p>
       </div>
       <p dangerouslySetInnerHTML={{ __html: getText(mail.sentEmailBody) }} />
-
+      {/* MAIL ATTACHMENT SECTION */}
       <div className="mail-attachments">
-        <Icon
-          icon="material-symbols-light:attachment"
-          color="#b31312"
-          width="30"
-        />
         {/* ATTACHMENT */}
-        <div>
-          {attachment ? (
+        <div className="inbox-mail-attachment-content">
+          {attachments?.map((attachments) => (
             <div className="inbox-mail-attachment">
               <div>
-                {attachment.contentType === "text/plain" && (
+                {" "}
+                <Icon icon="et:attachments" width="16" height="16" />
+                {attachments.contentType === "text/plain" && (
                   <div>
                     <a
-                      href={`data:text/plain;base64,${attachment.data}`}
-                      download={attachment.fileName}
+                      href={`data:text/plain;base64,${attachments.data}`}
+                      download={attachments.fileName}
                     >
-                      {attachment.fileName}
+                      {attachments.fileName}
                     </a>
                   </div>
                 )}
-
-                {attachment.contentType === "application/pdf" && (
+                {attachments.contentType ===
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
                   <a
-                    href={`data:application/pdf;base64,${attachment.data}`}
+                    href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${attachments.data}`}
                     target="_blank"
+                    download={attachments.fileName}
                   >
-                    {attachment.fileName}{" "}
+                    {attachments.fileName}
                   </a>
                 )}
-
+                {attachments.contentType === "application/pdf" && (
+                  <a
+                    href={`data:application/pdf;base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
                 {["image/jpeg", "image/png", "image/gif"].includes(
-                  attachment.contentType
+                  attachments.contentType
                 ) && (
                   <a
-                    href={`data:${attachment.contentType};base64,${attachment.data}`}
+                    href={`data:${attachments.contentType};base64,${attachments.data}`}
                     target="_blank"
                   >
-                    {attachment.fileName}{" "}
+                    {attachments.fileName}{" "}
                   </a>
                 )}
+                {["application/octet-stream", "application/zip"].includes(
+                  attachments.contentType
+                ) && (
+                  <div>
+                    <a
+                      href={`data:application/octet-stream;base64,${attachments.data}`}
+                      download={attachments.fileName}
+                    >
+                      {attachments.fileName}
+                    </a>
+                  </div>
+                )}
               </div>
+              {}{" "}
             </div>
-          ) : null}
+          ))}
         </div>
       </div>
 
-      {/* ANSWER */}
+      <Divider />
+
+      {/* MAIL ANSWER SECTION */}
+      {answer ?
       <div className="mail-answers">
-        {answer ? (
-          Array.isArray(answer) ? (
-            answer.map((answer) => (
-              <div className="mail-answer-content">
-                <div className="mail-actions">
-                  <Tooltip title="İlet" arrow onClick={showForwardModal}>
-                    <div className="icons">
-                      <button className="mail-action-btns">
-                        <Icon
-                          icon="material-symbols-light:forward"
-                          width="40"
-                          rotate={2}
-                        />
-                      </button>
-                    </div>
-                  </Tooltip>
-                  {/* MODAL FOR FORWARD EMAIL */}
-                  <Modal
-                    open={forwardMOdalOpen}
-                    title="İLET"
-                    onOk={handleForwardOk}
-                    onCancel={handleCancel}
-                    footer={[
-                      <Button key="back" onClick={handleCancel}>
-                        Geri
-                      </Button>,
-                      <Button
-                        key="submit"
-                        type="primary"
-                        onClick={handleForwardOk}
-                      >
-                        İlet
-                      </Button>
-                    ]}
-                  >
-                    <form className="forward-modal-form">
-                      <label>Kime:</label>{" "}
-                      <Mentions
-                        allowClear
-                        style={{ height: 50, border: "none" }}
-                        onSelect={onMentionSelect}
-                        required
-                        options={options}
-                        prefix={[""]}
-                      />
-                      <label>Mesaj: </label>{" "}
-                      <ReactQuill
-                        modules={toolbarOptions}
-                        theme="bubble"
-                        name="emailBody"
-                        style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
-                        onChange={(value) => {
-                          setForwardedEmailMessage(value)
-                        }}
-                        required
-                      />
-                      <br />
-                      <br />
-                      <br />
-                      <br />
-                      <span>-------Şu mesajdan iletilecek-------</span>
-                      <p>
-                        {" "}
-                        <span>Gönderen:</span> {mail.senderEmail}
-                      </p>
-                      <p>
-                        {" "}
-                        <span>Tarih: </span> {formatDate(mail.sentDateTime)}{" "}
-                      </p>
-                      <p>
-                        {" "}
-                        <span>Konu:</span> {mail.emailSubject}
-                      </p>
-                      <p
-                        dangerouslySetInnerHTML={{
-                          __html: getText(mail.sentEmailBody)
-                        }}
-                      />
-                    </form>
-                  </Modal>
-                  <Tooltip title="Yanıtla" arrow onClick={showModal}>
-                    <div className="icons">
-                      <button className="mail-action-btns">
-                        <Icon icon="iconoir:reply" width="30" />
-                      </button>
-                    </div>{" "}
-                  </Tooltip>
-                  {/* MODAL FOR REPLY EMAIL */}
-                  <Modal
-                    open={open}
-                    title="YANITLA"
-                    onOk={handleOk}
-                    onCancel={handleCancel}
-                    footer={[
-                      <Button key="back" onClick={handleCancel}>
-                        Geri
-                      </Button>,
-                      <Button
-                        key="submit"
-                        type="primary"
-                        loading={loading}
-                        onClick={handleOk}
-                      >
-                        Gönder
-                      </Button>
-                    ]}
-                  >
-                    <form className="reply-modal-form">
-                      <label type="text">
-                        <span>Kime: </span>
-                        {mail.recipientsEmail}
-                      </label>
-                      <label type="text">
-                        <span>Konu: </span>
-                        {mail.emailSubject}
-                      </label>
-                      <span>Mesaj: </span>
-                      <ReactQuill
-                        modules={toolbarOptions}
-                        theme="bubble"
-                        name="emailBody"
-                        style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
-                        onChange={(value) => setRepliedMailBody(value)}
-                        required
-                      />
-                      <input
-                        id="attachment"
-                        name="attachment"
-                        type="file"
-                        onChange={(event) => {
-                          setReplyAttachment(event.currentTarget.files[0])
-                        }}
-                      />
-                    </form>
-                  </Modal>
-                  <Tooltip title="Sil" arrow>
-                    <div className="icons">
-                      <button
-                        className="mail-action-btns"
-                        onClick={handleDelete}
-                      >
-                        <Icon icon="bi:trash" width="30" />
-                      </button>
-                    </div>
-                  </Tooltip>
-                </div>
-                <div className="mail-sender">
-                  <div className="user-icon-home">
-                    <Icon icon="ph:user-light" width="70" />
+        <div className="mail-answer-content">
+          {/* MAIL ANSWER ACTIONS */}
+          <div className="mail-actions">
+            <Tooltip title="İlet" arrow onClick={showForwardModal}>
+              <div className="icons">
+                <button className="mail-action-btns">
+                  <Icon
+                    icon="solar:multiple-forward-right-bold-duotone"
+                    width="25"
+                    height="25"
+                  />
+                </button>
+              </div>
+            </Tooltip>
+
+            {/* MODAL FOR FORWARD EMAIL */}
+            <Modal
+              open={forwardMOdalOpen}
+              title="İLET"
+              onOk={handleForwardOk}
+              onCancel={handleCancel}
+              footer={[
+                <Button key="back" onClick={handleCancel}>
+                  Geri
+                </Button>,
+                <Button key="submit" type="primary" onClick={handleForwardOk}>
+                  Gönder
+                </Button>
+              ]}
+            >
+              <form className="forward-modal-form">
+                <label>Kime: </label>{" "}
+                <Mentions
+                  allowClear
+                  style={{ height: 50, border: "none" }}
+                  onSelect={onMentionSelect}
+                  required
+                  options={options}
+                  prefix={[""]}
+                />
+                <label>Mesaj: </label>{" "}
+                <ReactQuill
+                  modules={toolbarOptions}
+                  theme="bubble"
+                  name="emailBody"
+                  style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
+                  onChange={(value) => {
+                    setForwardedEmailMessage(value)
+                  }}
+                  required
+                />
+                <br />
+                <br />
+                <br />
+                <br />
+                <span>-------Şu mesajdan iletilecek-------</span>
+                <p>
+                  {" "}
+                  <span>Gönderen:</span> {mail.senderEmail}
+                </p>
+                <p>
+                  {" "}
+                  <span>Tarih: </span> {formatDate(mail.sentDateTime)}{" "}
+                </p>
+                <p>
+                  {" "}
+                  <span>Konu:</span> {mail.emailSubject}
+                </p>
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: getText(mail.sentEmailBody)
+                  }}
+                />
+              </form>
+            </Modal>
+
+            <Tooltip title="Yanıtla" arrow onClick={showModal}>
+              <div className="icons">
+                <button className="mail-action-btns">
+                  <Icon icon="ic:round-reply" width="30" height="30" />
+                </button>
+              </div>{" "}
+            </Tooltip>
+            {/* MODAL FOR REPLY EMAIL */}
+            <Modal
+              open={open}
+              title="YANITLA"
+              onOk={handleOk}
+              onCancel={handleCancel}
+              footer={[
+                <Button key="back" onClick={handleCancel}>
+                  Geri
+                </Button>,
+                <Button
+                  key="submit"
+                  type="primary"
+                  loading={loading}
+                  onClick={handleOk}
+                >
+                  Gönder
+                </Button>
+              ]}
+            >
+              <form className="reply-modal-form">
+                <label type="text">
+                  <span>Kime: </span>
+                  {mail.recipientsEmail}
+                </label>
+                <label type="text">
+                  <span>Konu: </span>
+                  {mail.emailSubject}
+                </label>
+                <span>Mesaj: </span>
+                <ReactQuill
+                  modules={toolbarOptions}
+                  theme="bubble"
+                  name="emailBody"
+                  style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
+                  onChange={(value) => setRepliedMailBody(value)}
+                  required
+                />
+
+                <input
+                  id="attachment"
+                  name="attachment"
+                  type="file"
+                  onChange={(event) => {
+                    setReplyAttachment(event.currentTarget.files[0])
+                  }}
+                />
+              </form>
+            </Modal>
+            <Tooltip title="Sil" arrow>
+              <div className="icons">
+                <button className="mail-action-btns" onClick={handleDelete}>
+                  <Icon icon="iconoir:trash-solid" width="25" height="25" />
+                </button>
+              </div>
+            </Tooltip>
+          </div>
+
+          <div className="mail-sender">
+          <div className="user-icon-inbox">
+                  <Avatar
+            style={{
+              backgroundColor: "#fde3cf",
+              color: "#f56a00",
+              width: 60,
+              height: 60
+            }}
+          >
+            <span>{user.charAt(0)}</span>
+          </Avatar>
                   </div>
                   <div>
                     <div className="mail-sender-email">
@@ -563,8 +599,7 @@ const Inbox = () => {
                 </div>
 
                 <div className="mail-title">
-                  <Icon icon="uit:subject" color="#b31312" width="40" />{" "}
-                  <h3>{answer?.emailLog.emailSubject}</h3>
+                  <p>{answer?.emailLog.emailSubject}</p>
                 </div>
 
                 <p
@@ -572,282 +607,83 @@ const Inbox = () => {
                     __html: getText(answer?.emailLog.sentEmailBody)
                   }}
                 />
-                <div className="mail-attachments">
-                  <div className="attachment-content">
-                    <Icon
-                      icon="material-symbols-light:attachment"
-                      color="#b31312"
-                      width="30"
-                    />
-                  </div>
 
-                  <div className="mail-attachments">
-                    {answer.attachmentInfos ? (
+        </div>{" "}
+      </div> : null}
 
-                    
-                      <div className="inbox-mail-attachment"> <p>mailin attachmentı var </p> 
-                        <div>
-                          {answer.attachmentInfos.contentType ===
-                            "text/plain" && (
-                            <div>
-                              <a
-                                href={`data:text/plain;base64,${answer.attachment.data}`}
-                                download={answer.attachmentInfos.fileName}
-                              >
-                                {answer.attachmentInfos.fileName}
-                              </a>
-                            </div>
-                          )}
+      {/* MAIL ANSWERS ATTACHMENTS */}
 
-                          {answer.attachmentInfos.contentType ===
-                            "application/pdf" && (
-                            <a
-                              href={`data:application/pdf;base64,${answer.attachmentInfos.data}`}
-                              target="_blank"
-                            >
-                              {answer.attachmentInfos.fileName}{" "}
-                            </a>
-                          )}
 
-                          {["image/jpeg", "image/png", "image/gif"].includes(
-                            answer.attachmentInfos.contentType
-                          ) && (
-                            <a
-                              href={`data:${answer.attachmentInfos.contentType};base64,${attachment.data}`}
-                              target="_blank"
-                            >
-                              {answer.attachmentInfos.fileName}{" "}
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="mail-answer-content">
-              <div className="mail-actions">
-                <Tooltip title="İlet" arrow onClick={showForwardModal}>
-                  <div className="icons">
-                    <button className="mail-action-btns">
-                      <Icon
-                        icon="material-symbols-light:forward"
-                        width="40"
-                        rotate={2}
-                      />
-                    </button>
-                  </div>
-                </Tooltip>
-                {/* MODAL FOR FORWARD EMAIL */}
-                <Modal
-                  open={forwardMOdalOpen}
-                  title="İLET"
-                  onOk={handleForwardOk}
-                  onCancel={handleCancel}
-                  footer={[
-                    <Button key="back" onClick={handleCancel}>
-                      Geri
-                    </Button>,
-                    <Button
-                      key="submit"
-                      type="primary"
-                      onClick={handleForwardOk}
+{
+  answer?.attachmentInfos?.map(attachments=>
+    (
+            <div className="inbox-mail-attachment">
+              <div>
+                {" "}
+                <Icon icon="et:attachments" width="16" height="16" />
+                {attachments.contentType === "text/plain" && (
+                  <div>
+                    <a
+                      href={`data:text/plain;base64,${attachments.data}`}
+                      download={attachments.fileName}
                     >
-                      İlet
-                    </Button>
-                  ]}
-                >
-                  <form className="forward-modal-form">
-                    <label>Kime:</label>{" "}
-                    <Mentions
-                      allowClear
-                      style={{ height: 50, border: "none" }}
-                      onSelect={onMentionSelect}
-                      required
-                      options={options}
-                      prefix={[""]}
-                    />
-                    <label>Mesaj: </label>{" "}
-                    <ReactQuill
-                      modules={toolbarOptions}
-                      theme="bubble"
-                      name="emailBody"
-                      style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
-                      onChange={(value) => {
-                        setForwardedEmailMessage(value)
-                      }}
-                      required
-                    />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <span>-------Şu mesajdan iletilecek-------</span>
-                    <p>
-                      {" "}
-                      <span>Gönderen:</span> {mail.senderEmail}
-                    </p>
-                    <p>
-                      {" "}
-                      <span>Tarih: </span> {formatDate(mail.sentDateTime)}{" "}
-                    </p>
-                    <p>
-                      {" "}
-                      <span>Konu:</span> {mail.emailSubject}
-                    </p>
-                    <p
-                      dangerouslySetInnerHTML={{
-                        __html: getText(mail.sentEmailBody)
-                      }}
-                    />
-                  </form>
-                </Modal>
-                <Tooltip title="Yanıtla" arrow onClick={showModal}>
-                  <div className="icons">
-                    <button className="mail-action-btns">
-                      <Icon icon="iconoir:reply" width="30" />
-                    </button>
-                  </div>{" "}
-                </Tooltip>
-                {/* MODAL FOR REPLY EMAIL */}
-                <Modal
-                  open={open}
-                  title="YANITLA"
-                  onOk={handleOk}
-                  onCancel={handleCancel}
-                  footer={[
-                    <Button key="back" onClick={handleCancel}>
-                      Geri
-                    </Button>,
-                    <Button
-                      key="submit"
-                      type="primary"
-                      loading={loading}
-                      onClick={handleOk}
+                      {attachments.fileName}
+                    </a>
+                  </div>
+                )}
+                {attachments.contentType ===
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+                  <a
+                    href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${attachments.data}`}
+                    target="_blank"
+                    download={attachments.fileName}
+                  >
+                    {attachments.fileName}
+                  </a>
+                )}
+                {attachments.contentType === "application/pdf" && (
+                  <a
+                    href={`data:application/pdf;base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
+                {["image/jpeg", "image/png", "image/gif"].includes(
+                  attachments.contentType
+                ) && (
+                  <a
+                    href={`data:${attachments.contentType};base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
+                {["application/octet-stream", "application/zip"].includes(
+                  attachments.contentType
+                ) && (
+                  <div>
+                    <a
+                      href={`data:application/octet-stream;base64,${attachments.data}`}
+                      download={attachments.fileName}
                     >
-                      Gönder
-                    </Button>
-                  ]}
-                >
-                  <form className="reply-modal-form">
-                    <label type="text">
-                      <span>Kime: </span>
-                      {mail.recipientsEmail}
-                    </label>
-                    <label type="text">
-                      <span>Konu: </span>
-                      {mail.emailSubject}
-                    </label>
-                    <span>Mesaj: </span>
-                    <ReactQuill
-                      modules={toolbarOptions}
-                      theme="bubble"
-                      name="emailBody"
-                      style={{ height: 150, boxShadow: "rgba(0, 0, 0, 0.1)" }}
-                      onChange={(value) => setRepliedMailBody(value)}
-                      required
-                    />
-                    <input
-                      id="attachment"
-                      name="attachment"
-                      type="file"
-                      onChange={(event) => {
-                        setReplyAttachment(event.currentTarget.files[0])
-                      }}
-                    />
-                  </form>
-                </Modal>
-                <Tooltip title="Sil" arrow>
-                  <div className="icons">
-                    <button className="mail-action-btns" onClick={handleDelete}>
-                      <Icon icon="bi:trash" width="30" />
-                    </button>
+                      {attachments.fileName}
+                    </a>
                   </div>
-                </Tooltip>
+                )}
               </div>
-              <div className="mail-sender">
-                <div className="user-icon-home">
-                  <Icon icon="ph:user-light" width="70" />
-                </div>
-                <div>
-                  <div className="mail-sender-email">
-                    {answer?.emailLog.senderEmail}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mail-title">
-                <Icon icon="uit:subject" color="#b31312" width="40" />{" "}
-                <h3>{answer?.emailLog.emailSubject}</h3>
-              </div>
-
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: getText(answer?.emailLog.sentEmailBody)
-                }}
-              />
-              <div className="mail-attachments">
-                <div className="attachment-content">
-                  <Icon
-                    icon="material-symbols-light:attachment"
-                    color="#b31312"
-                    width="30"
-                  />
-                </div>
-
-                <div className="mail-attachments">
-                  {answer.attachmentInfos ? (
-                    <div className="inbox-mail-attachment">
-                      <div>
-                        {answer.attachmentInfos.contentType ===
-                          "text/plain" && (
-                          <div>
-                            <a
-                              href={`data:text/plain;base64,${answer.attachment.data}`}
-                              download={answer.attachmentInfos.fileName}
-                            >
-                              {answer.attachmentInfos.fileName}
-                            </a>
-                          </div>
-                        )}
-
-                        {answer.attachmentInfos.contentType ===
-                          "application/pdf" && (
-                          <a
-                            href={`data:application/pdf;base64,${answer.attachmentInfos.data}`}
-                            target="_blank"
-                          >
-                            {answer.attachmentInfos.fileName}{" "}
-                          </a>
-                        )}
-
-                        {["image/jpeg", "image/png", "image/gif"].includes(
-                          answer.attachmentInfos.contentType
-                        ) && (
-                          <a
-                            href={`data:${answer.attachmentInfos.contentType};base64,${attachment.data}`}
-                            target="_blank"
-                          >
-                            {answer.attachmentInfos.fileName}{" "}
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
+              {}{" "}
             </div>
           )
-        ) : null}
-      </div>
+  )
+}
+      {/* 
+IS FORWARDED SECTION */}
 
-      {/* FORWARDED */}
 
-      {forwardedFrom ? (
+{forwardedFrom ? (
         <div className="forwarded-from-section">
-          <span>----- Şu mesajdan iletildi -----</span>
+          <span>----- Şu mesaj iletildi -----</span>
           <span>Gönderen: </span> <p>{forwardedFrom.senderEmail}</p>
           <span>Tarih:</span> <p> {formatDate(forwardedFrom.sentDateTime)}</p>
           <span>Konu:</span> <p> {forwardedFrom.emailSubject}</p>
@@ -856,10 +692,73 @@ const Inbox = () => {
               __html: getText(forwardedFrom.sentEmailBody)
             }}
           />
+
+{/* FORWARDED FROMS ATTACHMENT SECTION */}
+{forwardedFrom.attachmentInfos?.map((attachments)=>(
+  <div className="inbox-mail-attachment">
+              <div>
+                {" "}
+                <Icon icon="et:attachments" width="16" height="16" />
+                {attachments.contentType === "text/plain" && (
+                  <div>
+                    <a
+                      href={`data:text/plain;base64,${attachments.data}`}
+                      download={attachments.fileName}
+                    >
+                      {attachments.fileName}
+                    </a>
+                  </div>
+                )}
+                {attachments.contentType ===
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+                  <a
+                    href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${attachments.data}`}
+                    target="_blank"
+                    download={attachments.fileName}
+                  >
+                    {attachments.fileName}
+                  </a>
+                )}
+                {attachments.contentType === "application/pdf" && (
+                  <a
+                    href={`data:application/pdf;base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
+                {["image/jpeg", "image/png", "image/gif"].includes(
+                  attachments.contentType
+                ) && (
+                  <a
+                    href={`data:${attachments.contentType};base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
+                {["application/octet-stream", "application/zip"].includes(
+                  attachments.contentType
+                ) && (
+                  <div>
+                    <a
+                      href={`data:application/octet-stream;base64,${attachments.data}`}
+                      download={attachments.fileName}
+                    >
+                      {attachments.fileName}
+                    </a>
+                  </div>
+                )}
+              </div>
+              {}{" "}
+            </div>
+))}
         </div>
       ) : null}
+
+
     </div>
-  ) : null
+  )
 }
 
 export default Inbox

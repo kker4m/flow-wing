@@ -73,6 +73,7 @@
 
 .mail-attachments {
   display: flex;
+  flex-direction: row;
   align-items: center;
   margin-top: 50px;
 }
@@ -116,4 +117,8 @@
 .user-icon-inbox span {
   font-size: 30px;
   padding: 6px;
+}
+.inbox-mail-attachment-content{
+  display: flex;
+  flex-direction: row;
 }

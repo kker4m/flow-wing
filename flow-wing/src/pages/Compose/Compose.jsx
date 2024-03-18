@@ -6,7 +6,15 @@ import { useFormik } from "formik"
 import "./compose.css"
 import { useNavigate } from "react-router"
 import alertify from "alertifyjs"
-import { Checkbox, DatePicker, Mentions, Modal, Select, Upload } from "antd"
+import {
+  Checkbox,
+  DatePicker,
+  Input,
+  Mentions,
+  Modal,
+  Select,
+  Upload
+} from "antd"
 import * as Yup from "yup"
 import dayjs from "dayjs"
 import {
@@ -54,24 +62,19 @@ const Compose = () => {
 
   // MAIL SEND FUNCTION FOR NON REPEATING MAIL
   const handleSubmit = async (values) => {
-    try {
-      const formData = new FormData()
-      if (values.file && values.file.length > 0) {
-        formData.append("attachment", values.file[0])
-      } else {
-        formData == []
-      }
-      console.log("values:", values, "form data ", formData)
-      const res = await sendMail(values, formData)
-      if (res.status === 201) {
-        alertify.success("Mail Gönderildi")
-        navigate("/home")
-      } else {
-        alertify.error("Gönderme başarısız oldu")
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error)
-      alertify.error("Bir hata oluştu")
+    const formData = new FormData()
+    if (values.file && values.file.length > 0) {
+      formData.append("attachment", values.file[0])
+    } else {
+      formData == []
+    }
+    console.log("values:", values, "form data ", formData)
+    const res = await sendMail(values, formData)
+    if (res.status === 201) {
+      alertify.success("Mail Gönderildi")
+      navigate("/home")
+    } else {
+      alertify.error("Gönderme başarısız oldu")
     }
   }
 
@@ -99,7 +102,7 @@ const Compose = () => {
   // ANTD MENTION FUNCTIONS
   const onMentionChange = (value) => {
     console.log("Change:", value)
-    formik.handleChange({ target: { name: "recipientsEmail", value } })
+    formik.handleChange({ name: "recipientsEmail", value })
   }
 
   const onMentionSelect = (option) => {
@@ -133,8 +136,12 @@ const Compose = () => {
   //Yup validation schema
   const validationSchema = Yup.object().shape({
     recipientsEmail: Yup.string()
-      .email("Geçersiz mail adresi")
-      .required("Mail adresi girmek zorunludur"),
+      .required("Mail adresi girmek zorunludur")
+      .matches(
+        /^[^\s@]+@[^\s@]+\.[^\s@]+(\s*,\s*[^\s@]+@[^\s@]+\.[^\s@]+)*$/,
+        "Geçersiz mail adresi, birden fazla maili virgülle ayırın."
+      ),
+
     emailSubject: Yup.string().required("Konu giriniz"),
     emailBody: Yup.string().required("İçerik giriniz")
   })
@@ -156,8 +163,13 @@ const Compose = () => {
     initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      const { repeatEndDate, repeatInterval, nextSendingDate, sentDateTime } =
-        values
+      const {
+        repeatEndDate,
+        repeatInterval,
+        nextSendingDate,
+        sentDateTime,
+        file
+      } = values
       if (isScheduled) {
         handleSubmitScheduled({ ...values, sentDateTime }) // Eğer isScheduled true ise, planlanmış gönderimi gerçekleştir
       } else if (isRepeating) {
@@ -267,9 +279,9 @@ const Compose = () => {
             value={formik.values.repeatInterval}
             onChange={onRepeatIntervalDateSelect}
           >
-            <MenuItem value={"00-07-00-00"}>Haftada bir</MenuItem>
-            <MenuItem value={"30-00-00-00"}>Ayda bir</MenuItem>
-            <MenuItem value={"00-00-00-60"}>Dakikada bir</MenuItem>
+            <MenuItem value={"00-01-00-00"}>Haftada bir</MenuItem>
+            <MenuItem value={"01-00-00-00"}>Ayda bir</MenuItem>
+            <MenuItem value={"00-00-00-01"}>Dakikada bir</MenuItem>
           </Select>
           <h2>Ne zamana kadar gönderilsin?</h2>
           <DatePicker
@@ -279,14 +291,13 @@ const Compose = () => {
         </Modal>
         <div className="compose send-to">
           <span>Kime</span> <Divider />
-          <Mentions
-            allowClear
+          <input
+            type="text"
+            name="recipientsEmail"
             style={{ height: 50, border: "none" }}
-            onChange={onMentionChange}
-            onSelect={onMentionSelect}
-            value={formik.values.recipientsEmail}
+            onChange={formik.handleChange}
+            value={formik.values.recipientsEmail.split(",")}
             required
-            options={options}
           />
         </div>
         {formik.errors.recipientsEmail && formik.touched.recipientsEmail && (
@@ -322,14 +333,25 @@ const Compose = () => {
           <div className="error-message">{formik.errors.emailBody}</div>
         )}
         <div className="compose-attachments">
-          <input
-            id="file"
-            name="file"
-            type="file"
-            onChange={(event) => {
-              formik.setFieldValue("file", event.currentTarget.files[0])
-            }}
-          />
+        <input
+    id="file"
+    name="file"
+    type="file"
+    multiple
+    onChange={(event) => {
+        const selectedFiles = event.currentTarget.files;
+        // Seçilen dosyaları bir dizi olarak alırız.
+        
+        // Diziyi döngüye alarak her bir dosyayı işleyebiliriz.
+        for (let i = 0; i < selectedFiles.length; i++) {
+            const file = selectedFiles[i];
+            // Burada dosya işlemlerini gerçekleştirin, örneğin dosyayı yükleyin veya formik'e ekleyin.
+            formik.setFieldValue(`file[${i}]`, file);
+        }
+    }}
+/>
+
+
 
           <hr />
         </div>

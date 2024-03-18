@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react"
 import "./home.css"
 import { Icon } from "@iconify/react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import Divider from "@mui/material/Divider"
 import alertify from "alertifyjs"
 import EmptyPage from "../../components/EmptyPage"
-import { deleteSentEmail, getMails } from "../../services/emailService"
+import {
+  deleteSentEmail,
+  getEmailAndAnswersByEmailLogId,
+  getMails
+} from "../../services/emailService"
 import { excerpt, getText } from "../../helpers"
 
 const Home = () => {
@@ -16,48 +20,38 @@ const Home = () => {
 
   // Get all e-mails
   useEffect(() => {
-    try {
-      getMails().then((response) => {
-        const sortedMails = response.data.userEmails.sort(
-          (a, b) =>
-            new Date(b.emailLog.sentDateTime) -
-            new Date(a.emailLog.sentDateTime)
-        )
+    getMails().then((response) => {
+      const sortedMails = response.data.userEmails.sort(
+        (a, b) =>
+          new Date(b.emailLog.sentDateTime) - new Date(a.emailLog.sentDateTime)
+      )
 
-        setMails(sortedMails)
-        console.log("home response", response.data.userEmails)
-        setMailCount(response.data.userEmails.length)
+      setMails(sortedMails)
+      console.log("home response", response.data.userEmails)
+      setMailCount(response.data.userEmails.length)
 
-        setSender(response.data.userEmails.map(mail=>setSender(mail.sender)))
-        console.log("home senders",sender)
-      })
-    } catch (error) {
-      console.error("Error fetching mails:", error)
-    }
+      response.data.userEmails.map((mail) => setSender(mail.sender))
+      console.log("home senders", sender)
+    })
   }, [mailCount])
-
 
   // DELETE AN EMAIL
   const handleDelete = (id) => {
-    try {
-      deleteSentEmail(id).then((res) => {
-        console.log(res)
-        // Update the sentMails state after deleting the email
-        setMails(mails.filter((mail) => mail.id !== id))
-        alertify.success("Mail silindi.")
-        navigate("/home")
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    deleteSentEmail(id).then((res) => {
+      console.log(res)
+      // Update the sentMails state after deleting the email
+      setMails(mails.filter((mail) => mail.id !== id))
+      alertify.success("Mail silindi.")
+      navigate("/home")
+    })
   }
   // COLOR ARRAY FOR HR ELEMENT
   const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"]
 
-  if (mails.length === 0) {
+  if (!mails) {
     return <EmptyPage />
   }
-  return sender.map(sender=>sender===false ? (
+  return (
     <div className="sent-mail-page-content">
       <h2>{mailCount} mesaj</h2>
       <div className="inbox">
@@ -142,7 +136,7 @@ const Home = () => {
         })}
       </div>
     </div>
-  ): null)
+  )
 }
 
 export default Home

@@ -24,12 +24,26 @@ const Login = () => {
     })
   }
   //validations
+
   const validationSchema = Yup.object({
     password: Yup.string()
       .required("Zorunlu alan")
       .min(4, "Şifre en az 4 karakter içermelidir")
       .max(8, "Şifre en fazla 8 karakterden oluşabilir."),
-    email: Yup.string().email("Geçersiz e-mail adresi").required("Zorunlu alan")
+    email: Yup.string()
+      .email("Geçersiz e-mail adresi")
+      .required("Zorunlu alan")
+      .test(
+        "arcelikEmail",
+        "Yalnızca Arçelik maillerinizle giriş yapabilirsiniz",
+        function (value) {
+          // E-posta adresinin @arcelik.com ile bitip bitmediğini kontrol et
+          if (value && value.endsWith("@arcelik.com")) {
+            return true // Geçerli
+          }
+          return false // Geçersiz
+        }
+      )
   })
 
   return (

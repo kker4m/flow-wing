@@ -34,14 +34,15 @@ const replyMail = (values) => {
   return apiAxios.post("EmailLogs", mailContent)
 }
 const sendScheduledMail = (values) => {
-  const { sentDateTime, recipientsEmail, emailSubject, emailBody } = values
+  const { sentDateTime, recipientsEmail, emailSubject, emailBody, file } =
+    values
 
   const mailContent = {
     sentDateTime: sentDateTime,
     recipientsEmail: recipientsEmail,
     emailSubject: emailSubject,
     emailBody: emailBody,
-    attachments: []
+    attachments: file
   }
   return apiAxios.post("ScheduledEmails/CreateScheduledEmail", mailContent)
 }
@@ -95,6 +96,10 @@ const getForwardedMailById = (id) => {
 const forwardEmail = (values) => {
   return apiAxios.post("EmailLogs/CreateForwardedEmailLog", values)
 }
+
+const getEmailAndAnswersByEmailLogId = (id) => {
+  return apiAxios.get("EmailLogs/GetEmailAndAnswersByEmailLogId/" + id)
+}
 export {
   getAllUsers,
   getEmailById,
@@ -107,5 +112,6 @@ export {
   getMailAnswersById,
   replyMail,
   forwardEmail,
-  getForwardedMailById
+  getForwardedMailById,
+  getEmailAndAnswersByEmailLogId
 }
