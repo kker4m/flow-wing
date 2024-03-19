@@ -23,7 +23,7 @@ namespace FlowWing.API.Controllers
         private IAttachmentService _attachmentService;
         private AppSettings _appSettings;
         private ScheduledMailHelper _scheduledMailHelper;
-        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings,IAttachmentService attachmentService, ScheduledMailHelper scheduledMailHelper)
+        public ScheduledEmailsController(IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService, IUserService userService, IOptions<AppSettings> appSettings, IAttachmentService attachmentService, ScheduledMailHelper scheduledMailHelper)
         {
             _scheduledEmailService = scheduledEmailService;
             _emailLogService = emailLogService;
@@ -52,7 +52,7 @@ namespace FlowWing.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetScheduledEmailById(int id)
-        { 
+        {
             var scheduledEmail = await _scheduledEmailService.GetScheduledEmailByIdAsync(id);
             if (scheduledEmail == null)
             {
@@ -69,88 +69,82 @@ namespace FlowWing.API.Controllers
         [Authorize]
         public async Task<IActionResult> CreateScheduledEmail([FromForm] ScheduledEmailLogModel scheduledEmail)
         {
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
+            (string UserEmail, string UserId) = (HttpContext.Items["UserEmail"] as string, HttpContext.Items["UserId"] as string);
+            EmailLog newEmailLog;
+            EmailLog createdEmailLog;
+            ScheduledEmail newScheduledEmail;
+            string attachmentIds = "";
+
+            User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+            var formFiles = HttpContext.Request.Form.Files;
+
+            foreach (string recipient in scheduledEmail.RecipientsEmail.Split(','))
             {
-                EmailLog newEmailLog;
-                EmailLog createdEmailLog;
-                ScheduledEmail newScheduledEmail;
-                string attachmentIds = "";
-                
-                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
-                var formFiles = HttpContext.Request.Form.Files;
-
-                foreach (string recipient in scheduledEmail.RecipientsEmail.Split(','))
+                if (!recipient.Contains("@arcelik.com"))
                 {
-                    if (!recipient.Contains("@arcelik.com"))
-                    {
-                        return BadRequest("Yalnızca arcelik maillerine mail gönderilebilmektedir");
-                    }
+                    return BadRequest("Yalnızca arcelik maillerine mail gönderilebilmektedir");
                 }
-
-                newEmailLog = new EmailLog
-                {
-                    UserId = int.Parse(UserId),
-                    CreationDate = DateTime.UtcNow,
-                    SentDateTime = scheduledEmail.SentDateTime,
-                    RecipientsEmail = scheduledEmail.RecipientsEmail,
-                    SenderEmail = UserEmail,
-                    EmailSubject = scheduledEmail.EmailSubject,
-                    SentEmailBody = scheduledEmail.EmailBody,
-                    Status = false,
-                    IsScheduled = true,
-                    User = user
-                };
-                
-                createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
-                
-                newScheduledEmail = new ScheduledEmail
-                {
-                    EmailLogId = createdEmailLog.Id,
-                    IsRepeating = false,
-                    NextSendingDate = scheduledEmail.SentDateTime,
-                };
-                
-                var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledEmail);
-                
-                foreach (var formFile in formFiles)
-                {
-                    using (var stream = new MemoryStream())
-                    {
-                        await formFile.CopyToAsync(stream);
-                        byte[] bytes = stream.ToArray();
-
-                        var attachment = new Attachment
-                        {
-                            EmailLogId = createdEmailLog.Id,
-                            FileName = formFile.FileName,
-                            FileSize = formFile.Length,
-                            ContentType = formFile.ContentType,
-                            Data = bytes,
-                        };
-                       
-                        await _attachmentService.CreateAttachmentAsync(attachment);
-                        attachmentIds += attachment.Id + ",";
-                    }
-                }
-                
-                if (attachmentIds.Length > 0)
-                {
-                    attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
-                    createdEmailLog.AttachmentIds = attachmentIds;
-                    _emailLogService.UpdateEmailLog(createdEmailLog);
-                }
-                
-                // Hangfire'da işi planla
-                _scheduledMailHelper.ScheduleScheduledEmail(createdEmailLog, scheduledEmail);
-                
-                return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
             }
-            return Unauthorized(); 
+
+            newEmailLog = new EmailLog
+            {
+                UserId = int.Parse(UserId),
+                CreationDate = DateTime.UtcNow,
+                SentDateTime = scheduledEmail.SentDateTime,
+                RecipientsEmail = scheduledEmail.RecipientsEmail,
+                SenderEmail = UserEmail,
+                EmailSubject = scheduledEmail.EmailSubject,
+                SentEmailBody = scheduledEmail.EmailBody,
+                Status = false,
+                IsScheduled = true,
+                User = user
+            };
+
+            createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
+
+            newScheduledEmail = new ScheduledEmail
+            {
+                EmailLogId = createdEmailLog.Id,
+                IsRepeating = false,
+                NextSendingDate = scheduledEmail.SentDateTime,
+            };
+
+            var createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledEmail);
+
+            foreach (var formFile in formFiles)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await formFile.CopyToAsync(stream);
+                    byte[] bytes = stream.ToArray();
+
+                    var attachment = new Attachment
+                    {
+                        EmailLogId = createdEmailLog.Id,
+                        FileName = formFile.FileName,
+                        FileSize = formFile.Length,
+                        ContentType = formFile.ContentType,
+                        Data = bytes,
+                    };
+
+                    await _attachmentService.CreateAttachmentAsync(attachment);
+                    attachmentIds += attachment.Id + ",";
+                }
+            }
+
+            if (attachmentIds.Length > 0)
+            {
+                attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                createdEmailLog.AttachmentIds = attachmentIds;
+                _emailLogService.UpdateEmailLog(createdEmailLog);
+            }
+
+            // Hangfire'da işi planla
+            _scheduledMailHelper.ScheduleScheduledEmail(createdEmailLog, scheduledEmail);
+
+            return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
         }
-        
-        
+
         /// <summary>
         /// Create an Repeating scheduled email
         /// </summary>
@@ -160,81 +154,76 @@ namespace FlowWing.API.Controllers
         [Authorize]
         public async Task<IActionResult> CreateScheduledRepeatingEmail([FromForm] ScheduledRepeatingEmailModel scheduledRepeatingEmailModel)
         {
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token,_appSettings.SecretKey))
+            (string UserEmail, string UserId) = (HttpContext.Items["UserEmail"] as string, HttpContext.Items["UserId"] as string);
+            EmailLog newEmailLog;
+            EmailLog createdEmailLog;
+            ScheduledEmail createdScheduledEmail;
+            String attachmentIds = "";
+            foreach (string recipient in scheduledRepeatingEmailModel.RecipientsEmail.Split(','))
             {
-                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-                EmailLog newEmailLog;
-                EmailLog createdEmailLog;
-                ScheduledEmail createdScheduledEmail;
-                String attachmentIds = "";
-                foreach (string recipient in scheduledRepeatingEmailModel.RecipientsEmail.Split(','))
+                if (!recipient.Contains("@arcelik.com"))
                 {
-                    if (!recipient.Contains("@arcelik.com"))
-                    {
-                        return BadRequest("Yalnızca arcelik maillerine mail gönderilebilmektedir");
-                    }
+                    return BadRequest("Yalnızca arcelik maillerine mail gönderilebilmektedir");
                 }
-                User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
-                var formFiles = HttpContext.Request.Form.Files;
-                newEmailLog = new EmailLog
-                {
-                    UserId = int.Parse(UserId),
-                    CreationDate = DateTime.UtcNow,
-                    SentDateTime = scheduledRepeatingEmailModel.NextSendingDate,
-                    RecipientsEmail = scheduledRepeatingEmailModel.RecipientsEmail,
-                    SenderEmail = UserEmail,
-                    EmailSubject = scheduledRepeatingEmailModel.EmailSubject,
-                    SentEmailBody = scheduledRepeatingEmailModel.EmailBody,
-                    Status = false,
-                    IsScheduled = true,
-                    User = user
-                };
-                
-                createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
-                
-                ScheduledEmail newScheduledRepeatingEmail = new ScheduledEmail
-                {
-                    EmailLogId = createdEmailLog.Id,
-                    IsRepeating = true,
-                    NextSendingDate = scheduledRepeatingEmailModel.NextSendingDate,
-                    RepeatInterval = scheduledRepeatingEmailModel.RepeatInterval,
-                    RepeatEndDate = scheduledRepeatingEmailModel.RepeatEndDate
-                };
-                
-                createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledRepeatingEmail);
-                foreach (var formFile in formFiles)
-                {
-                    using (var stream = new MemoryStream())
-                    {
-                        await formFile.CopyToAsync(stream);
-                        byte[] bytes = stream.ToArray();
-
-                        var attachment = new Attachment
-                        {
-                            EmailLogId = createdEmailLog.Id,
-                            FileName = formFile.FileName,
-                            FileSize = formFile.Length,
-                            ContentType = formFile.ContentType,
-                            Data = bytes,
-                        };
-                       
-                        await _attachmentService.CreateAttachmentAsync(attachment);
-                        attachmentIds += attachment.Id + ",";
-                    }
-                }
-                createdEmailLog.repeatingLogId = createdScheduledEmail.Id;
-                if (attachmentIds.Length > 0)
-                {
-                    attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
-                    createdEmailLog.AttachmentIds = attachmentIds;
-                }
-                
-                _scheduledMailHelper.ScheduleRepeatingEmail(createdEmailLog, scheduledRepeatingEmailModel);
-                
-                return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
             }
-            return Unauthorized(); 
+            User user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+            var formFiles = HttpContext.Request.Form.Files;
+            newEmailLog = new EmailLog
+            {
+                UserId = int.Parse(UserId),
+                CreationDate = DateTime.UtcNow,
+                SentDateTime = scheduledRepeatingEmailModel.NextSendingDate,
+                RecipientsEmail = scheduledRepeatingEmailModel.RecipientsEmail,
+                SenderEmail = UserEmail,
+                EmailSubject = scheduledRepeatingEmailModel.EmailSubject,
+                SentEmailBody = scheduledRepeatingEmailModel.EmailBody,
+                Status = false,
+                IsScheduled = true,
+                User = user
+            };
+
+            createdEmailLog = await _emailLogService.CreateEmailLogAsync(newEmailLog);
+
+            ScheduledEmail newScheduledRepeatingEmail = new ScheduledEmail
+            {
+                EmailLogId = createdEmailLog.Id,
+                IsRepeating = true,
+                NextSendingDate = scheduledRepeatingEmailModel.NextSendingDate,
+                RepeatInterval = scheduledRepeatingEmailModel.RepeatInterval,
+                RepeatEndDate = scheduledRepeatingEmailModel.RepeatEndDate
+            };
+
+            createdScheduledEmail = await _scheduledEmailService.CreateScheduledEmailAsync(newScheduledRepeatingEmail);
+            foreach (var formFile in formFiles)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await formFile.CopyToAsync(stream);
+                    byte[] bytes = stream.ToArray();
+
+                    var attachment = new Attachment
+                    {
+                        EmailLogId = createdEmailLog.Id,
+                        FileName = formFile.FileName,
+                        FileSize = formFile.Length,
+                        ContentType = formFile.ContentType,
+                        Data = bytes,
+                    };
+
+                    await _attachmentService.CreateAttachmentAsync(attachment);
+                    attachmentIds += attachment.Id + ",";
+                }
+            }
+            createdEmailLog.repeatingLogId = createdScheduledEmail.Id;
+            if (attachmentIds.Length > 0)
+            {
+                attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                createdEmailLog.AttachmentIds = attachmentIds;
+            }
+
+            _scheduledMailHelper.ScheduleRepeatingEmail(createdEmailLog, scheduledRepeatingEmailModel);
+
+            return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
         }
 
         /// <summary>
@@ -245,43 +234,36 @@ namespace FlowWing.API.Controllers
         [HttpPut("ScheduledEmail")]
         public async Task<IActionResult> UpdateScheduledEmail([FromForm] ScheduledEmailLogModel scheduledEmail, int scheduledEmailId)
         {
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
+
+            (string UserEmail, string UserId) = (HttpContext.Items["UserEmail"] as string, HttpContext.Items["UserId"] as string);
+
+            //get email log by emaillogId
+            var scheduledEmailLog = await _scheduledEmailService.GetScheduledEmailByIdAsync(scheduledEmailId);
+            var emailLog = await _emailLogService.GetEmailLogByIdAsync(scheduledEmailLog.EmailLogId);
+
+            //get user's email logs and check if the email log exists
+            var user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+            var userLogs = await _emailLogService.GetEmailLogsByUserIdAsync(user.Id);
+            if (!userLogs.Contains(emailLog))
             {
-                
-                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-
-                //get email log by emaillogId
-                var scheduledEmailLog = await _scheduledEmailService.GetScheduledEmailByIdAsync(scheduledEmailId);
-                var emailLog = await _emailLogService.GetEmailLogByIdAsync(scheduledEmailLog.EmailLogId);
-                
-                //get user's email logs and check if the email log exists
-                var user = await _userService.GetUserByIdAsync(int.Parse(UserId));
-                var userLogs = await _emailLogService.GetEmailLogsByUserIdAsync(user.Id);
-                if (!userLogs.Contains(emailLog))
-                {
-                    //return 404
-                    return NotFound();
-                }
-                
-                //update scheduled email log
-                scheduledEmailLog.NextSendingDate = scheduledEmail.SentDateTime;
-                scheduledEmailLog.IsRepeating = false;
-                scheduledEmailLog.RepeatEndDate = null;
-                scheduledEmailLog.RepeatInterval = null;
-                emailLog.RecipientsEmail = scheduledEmail.RecipientsEmail;
-                emailLog.EmailSubject = scheduledEmail.EmailSubject;
-                emailLog.SentEmailBody = scheduledEmail.EmailBody;
-                
-                await _scheduledEmailService.UpdateScheduledEmailAsync(scheduledEmailLog);
-                
-                await _emailLogService.UpdateEmailLogAsync(emailLog);
-
-                return CreatedAtAction(nameof(UpdateScheduledEmail), new { id = emailLog.Id }, emailLog);
-                
+                //return 404
+                return NotFound();
             }
-            
-            return Unauthorized();
+
+            //update scheduled email log
+            scheduledEmailLog.NextSendingDate = scheduledEmail.SentDateTime;
+            scheduledEmailLog.IsRepeating = false;
+            scheduledEmailLog.RepeatEndDate = null;
+            scheduledEmailLog.RepeatInterval = null;
+            emailLog.RecipientsEmail = scheduledEmail.RecipientsEmail;
+            emailLog.EmailSubject = scheduledEmail.EmailSubject;
+            emailLog.SentEmailBody = scheduledEmail.EmailBody;
+
+            await _scheduledEmailService.UpdateScheduledEmailAsync(scheduledEmailLog);
+
+            await _emailLogService.UpdateEmailLogAsync(emailLog);
+
+            return CreatedAtAction(nameof(UpdateScheduledEmail), new { id = emailLog.Id }, emailLog);
         }
 
         /// <summary>
@@ -292,47 +274,39 @@ namespace FlowWing.API.Controllers
         [HttpPut("ScheduledRepeatingEmail")]
         public async Task<IActionResult> UpdateScheduledRepeatingEmail([FromForm] ScheduledRepeatingEmailModel scheduledRepeatingEmail, int scheduledRepeatingEmailId)
         {
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
+
+            (string UserEmail, string UserId) = (HttpContext.Items["UserEmail"] as string, HttpContext.Items["UserId"] as string);
+
+            //get email log by emaillogId
+            var scheduledEmailLog = await _scheduledEmailService.GetScheduledEmailByIdAsync(scheduledRepeatingEmailId);
+            var emailLog = await _emailLogService.GetEmailLogByIdAsync(scheduledEmailLog.EmailLogId);
+
+            //get user's email logs and check if the email log exists
+            var user = await _userService.GetUserByIdAsync(int.Parse(UserId));
+            var userLogs = await _emailLogService.GetEmailLogsByUserIdAsync(user.Id);
+            if (!userLogs.Contains(emailLog))
             {
-                
-                (string UserEmail, string UserId) = JwtHelper.GetJwtPayloadInfo(token);
-
-                //get email log by emaillogId
-                var scheduledEmailLog = await _scheduledEmailService.GetScheduledEmailByIdAsync(scheduledRepeatingEmailId);
-                var emailLog = await _emailLogService.GetEmailLogByIdAsync(scheduledEmailLog.EmailLogId);
-                
-                //get user's email logs and check if the email log exists
-                var user = await _userService.GetUserByIdAsync(int.Parse(UserId));
-                var userLogs = await _emailLogService.GetEmailLogsByUserIdAsync(user.Id);
-                if (!userLogs.Contains(emailLog))
-                {
-                    //return 404
-                    return NotFound();
-                }
-                
-                //update scheduled email log
-                scheduledEmailLog.NextSendingDate = scheduledRepeatingEmail.NextSendingDate;
-                scheduledEmailLog.IsRepeating = true;
-                scheduledEmailLog.RepeatEndDate = scheduledRepeatingEmail.RepeatEndDate;
-                scheduledEmailLog.RepeatInterval = scheduledRepeatingEmail.RepeatInterval;
-                emailLog.RecipientsEmail = scheduledRepeatingEmail.RecipientsEmail;
-                emailLog.EmailSubject = scheduledRepeatingEmail.EmailSubject;
-                emailLog.SentEmailBody = scheduledRepeatingEmail.EmailBody;
-                
-                await _scheduledEmailService.UpdateScheduledEmailAsync(scheduledEmailLog);
-                
-                await _emailLogService.UpdateEmailLogAsync(emailLog);
-
-                return CreatedAtAction(nameof(UpdateScheduledEmail), new { id = emailLog.Id }, emailLog);
-                
+                //return 404
+                return NotFound();
             }
-            
-            return Unauthorized();
+
+            //update scheduled email log
+            scheduledEmailLog.NextSendingDate = scheduledRepeatingEmail.NextSendingDate;
+            scheduledEmailLog.IsRepeating = true;
+            scheduledEmailLog.RepeatEndDate = scheduledRepeatingEmail.RepeatEndDate;
+            scheduledEmailLog.RepeatInterval = scheduledRepeatingEmail.RepeatInterval;
+            emailLog.RecipientsEmail = scheduledRepeatingEmail.RecipientsEmail;
+            emailLog.EmailSubject = scheduledRepeatingEmail.EmailSubject;
+            emailLog.SentEmailBody = scheduledRepeatingEmail.EmailBody;
+
+            await _scheduledEmailService.UpdateScheduledEmailAsync(scheduledEmailLog);
+
+            await _emailLogService.UpdateEmailLogAsync(emailLog);
+
+            return CreatedAtAction(nameof(UpdateScheduledEmail), new { id = emailLog.Id }, emailLog);
         }
-        
-        
-        
+
+
         /// <summary>
         /// Delete an Scheduled Email
         /// </summary>
@@ -341,19 +315,15 @@ namespace FlowWing.API.Controllers
         [HttpDelete("ScheduledEmail/{id}")]
         public async Task<IActionResult> DeleteScheduledEmail(int id)
         {
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
+            if (await _scheduledEmailService.GetScheduledEmailByIdAsync(id) == null)
             {
-                if (await _scheduledEmailService.GetScheduledEmailByIdAsync(id) == null)
-                {
-                    return NotFound();
-                }
-                await _scheduledEmailService.DeleteScheduledEmailAsync(id);
-                return Ok();
+                return NotFound();
             }
-            return Unauthorized();
+            await _scheduledEmailService.DeleteScheduledEmailAsync(id);
+
+            return Ok();
         }
-        
+
         /// <summary>
         /// Delete an Scheduled Repeating Email
         /// </summary>
@@ -362,17 +332,14 @@ namespace FlowWing.API.Controllers
         [HttpDelete("ScheduledRepeatingEmail/{id}")]
         public async Task<IActionResult> DeleteScheduledRepeatingEmail(int id)
         {
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            if (JwtHelper.TokenIsValid(token, _appSettings.SecretKey))
+            if (await _scheduledEmailService.GetScheduledEmailByIdAsync(id) == null)
             {
-                if (await _scheduledEmailService.GetScheduledEmailByIdAsync(id) == null)
-                {
-                    return NotFound();
-                }
-                await _scheduledEmailService.DeleteScheduledEmailAsync(id);
-                return Ok();
+                return NotFound();
             }
-            return Unauthorized();
+
+            await _scheduledEmailService.DeleteScheduledRepeatingEmailAsync(id);
+            
+            return Ok();
         }
     }
 }

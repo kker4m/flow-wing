@@ -43,7 +43,12 @@ namespace FlowWing.DataAccess.Concrete
         {
             return await _dbContext.EmailLogs.AsNoTracking().ToListAsync();
         }
-        
+        public async Task<IEnumerable<EmailLog>> GetEmailLogsByRepeatingLogIdAsync(int repeatingLogId)
+        {
+            return await _dbContext.EmailLogs.AsNoTracking().Where(x => x.repeatingLogId == repeatingLogId).ToListAsync();
+        }
+
+
         public async Task<EmailLog> GetEmailLogByIdAsync(int? id)
         {
             if (id == null)

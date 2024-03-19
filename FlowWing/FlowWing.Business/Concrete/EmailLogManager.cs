@@ -1,6 +1,7 @@
 ﻿using FlowWing.Business.Abstract;
 using FlowWing.DataAccess.Abstract;
 using FlowWing.Entities;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -46,7 +47,9 @@ namespace FlowWing.Business.Concrete
             else
             {
                 var emailLog = await _emailLogRepository.GetEmailLogByIdAsync(id);
-                await _emailLogRepository.DeleteEmailLogAsync(emailLog);
+                emailLog.DeletionDate = DateTime.Now.AddDays(30);
+                BackgroundJob.Schedule(() => _emailLogRepository.DeleteEmailLogAsync(emailLog), TimeSpan.FromDays(30));
+                
                 return emailLog;
             }
         }
@@ -55,7 +58,10 @@ namespace FlowWing.Business.Concrete
         {
             return await _emailLogRepository.GetAllEmailLogsAsync();
         }
-
+        public async Task<IEnumerable<EmailLog>> GetEmailLogsByRepeatingLogIdAsync(int repeatingLogId)
+        {
+            return await _emailLogRepository.GetEmailLogsByRepeatingLogIdAsync(repeatingLogId);
+        }
         public async Task<EmailLog> GetEmailLogByIdAsync(int? id)
         { 
           return await _emailLogRepository.GetEmailLogByIdAsync(id);

@@ -2,6 +2,7 @@
 using System.Text;
 using FlowWing.API.Controllers;
 using FlowWing.API.Helpers;
+using FlowWing.API.Middlewares;
 using FlowWing.Business.Abstract;
 using FlowWing.Business.Concrete;
 using FlowWing.DataAccess;
@@ -34,7 +35,7 @@ namespace FlowWing.API
         {
             services.AddHangfire(config =>
                 config.UsePostgreSqlStorage(c =>c.UseNpgsqlConnection(
-                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=123;\r\n")));
+                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;\r\n")));
             
             services.AddHangfireServer();
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -155,9 +156,21 @@ namespace FlowWing.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "FlowWing API v1");
                 
             });
+            app.UseMiddleware<EmailOwnershipMiddleware>();
+            app.UseMiddleware<LoggingMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+            name: "EmailLogsRoute",
+            pattern: "/api/EmailLogs/{action}",
+            defaults: new { controller = "EmailLogs" }
+        ).RequireAuthorization();
+                endpoints.MapControllerRoute(
+            name: "ScheduledEmailsRoute",
+            pattern: "/api/ScheduledEmailsRoute/{action}",
+            defaults: new { controller = "ScheduledEmails" }
+        ).RequireAuthorization();
             }
             );
         

@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Business\\FlowWing.Business.csproj": {}
+    "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Business\\FlowWing.Business.csproj": {}
   },
   "projects": {
-    "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Business\\FlowWing.Business.csproj": {
+    "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Business\\FlowWing.Business.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Business\\FlowWing.Business.csproj",
+        "projectUniqueName": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Business\\FlowWing.Business.csproj",
         "projectName": "FlowWing.Business",
-        "projectPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Business\\FlowWing.Business.csproj",
+        "projectPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Business\\FlowWing.Business.csproj",
         "packagesPath": "C:\\Users\\linux\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Business\\obj\\",
+        "outputPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Business\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\linux\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,17 +26,18 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj": {
-                "projectPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj"
+              "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj"
               },
-              "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {
-                "projectPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj"
+              "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {
+                "projectPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj"
               }
             }
           }
@@ -41,17 +46,16 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Hangfire": {
+              "target": "Package",
+              "version": "[1.8.11, )"
+            },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[8.0.1, )"
@@ -73,21 +77,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj": {
+    "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj",
+        "projectUniqueName": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj",
         "projectName": "FlowWing.DataAccess",
-        "projectPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj",
+        "projectPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\FlowWing.DataAccess.csproj",
         "packagesPath": "C:\\Users\\linux\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.DataAccess\\obj\\",
+        "outputPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.DataAccess\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\linux\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -95,14 +103,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {
-                "projectPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj"
+              "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {
+                "projectPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj"
               }
             }
           }
@@ -111,11 +120,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -171,21 +175,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {
+    "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj",
+        "projectUniqueName": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj",
         "projectName": "FlowWing.Entities",
-        "projectPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj",
+        "projectPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\FlowWing.Entities.csproj",
         "packagesPath": "C:\\Users\\linux\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.Entities\\obj\\",
+        "outputPath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.Entities\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\linux\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -193,6 +201,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -205,11 +214,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -231,7 +235,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

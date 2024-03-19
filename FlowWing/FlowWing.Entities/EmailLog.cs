@@ -38,6 +38,7 @@ namespace FlowWing.Entities
         
         public int? Answer { get; set; }
         public int? ForwardedFrom { get; set; }
+        public DateTime? DeletionDate { get; set; }
 
         [ForeignKey("UserId")] 
         public virtual User User { get; set; }

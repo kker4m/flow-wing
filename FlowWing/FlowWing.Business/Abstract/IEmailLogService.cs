@@ -11,6 +11,7 @@ namespace FlowWing.Business.Abstract
     {
         Task<EmailLog> GetEmailLogByIdAsync(int? id);
         Task<IEnumerable<EmailLog>> GetAllEmailLogsAsync();
+        Task<IEnumerable<EmailLog>> GetEmailLogsByRepeatingLogIdAsync(int repeatingLogId);
         Task<EmailLog> CreateEmailLogAsync(EmailLog emailLog);
         EmailLog CreateEmailLog(EmailLog emailLog);
         Task<EmailLog> UpdateEmailLogAsync(EmailLog emailLog);
