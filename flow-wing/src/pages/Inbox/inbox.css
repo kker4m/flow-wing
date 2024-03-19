@@ -76,6 +76,7 @@
   flex-direction: row;
   align-items: center;
   margin-top: 50px;
+  width: 700px;
 }
 
 .attachment-content {
@@ -118,7 +119,8 @@
   font-size: 30px;
   padding: 6px;
 }
-.inbox-mail-attachment-content{
+.inbox-mail-attachment {
   display: flex;
   flex-direction: row;
+  width: 700px;
 }

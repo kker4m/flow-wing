@@ -119,17 +119,6 @@ const Sidebar = () => {
         onSelect={({ key }) => setStoredSelectedKey(key)}
         style={{ fontSize: "16px", width: 256 }}
       />
-
-      {/* <div className="logo-section">
-        <Link to="/home">
-          {" "}
-          <img
-            className="logo-img"
-            src="https://res.cloudinary.com/dirtkkfqn/image/upload/v1703573682/arcelik_logo_lztrqj.png"
-            alt="Logo"
-          />
-        </Link>
-      </div> */}
     </div>
   )
 }

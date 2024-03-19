@@ -1,20 +1,11 @@
-import React, { useEffect, useState } from "react"
-import Attachments from "../../components/Attachments"
-import { Divider, Icon, MenuItem } from "@mui/material"
+import React, { useState } from "react"
+import { Divider, MenuItem } from "@mui/material"
 import { useSelector } from "react-redux"
 import { useFormik } from "formik"
 import "./compose.css"
 import { useNavigate } from "react-router"
 import alertify from "alertifyjs"
-import {
-  Checkbox,
-  DatePicker,
-  Input,
-  Mentions,
-  Modal,
-  Select,
-  Upload
-} from "antd"
+import { Checkbox, DatePicker, Modal, Select } from "antd"
 import * as Yup from "yup"
 import dayjs from "dayjs"
 import {
@@ -22,7 +13,6 @@ import {
   sendScheduledMail,
   sendScheduledRepeatingMail
 } from "../../services/emailService"
-import { getUsers } from "../../services/userService"
 import "react-quill/dist/quill.bubble.css"
 import ReactQuill from "react-quill"
 
@@ -97,17 +87,6 @@ const Compose = () => {
         navigate("/home")
       } else alertify.error("Gönderme başarısız oldu")
     })
-  }
-
-  // ANTD MENTION FUNCTIONS
-  const onMentionChange = (value) => {
-    console.log("Change:", value)
-    formik.handleChange({ name: "recipientsEmail", value })
-  }
-
-  const onMentionSelect = (option) => {
-    console.log("select", option)
-    formik.setFieldValue("recipientsEmail", option.value)
   }
 
   // DATE FIELDS
@@ -186,23 +165,7 @@ const Compose = () => {
       }
     }
   })
-  // GET USERS FOR MENTION
-  useEffect(() => {
-    getUsers()
-      .then((res) => {
-        setUsers(res.data)
-      })
-      .catch((error) => {
-        console.error("Error fetching users:", error)
-      })
 
-    return () => {}
-  }, [])
-
-  const options = users.map((user) => ({
-    value: user.email,
-    label: user.email
-  }))
   const handleReset = () => {
     formik.resetForm() // Reset the form fields
   }
@@ -333,25 +296,23 @@ const Compose = () => {
           <div className="error-message">{formik.errors.emailBody}</div>
         )}
         <div className="compose-attachments">
-        <input
-    id="file"
-    name="file"
-    type="file"
-    multiple
-    onChange={(event) => {
-        const selectedFiles = event.currentTarget.files;
-        // Seçilen dosyaları bir dizi olarak alırız.
-        
-        // Diziyi döngüye alarak her bir dosyayı işleyebiliriz.
-        for (let i = 0; i < selectedFiles.length; i++) {
-            const file = selectedFiles[i];
-            // Burada dosya işlemlerini gerçekleştirin, örneğin dosyayı yükleyin veya formik'e ekleyin.
-            formik.setFieldValue(`file[${i}]`, file);
-        }
-    }}
-/>
+          <input
+            id="file"
+            name="file"
+            type="file"
+            multiple
+            onChange={(event) => {
+              const selectedFiles = event.currentTarget.files
+              // Seçilen dosyaları bir dizi olarak alırız.
 
-
+              // Diziyi döngüye alarak her bir dosyayı işleyebiliriz.
+              for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i]
+                // Burada dosya işlemlerini gerçekleştirin, örneğin dosyayı yükleyin veya formik'e ekleyin.
+                formik.setFieldValue(`file[${i}]`, file)
+              }
+            }}
+          />
 
           <hr />
         </div>

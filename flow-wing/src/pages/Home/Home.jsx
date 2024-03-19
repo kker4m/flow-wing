@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from "react"
 import "./home.css"
 import { Icon } from "@iconify/react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Divider from "@mui/material/Divider"
 import alertify from "alertifyjs"
 import EmptyPage from "../../components/EmptyPage"
-import {
-  deleteSentEmail,
-  getEmailAndAnswersByEmailLogId,
-  getMails
-} from "../../services/emailService"
+import { deleteSentEmail, getMails } from "../../services/emailService"
 import { excerpt, getText } from "../../helpers"
 
 const Home = () => {
   const [mails, setMails] = useState([])
   const [mailCount, setMailCount] = useState(0)
   const [sender, setSender] = useState([])
+
   let navigate = useNavigate()
 
   // Get all e-mails
@@ -117,15 +114,7 @@ const Home = () => {
                         )}
                       </div>
                     </div>
-                    {/* <div className="delete-mail">
-                      {" "}
-                      <button
-                        className="delete-mail-btn"
-                        onClick={() => handleDelete(item.emailLog.id)}
-                      >
-                        <Icon icon="iconoir:trash" />
-                      </button>
-                    </div>{" "} */}
+
                     <div className="inbox-sent-time">{timeToShow}</div>
                   </div>
                 </div>

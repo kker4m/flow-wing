@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
 import "./sentbox.css"
 import { useNavigate, useParams } from "react-router"
-import { getUsers } from "../../services/userService"
 import {
   deleteSentEmail,
   forwardEmail,
@@ -12,12 +11,12 @@ import {
   replyMail
 } from "../../services/emailService"
 import Spinner from "../../components/Spinner"
-import { Avatar, Button, Divider, Mentions, Modal, Tooltip } from "antd"
+import { Avatar, Button, Divider, Modal, Tooltip } from "antd"
 import { Icon } from "@iconify/react"
 import ReactQuill from "react-quill"
 import { formatDate, getText } from "../../helpers"
 import alertify from "alertifyjs"
-import { HOME_ROUTE, SENT_ROUTE } from "../../routes"
+import { HOME_ROUTE } from "../../routes"
 
 const Sentbox = () => {
   const [mail, setMail] = useState(null)
@@ -38,14 +37,6 @@ const Sentbox = () => {
   let navigate = useNavigate()
   let { id } = useParams()
 
-  // GET USERS FOR MENTION
-  useEffect(() => {
-    getUsers().then((res) => {
-      setUsers(res.data)
-    })
-
-    return () => {}
-  }, [])
 
   // GET ANSWER INFOS
 
@@ -84,12 +75,7 @@ const Sentbox = () => {
     setOpen(false)
     setForwardModalOpen(false)
   }
-  // ANTD MENTION FUNCTIONS
 
-  const onMentionSelect = (option) => {
-    console.log("select", option)
-    setForwardTo(option.value)
-  }
   // QUILL TOOLBAR
   const toolbarOptions = {
     toolbar: [
@@ -151,7 +137,9 @@ const Sentbox = () => {
   const handleDelete = () => {
     deleteSentEmail(mail.id).then((res) => {
       console.log(res)
-      alertify.success("Mail silindi.")
+      if (res.status === 200) {
+        alertify.success("Mail silindi")
+      } else alertify.error(res.message)
       navigate(HOME_ROUTE)
     })
   }
@@ -172,13 +160,13 @@ const Sentbox = () => {
     } else {
       formData == []
     }
-    replyMail(values, formData).then((res) => {if(res.status ===400) {
+    replyMail(values, formData).then((res) => {
+      if (res.status === 400) {
         alertify.error("Bu mail yalnızca bir kez yanıtlanabilir")
-      }
-      else if (res.status === 201) {
+      } else if (res.status === 201) {
         setMail(res.data.emailLog)
         alertify.success("Mail yanıtlandı")
-      } 
+      }
     })
 
     navigate()
@@ -239,13 +227,12 @@ const Sentbox = () => {
         >
           <form className="forward-modal-form">
             <label>Kime: </label>{" "}
-            <Mentions
-              allowClear
+            <input
               style={{ height: 50, border: "none" }}
-              onSelect={onMentionSelect}
               required
-              options={options}
-              prefix={[""]}
+              onChange={(e) => {
+                setForwardTo(e.target.value)
+              }}
             />
             <label>Mesaj: </label>{" "}
             <ReactQuill
@@ -262,7 +249,7 @@ const Sentbox = () => {
             <br />
             <br />
             <br />
-            <span>-------Şu mesajdan iletilecek-------</span>
+            <span>-------Şu mesaj iletilecek-------</span>
             <p>
               {" "}
               <span>Gönderen:</span> {mail.senderEmail}
@@ -472,13 +459,12 @@ const Sentbox = () => {
               >
                 <form className="forward-modal-form">
                   <label>Kime: </label>{" "}
-                  <Mentions
-                    allowClear
+                  <input
                     style={{ height: 50, border: "none" }}
-                    onSelect={onMentionSelect}
                     required
-                    options={options}
-                    prefix={[""]}
+                    onChange={(e) => {
+                      setForwardTo(e.target.value)
+                    }}
                   />
                   <label>Mesaj: </label>{" "}
                   <ReactQuill
