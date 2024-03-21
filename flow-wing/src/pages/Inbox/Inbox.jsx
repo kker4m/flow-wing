@@ -32,8 +32,8 @@ const Inbox = () => {
   const [forwardedEmailMessage, setForwardedEmailMessage] = useState("")
   const [forwardedMailId, setForwardedMailId] = useState("")
   const [forwardedFrom, setForwardedFrom] = useState("")
-  const [users, setUsers] = useState([])
   const [replyAttachment, setReplyAttachment] = useState("")
+  const [answerArray, setAnswerArray] = useState([])
   let navigate = useNavigate()
   let { id } = useParams()
 
@@ -97,13 +97,16 @@ const Inbox = () => {
       setUser(res.data.emailLog.user.username)
       //console.log("user", res.data.emailLog.user.username)
     })
-
+    //console.log("answer for reply mail id", mail.answer)
     getEmailAndAnswersByEmailLogId(id).then((response) => {
-      //console.log("info endpoint :", response)
-
+      console.log(
+        "info endpoint answers :",
+        response.data.answers[0]?.attachmentInfos
+      )
+      setAnswerArray(response.data.answers)
       // console.log("forwarded mail ", response.data.forwardedEmailLog)
       setForwardedFrom(response.data.forwardedEmailLog)
-      //console.log(" answer : ", response.data.answer)
+      console.log(" answer : ", response.data.answer)
       setAnswer(response.data.answer)
       //console.log("answer emaillog ", answer?.emailLog?.sentEmailBody)
       setForwardedMailId(response.data.emailLog.forwardedFrom)
@@ -111,7 +114,7 @@ const Inbox = () => {
     })
 
     getForwardedMailById(forwardedMailId).then((res) => {
-      //console.log("forwarded mail ", res.data.forwardedEmailLog)
+      console.log("forwarded mail ", res.data.forwardedEmailLog)
       setForwardedFrom(res.data.emailLog)
       setForwardedMailId(res.data.emailLog.forwardedFrom)
     })
@@ -126,9 +129,8 @@ const Inbox = () => {
   // DELETE AN EMAIL
   const handleDelete = () => {
     deleteSentEmail(mail.id).then((res) => {
-      
       console.log(res)
-      
+
       if (res.status === 200) {
         alertify.success("Mail silindi.")
       } else alertify.error(res.message)
@@ -143,21 +145,22 @@ const Inbox = () => {
       recipientsEmail: mail.recipientsEmail,
       emailSubject: mail.emailSubject,
       emailBody: repliedMailBody,
-      RepliedEmailId: mail.answer ? mail.answer.id : mail.id,
+      RepliedEmailId: mail.answer ? mail.answer : mail.id, // mail.answer gets answers id
       file: replyAttachment
     }
     const formData = new FormData()
     if (values.file && values.file.length > 0) {
-      formData.append("attachment", values.file[0])
+      formData.append("attachment", values.file)
     } else {
       formData == []
     }
+    console.log("values:", values, "form data ", formData)
     replyMail(values, formData).then((res) => {
       setMail(res.data.emailLog)
 
       if (res.status === 201) {
         alertify.success("Mail gönderildi")
-      } else alertify.error(res.message)
+      } else alertify.error("Gönderme başarısız oldu")
     })
     console.log(mail.answer)
     navigate()
@@ -286,7 +289,7 @@ const Inbox = () => {
             </Button>
           ]}
         >
-          <form className="reply-modal-form">
+          <form className="reply-modal-form" enctype="multipart/form-data">
             <label type="text">
               <span>Kime: </span>
               {mail.recipientsEmail}
@@ -309,8 +312,17 @@ const Inbox = () => {
               id="attachment"
               name="attachment"
               type="file"
+              multiple
               onChange={(event) => {
-                setReplyAttachment(event.currentTarget.files[0])
+                const selectedFiles = event.currentTarget.files
+                // Tüm dosyaları içeren bir nesne oluşturun
+                const filesObject = {}
+                for (let i = 0; i < selectedFiles.length; i++) {
+                  const file = selectedFiles[i]
+                  filesObject[`file[${i}]`] = file
+                }
+                // Dosyaları bir nesne olarak ayarlayın
+                setReplyAttachment(filesObject)
               }}
             />
           </form>
@@ -406,7 +418,19 @@ const Inbox = () => {
                     </a>
                   </div>
                 )}
-              </div>
+              </div> {/* İndirme Düğmesi */}
+      <button className="attachment-download-btn"
+        onClick={() => {
+          const link = document.createElement("a");
+          link.href = `data:${attachments.contentType};base64,${attachments.data}`;
+          link.download = attachments.fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }}
+      >
+        İndir
+      </button>
               {}{" "}
             </div>
           ))}
@@ -416,7 +440,7 @@ const Inbox = () => {
       <Divider />
 
       {/* MAIL ANSWER SECTION */}
-      {answer ? (
+      {answerArray.map((answer) => (
         <div className="mail-answers">
           <div className="mail-answer-content">
             {/* MAIL ANSWER ACTIONS */}
@@ -448,7 +472,10 @@ const Inbox = () => {
                   </Button>
                 ]}
               >
-                <form className="forward-modal-form">
+                <form
+                  className="reply-modal-form"
+                  enctype="multipart/form-data"
+                >
                   <label>Kime: </label>{" "}
                   <input
                     style={{ height: 50, border: "none" }}
@@ -520,7 +547,10 @@ const Inbox = () => {
                   </Button>
                 ]}
               >
-                <form className="reply-modal-form">
+                <form
+                  className="reply-modal-form"
+                  enctype="multipart/form-data"
+                >
                   <label type="text">
                     <span>Kime: </span>
                     {mail.recipientsEmail}
@@ -543,8 +573,17 @@ const Inbox = () => {
                     id="attachment"
                     name="attachment"
                     type="file"
+                    multiple
                     onChange={(event) => {
-                      setReplyAttachment(event.currentTarget.files[0])
+                      const selectedFiles = event.currentTarget.files
+                      // Tüm dosyaları içeren bir nesne oluşturun
+                      const filesObject = {}
+                      for (let i = 0; i < selectedFiles.length; i++) {
+                        const file = selectedFiles[i]
+                        filesObject[`file[${i}]`] = file
+                      }
+                      // Dosyaları bir nesne olarak ayarlayın
+                      setReplyAttachment(filesObject)
                     }}
                   />
                 </form>
@@ -588,68 +627,79 @@ const Inbox = () => {
               }}
             />
           </div>{" "}
-        </div>
-      ) : null}
-
-      {/* MAIL ANSWERS ATTACHMENTS */}
-
-      {answer?.attachmentInfos?.map((attachments) => (
-        <div className="inbox-mail-attachment">
-          <div>
-            {" "}
-            <Icon icon="et:attachments" width="16" height="16" />
-            {attachments.contentType === "text/plain" && (
+          {/* MAIL ANSWERS ATTACHMENTS */}
+          {answerArray[0]?.attachmentInfos?.map((attachments) => (
+            <div className="inbox-mail-attachment">
               <div>
-                <a
-                  href={`data:text/plain;base64,${attachments.data}`}
-                  download={attachments.fileName}
-                >
-                  {attachments.fileName}
-                </a>
+                {" "}
+                <Icon icon="et:attachments" width="16" height="16" />
+                {attachments.contentType === "text/plain" && (
+                  <div>
+                    <a
+                      href={`data:text/plain;base64,${attachments.data}`}
+                      download={attachments.fileName}
+                    >
+                      {attachments.fileName}
+                    </a>
+                  </div>
+                )}
+                {attachments.contentType ===
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+                  <a
+                    href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${attachments.data}`}
+                    target="_blank"
+                    download={attachments.fileName}
+                  >
+                    {attachments.fileName}
+                  </a>
+                )}
+                {attachments.contentType === "application/pdf" && (
+                  <a
+                    href={`data:application/pdf;base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
+                {["image/jpeg", "image/png", "image/gif"].includes(
+                  attachments.contentType
+                ) && (
+                  <a
+                    href={`data:${attachments.contentType};base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
+                {["application/octet-stream", "application/zip"].includes(
+                  attachments.contentType
+                ) && (
+                  <div>
+                    <a
+                      href={`data:application/octet-stream;base64,${attachments.data}`}
+                      download={attachments.fileName}
+                    >
+                      {attachments.fileName}
+                    </a>
+                  </div>
+                )} {/* İndirme Düğmesi */}
+      <button className="attachment-download-btn"
+        onClick={() => {
+          const link = document.createElement("a");
+          link.href = `data:${attachments.contentType};base64,${attachments.data}`;
+          link.download = attachments.fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }}
+      >
+        İndir
+      </button>
               </div>
-            )}
-            {attachments.contentType ===
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-              <a
-                href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${attachments.data}`}
-                target="_blank"
-                download={attachments.fileName}
-              >
-                {attachments.fileName}
-              </a>
-            )}
-            {attachments.contentType === "application/pdf" && (
-              <a
-                href={`data:application/pdf;base64,${attachments.data}`}
-                target="_blank"
-              >
-                {attachments.fileName}{" "}
-              </a>
-            )}
-            {["image/jpeg", "image/png", "image/gif"].includes(
-              attachments.contentType
-            ) && (
-              <a
-                href={`data:${attachments.contentType};base64,${attachments.data}`}
-                target="_blank"
-              >
-                {attachments.fileName}{" "}
-              </a>
-            )}
-            {["application/octet-stream", "application/zip"].includes(
-              attachments.contentType
-            ) && (
-              <div>
-                <a
-                  href={`data:application/octet-stream;base64,${attachments.data}`}
-                  download={attachments.fileName}
-                >
-                  {attachments.fileName}
-                </a>
-              </div>
-            )}
-          </div>
-          {}{" "}
+              {}{" "}
+            </div>
+          ))}
+          <Divider />
         </div>
       ))}
       {/* 

@@ -177,19 +177,6 @@ const Compose = () => {
       showModal()
     }
   }
-  // ATTACHMENT FUNCTION
-  const handleFileChange = (event) => {
-    if (event.target.files.length > 0) {
-      console.log("Selected files:", event.target.files)
-      // Dosya nesnesini al
-      const file = event.target.files[0]
-      // Form verilerine dosya nesnesini ekle
-      formik.setFieldValue("attachment", file)
-    } else {
-      console.log("No file selected")
-      formik.setFieldValue("attachment", [])
-    }
-  }
 
   return (
     <div className="compose-page-content">

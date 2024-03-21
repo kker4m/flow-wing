@@ -124,3 +124,11 @@
   flex-direction: row;
   width: 700px;
 }
+.attachment-download-btn{
+  background-color: #3F6739; 
+  margin: 30px;
+  color: aliceblue;
+  border-radius: 20%;
+  width: 60px;
+  height: 35px;
+}

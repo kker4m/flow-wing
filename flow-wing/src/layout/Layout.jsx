@@ -1,6 +1,6 @@
 import React from "react"
 import Sidebar from "../components/Sidebar"
-import Header from "../components/Header"
+import ScrollButton from "../components/ScrollButton"
 
 const Layout = ({ children }) => {
   const onSearch = (value, _e, info) => console.log(info?.source, value)
@@ -23,6 +23,7 @@ const Layout = ({ children }) => {
           ))}
         </div>
       </div>
+      <ScrollButton/>
     </div>
   )
 }

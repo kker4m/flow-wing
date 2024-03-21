@@ -2,7 +2,6 @@ import { useFormik } from "formik"
 import React from "react"
 import { useSelector } from "react-redux"
 import { Divider } from "@mui/material"
-import Attachments from "../../components/Attachments"
 import { Select } from "antd"
 import { sendMail } from "../../services/emailService"
 
@@ -80,7 +79,6 @@ const Scheduled = () => {
         />
       </div>
       <div className="compose-attachments">
-        <Attachments />
         <Divider type="vertical" />
       </div>
       <div className="compose-btns">

@@ -34,9 +34,9 @@ const Sentbox = () => {
   const [forwardedFrom, setForwardedFrom] = useState("")
   const [users, setUsers] = useState([])
   const [replyAttachment, setReplyAttachment] = useState("")
+  const [answerArray, setAnswerArray] = useState([])
   let navigate = useNavigate()
   let { id } = useParams()
-
 
   // GET ANSWER INFOS
 
@@ -110,7 +110,8 @@ const Sentbox = () => {
 
     getEmailAndAnswersByEmailLogId(id).then((response) => {
       console.log("info endpoint :", response)
-
+      console.log("info endpoint answers :", response.data.answers)
+      setAnswerArray(response.data.answers)
       console.log("forwarded mail ", response.data.forwardedEmailLog)
       setForwardedFrom(response.data.forwardedEmailLog)
       console.log(" answer : ", response.data.answer)
@@ -318,8 +319,17 @@ const Sentbox = () => {
               id="attachment"
               name="attachment"
               type="file"
+              multiple
               onChange={(event) => {
-                setReplyAttachment(event.currentTarget.files[0])
+                const selectedFiles = event.currentTarget.files
+                // Tüm dosyaları içeren bir nesne oluşturun
+                const filesObject = {}
+                for (let i = 0; i < selectedFiles.length; i++) {
+                  const file = selectedFiles[i]
+                  filesObject[`file[${i}]`] = file
+                }
+                // Dosyaları bir nesne olarak ayarlayın
+                setReplyAttachment(filesObject)
               }}
             />
           </form>
@@ -414,7 +424,19 @@ const Sentbox = () => {
                       {attachments.fileName}
                     </a>
                   </div>
-                )}
+                )} {/* İndirme Düğmesi */}
+      <button className="attachment-download-btn"
+        onClick={() => {
+          const link = document.createElement("a");
+          link.href = `data:${attachments.contentType};base64,${attachments.data}`;
+          link.download = attachments.fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }}
+      >
+        İndir
+      </button>
               </div>
               {}{" "}
             </div>
@@ -425,7 +447,7 @@ const Sentbox = () => {
       <Divider />
 
       {/* MAIL ANSWER SECTION */}
-      {answer ? (
+      {answerArray.map((answer) => (
         <div className="mail-answers">
           <div className="mail-answer-content">
             {/* MAIL ANSWER ACTIONS */}
@@ -547,13 +569,21 @@ const Sentbox = () => {
                     onChange={(value) => setRepliedMailBody(value)}
                     required
                   />
-
                   <input
                     id="attachment"
                     name="attachment"
                     type="file"
+                    multiple
                     onChange={(event) => {
-                      setReplyAttachment(event.currentTarget.files[0])
+                      const selectedFiles = event.currentTarget.files
+                      // Tüm dosyaları içeren bir nesne oluşturun
+                      const filesObject = {}
+                      for (let i = 0; i < selectedFiles.length; i++) {
+                        const file = selectedFiles[i]
+                        filesObject[`file[${i}]`] = file
+                      }
+                      // Dosyaları bir nesne olarak ayarlayın
+                      setReplyAttachment(filesObject)
                     }}
                   />
                 </form>
@@ -597,72 +627,84 @@ const Sentbox = () => {
               }}
             />
           </div>{" "}
-        </div>
-      ) : null}
-
-      {/* MAIL ANSWERS ATTACHMENTS */}
-
-      {answer?.attachmentInfos?.map((attachments) => (
-        <div className="inbox-mail-attachment">
-          <div>
-            {" "}
-            <Icon icon="et:attachments" width="16" height="16" />
-            {attachments.contentType === "text/plain" && (
+          {/* MAIL ANSWERS ATTACHMENTS */}
+          {answerArray?.attachmentInfos?.map((attachments) => (
+            <div className="inbox-mail-attachment">
               <div>
-                <a
-                  href={`data:text/plain;base64,${attachments.data}`}
-                  download={attachments.fileName}
-                >
-                  {attachments.fileName}
-                </a>
+                {" "}
+                <Icon icon="et:attachments" width="16" height="16" />
+                {attachments.contentType === "text/plain" && (
+                  <div>
+                    <a
+                      href={`data:text/plain;base64,${attachments.data}`}
+                      download={attachments.fileName}
+                    >
+                      {attachments.fileName}
+                    </a>
+                  </div>
+                )}
+                {attachments.contentType ===
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+                  <a
+                    href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${attachments.data}`}
+                    target="_blank"
+                    download={attachments.fileName}
+                  >
+                    {attachments.fileName}
+                  </a>
+                )}
+                {attachments.contentType === "application/pdf" && (
+                  <a
+                    href={`data:application/pdf;base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
+                {["image/jpeg", "image/png", "image/gif"].includes(
+                  attachments.contentType
+                ) && (
+                  <a
+                    href={`data:${attachments.contentType};base64,${attachments.data}`}
+                    target="_blank"
+                  >
+                    {attachments.fileName}{" "}
+                  </a>
+                )}
+                {["application/octet-stream", "application/zip"].includes(
+                  attachments.contentType
+                ) && (
+                  <div>
+                    <a
+                      href={`data:application/octet-stream;base64,${attachments.data}`}
+                      download={attachments.fileName}
+                    >
+                      {attachments.fileName}
+                    </a>
+                  </div>
+                )} {/* İndirme Düğmesi */}
+      <button
+        onClick={() => {
+          const link = document.createElement("a");
+          link.href = `data:${attachments.contentType};base64,${attachments.data}`;
+          link.download = attachments.fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }}
+      >
+        İndir
+      </button>
               </div>
-            )}
-            {attachments.contentType ===
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-              <a
-                href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${attachments.data}`}
-                target="_blank"
-                download={attachments.fileName}
-              >
-                {attachments.fileName}
-              </a>
-            )}
-            {attachments.contentType === "application/pdf" && (
-              <a
-                href={`data:application/pdf;base64,${attachments.data}`}
-                target="_blank"
-              >
-                {attachments.fileName}{" "}
-              </a>
-            )}
-            {["image/jpeg", "image/png", "image/gif"].includes(
-              attachments.contentType
-            ) && (
-              <a
-                href={`data:${attachments.contentType};base64,${attachments.data}`}
-                target="_blank"
-              >
-                {attachments.fileName}{" "}
-              </a>
-            )}
-            {["application/octet-stream", "application/zip"].includes(
-              attachments.contentType
-            ) && (
-              <div>
-                <a
-                  href={`data:application/octet-stream;base64,${attachments.data}`}
-                  download={attachments.fileName}
-                >
-                  {attachments.fileName}
-                </a>
-              </div>
-            )}
-          </div>
-          {}{" "}
+              {}{" "}
+            </div>
+          ))}
+
         </div>
+        
       ))}
-      {/* 
-IS FORWARDED SECTION */}
+
+      {/* IS FORWARDED SECTION */}
 
       {forwardedFrom ? (
         <div className="forwarded-from-section">
