@@ -2624,6 +2624,7 @@
         "dependencies": {
           "FlowWing.DataAccess": "1.0.0",
           "FlowWing.Entities": "1.0.0",
+          "Hangfire": "1.8.11",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "8.0.1"
         },
         "runtime": {

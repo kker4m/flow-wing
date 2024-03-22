@@ -41,8 +41,8 @@ namespace FlowWing.API.Controllers
                     Password = model.Password,
                     Username = model.Username,
                     IsApplicationUser = false,
-                    LastLoginDate = DateTime.Now,
-                    CreationDate = DateTime.Now
+                    LastLoginDate = DateTime.UtcNow,
+                    CreationDate = DateTime.UtcNow
                 };
 
 

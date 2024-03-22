@@ -170,6 +170,11 @@ namespace FlowWing.API.Controllers
 
                     emailLog = answer;
                 }
+                if(createdAnswerEmail != null)
+                {
+                    emailLog.Answer = createdAnswerEmail.emailLog.Id;
+                }
+                
                 else if (answer == null)
                 {
                     return BadRequest("Email's answer not found");

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FlowWing.Entities")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ba66caeb75dc31fbcb498679dfd462ebc59f7abd")]
 [assembly: System.Reflection.AssemblyProductAttribute("FlowWing.Entities")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FlowWing.Entities")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

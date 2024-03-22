@@ -51,22 +51,29 @@ namespace FlowWing.API
                     .AllowAnyHeader();
                 });
             });
+
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             //services.AddScoped<DbContext,FlowWingDbContext>();
             services.AddScoped<ScheduledMailHelper>();
             services.AddScoped<EmailSenderService>();
-            
-            services.AddScoped<IUserService, UserManager>();
-            services.AddScoped<IEmailLogRepository, EmailLogRepository>();
-            services.AddScoped<IScheduledEmailRepository, ScheduledEmailRepository>();
-            services.AddScoped<IAttachmentService,AttachmentManager>();
 
-            services.AddScoped<IAttachmentRepository, AttachmentRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IScheduledEmailService, ScheduledEmailManager>();
+            services.AddScoped<IEmailLogRepository, EmailLogRepository>();
             services.AddScoped<IEmailLogService, EmailLogManager>();
+
+            services.AddScoped<IScheduledEmailRepository, ScheduledEmailRepository>();
+            services.AddScoped<IScheduledEmailService, ScheduledEmailManager>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserManager>();
             
-            services.AddDbContext<FlowWingDbContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+            services.AddScoped<IAttachmentService, AttachmentManager>();
+
+            services.AddScoped<ILoggingRepository, LoggingRepository>();
+            services.AddScoped<ILoggingService, LoggingManager>();
+
+
+            services.AddDbContext<FlowWingDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             
             // JWT Authentication ekle

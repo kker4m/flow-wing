@@ -72,6 +72,9 @@ namespace FlowWing.DataAccess.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("EmailSubject")
                         .IsRequired()
                         .HasColumnType("text");
@@ -111,6 +114,26 @@ namespace FlowWing.DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EmailLogs");
+                });
+
+            modelBuilder.Entity("FlowWing.Entities.Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("LogTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("FlowWing.Entities.ScheduledEmail", b =>

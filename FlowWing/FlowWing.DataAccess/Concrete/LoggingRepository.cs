@@ -22,7 +22,7 @@ namespace FlowWing.DataAccess.Concrete
             _dbContext.Logs.Add(new Log
             {
                 Message = message,
-                LogTime = DateTime.Now
+                LogTime = DateTime.UtcNow
             });
 
             await _dbContext.SaveChangesAsync();
