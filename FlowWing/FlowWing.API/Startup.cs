@@ -35,7 +35,7 @@ namespace FlowWing.API
         {
             services.AddHangfire(config =>
                 config.UsePostgreSqlStorage(c =>c.UseNpgsqlConnection(
-                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;\r\n")));
+                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=123;\r\n")));
             
             services.AddHangfireServer();
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -174,7 +174,13 @@ namespace FlowWing.API
 
             
             app.UseMiddleware<EmailOwnershipMiddleware>();
-            
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            });
         }
     }
 }
