@@ -146,7 +146,7 @@ namespace FlowWing.API
                 app.UseDeveloperExceptionPage();
             }
 
-            // app.UseAuthorization();
+            // 
             //app.UseOpenApi();
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
@@ -155,32 +155,26 @@ namespace FlowWing.API
             
             app.UseRouting();
             app.UseCors("AllowAll");
-            app.UseAuthentication();
-            app.UseAuthorization();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "FlowWing API v1");
                 
             });
-            app.UseMiddleware<EmailOwnershipMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapControllerRoute(
-            name: "EmailLogsRoute",
-            pattern: "/api/EmailLogs/{action}",
-            defaults: new { controller = "EmailLogs" }
-        ).RequireAuthorization();
-                endpoints.MapControllerRoute(
-            name: "ScheduledEmailsRoute",
-            pattern: "/api/ScheduledEmailsRoute/{action}",
-            defaults: new { controller = "ScheduledEmails" }
-        ).RequireAuthorization();
-            }
+            app.UseAuthorization();
+            app.UseWhen(context =>
+                context.Request.Path.StartsWithSegments("/api/EmailLogs") ||
+                context.Request.Path.StartsWithSegments("/api/ScheduledEmails"),
+                builder =>
+                {
+                    builder.UseMiddleware<AuthorizationMiddleware>();
+                }
             );
-        
+
+            
+            app.UseMiddleware<EmailOwnershipMiddleware>();
+            
         }
     }
 }

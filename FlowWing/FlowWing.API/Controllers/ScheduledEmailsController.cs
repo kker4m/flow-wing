@@ -38,7 +38,6 @@ namespace FlowWing.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAllScheduledEmails()
         {
             var scheduledEmails = await _scheduledEmailService.GetAllScheduledEmailsAsync();
@@ -66,7 +65,6 @@ namespace FlowWing.API.Controllers
         /// <param name="scheduledEmail"></param>
         /// <returns></returns>
         [HttpPost("CreateScheduledEmail")]
-        [Authorize]
         public async Task<IActionResult> CreateScheduledEmail([FromForm] ScheduledEmailLogModel scheduledEmail)
         {
             (string UserEmail, string UserId) = (HttpContext.Items["UserEmail"] as string, HttpContext.Items["UserId"] as string);
@@ -151,7 +149,6 @@ namespace FlowWing.API.Controllers
         /// <param name="repeatingEmail"></param>
         /// <returns></returns>
         [HttpPost("CreateScheduledRepeatingEmail")]
-        [Authorize]
         public async Task<IActionResult> CreateScheduledRepeatingEmail([FromForm] ScheduledRepeatingEmailModel scheduledRepeatingEmailModel)
         {
             (string UserEmail, string UserId) = (HttpContext.Items["UserEmail"] as string, HttpContext.Items["UserId"] as string);

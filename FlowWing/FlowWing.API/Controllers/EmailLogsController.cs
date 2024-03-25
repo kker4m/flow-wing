@@ -39,7 +39,6 @@ namespace FlowWing.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetUserSentEmails")]
-        [Authorize]
         public async Task<IActionResult> GetUserSentEmails()
         {
             bool Sender;
@@ -94,7 +93,6 @@ namespace FlowWing.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetEmailAndAnswersByEmailLogId/{id}")]
-        [Authorize]
         public async Task<IActionResult> GetEmailInformatinByEmailLogId(int id)
         {
             IEnumerable<Attachment>? emailAttachments;
@@ -195,7 +193,6 @@ namespace FlowWing.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetUserReceivedEmails")]
-        [Authorize]
         public async Task<IActionResult> GetUserReceivedEmails()
         {
             bool Sender;
@@ -262,7 +259,6 @@ namespace FlowWing.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<IActionResult> GetEmailLogById(int id)
         {
             bool Sender;
@@ -486,7 +482,6 @@ namespace FlowWing.API.Controllers
         /// <param name="emailLogModel"></param>
         /// <returns></returns>
         [HttpPut]
-        [Authorize]
         public async Task<IActionResult> UpdateEmailLog([FromForm] EmailLogModel emailLogModel, int EmailLogId)
         {
             (string UserEmail, string UserId) = (HttpContext.Items["UserEmail"] as string, HttpContext.Items["UserId"] as string);
