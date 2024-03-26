@@ -13,27 +13,27 @@ public class ScheduledMailHelper
 {
     private readonly EmailSenderService _emailSenderService;
     private readonly IScheduledEmailService _scheduledEmailService;
+    private IEmailLogService _emailLogService;
 
-    public ScheduledMailHelper(EmailSenderService emailSenderService, IScheduledEmailService scheduledEmailService)
+    public ScheduledMailHelper(EmailSenderService emailSenderService, IScheduledEmailService scheduledEmailService, IEmailLogService emailLogService)
     {
         _emailSenderService = emailSenderService;
         _scheduledEmailService = scheduledEmailService;
+        _emailLogService = emailLogService;
     }
     
     public void ScheduleRepeatingEmail(EmailLog emailLog, ScheduledRepeatingEmailModel scheduledRepeatingEmailModel)
     {
         _emailSenderService.UpdateStatus(emailLog);
-        //Hangfire'da işi planla, NextSendingDate'de ilk maili gonder
-        BackgroundJob.Schedule($"scheduledjob-{emailLog.Id}",
-            () => SendRepeatingEmail(emailLog),
-            scheduledRepeatingEmailModel.NextSendingDate
-        );
+        BackgroundJob.Schedule(() => SendRepeatingEmail(emailLog),scheduledRepeatingEmailModel.NextSendingDate);
     }
     public async Task ScheduleScheduledEmail(EmailLog createdEmailLog, ScheduledEmailLogModel scheduledEmail)
     {
         // Hangfire'da işi planla
-        BackgroundJob.Schedule($"scheduledjob-{createdEmailLog.Id}",() => _emailSenderService.UpdateStatus(createdEmailLog)
-            ,scheduledEmail.SentDateTime);
+        string jobId = BackgroundJob.Schedule(() => _emailSenderService.UpdateStatus(createdEmailLog),scheduledEmail.SentDateTime);
+        
+        createdEmailLog.HangfireJobId = jobId;
+        _emailLogService.UpdateEmailLog(createdEmailLog);
     }
     public async Task SendRepeatingEmail(EmailLog emailLog)
     {
@@ -48,15 +48,12 @@ public class ScheduledMailHelper
             scheduledEmail.NextSendingDate = AddUserInputToUtcNow(scheduledEmail.RepeatInterval);
             int minutes = ConvertUserInputToMinutes(scheduledEmail.RepeatInterval);
 
-            RecurringJob.AddOrUpdate(
-                $"scheduledjob-{emailLog.Id}",
-                () => SendRepeatingEmail(emailLog),
-                Cron.MinuteInterval(minutes)
-            );
+            RecurringJob.AddOrUpdate($"repeatingemailjob-{emailLog.Id}",() => SendRepeatingEmail(emailLog),Cron.MinuteInterval(minutes));
+
         }
         else
         {
-            RecurringJob.RemoveIfExists($"scheduledjob-{emailLog.Id}");
+            RecurringJob.RemoveIfExists($"repeatingemailjob-{emailLog.Id}");
         }
     }
     

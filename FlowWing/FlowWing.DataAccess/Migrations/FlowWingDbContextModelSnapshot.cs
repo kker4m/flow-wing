@@ -82,6 +82,9 @@ namespace FlowWing.DataAccess.Migrations
                     b.Property<int?>("ForwardedFrom")
                         .HasColumnType("integer");
 
+                    b.Property<string>("HangfireJobId")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsScheduled")
                         .HasColumnType("boolean");
 
@@ -166,6 +169,9 @@ namespace FlowWing.DataAccess.Migrations
 
                     b.Property<int>("EmailLogId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("HangfireJobId")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsRepeating")
                         .HasColumnType("boolean");

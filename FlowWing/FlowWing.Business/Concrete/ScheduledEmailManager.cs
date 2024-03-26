@@ -32,10 +32,8 @@ namespace FlowWing.Business.Concrete
             if (scheduledEmail != null)
             {
                 emailLog.DeletionDate = DateTime.Now.AddDays(30);
-                RecurringJob.RemoveIfExists("ScheduledEmailJob_" + id.ToString());
-                RecurringJob.RemoveIfExists("ScheduledEmailJob_" + emailLog.Id.ToString());
+                RecurringJob.RemoveIfExists(emailLog.HangfireJobId);
 
-                //schedule the deletion of emailLog 30 days later
                 BackgroundJob.Schedule(() => _emailLogRepository.DeleteEmailLogAsync(emailLog), TimeSpan.FromDays(30));
                 BackgroundJob.Schedule(() => _scheduledEmailRepository.DeleteScheduledEmailAsync(scheduledEmail), TimeSpan.FromDays(30));
                 return scheduledEmail;
@@ -58,10 +56,10 @@ namespace FlowWing.Business.Concrete
                     emailLog.DeletionDate = DateTime.Now.AddDays(30);
                     await _emailLogRepository.UpdateEmailLogAsync(emailLog);
                     BackgroundJob.Schedule(() => _emailLogRepository.DeleteEmailLogAsync(emailLog), TimeSpan.FromDays(30));
-                    RecurringJob.RemoveIfExists("ScheduledEmailJob_" + emailLog.Id.ToString());
+                    RecurringJob.RemoveIfExists(emailLog.HangfireJobId);
                 }
                 BackgroundJob.Schedule(() => _scheduledEmailRepository.DeleteScheduledEmailAsync(scheduledEmail), TimeSpan.FromDays(30));
-                RecurringJob.RemoveIfExists("ScheduledEmailJob_" + id.ToString());
+                RecurringJob.RemoveIfExists("repeatingemailjob-" + id.ToString());
                 return scheduledEmail;
             }
             else

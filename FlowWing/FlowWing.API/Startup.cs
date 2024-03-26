@@ -38,6 +38,7 @@ namespace FlowWing.API
                     "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;\r\n")));
             
             services.AddHangfireServer();
+            
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
             // Burada bağımlılıkları ekleyin
