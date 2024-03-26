@@ -138,7 +138,7 @@ namespace FlowWing.API.Controllers
             }
 
             // Hangfire'da işi planla
-            _scheduledMailHelper.ScheduleScheduledEmail(createdEmailLog, scheduledEmail);
+            await _scheduledMailHelper.ScheduleScheduledEmail(createdEmailLog, scheduledEmail);
 
             return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
         }

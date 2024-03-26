@@ -24,7 +24,7 @@ public class ScheduledMailHelper
     {
         _emailSenderService.UpdateStatus(emailLog);
         //Hangfire'da işi planla, NextSendingDate'de ilk maili gonder
-        BackgroundJob.Schedule($"ScheduledEmailJob_{emailLog.Id}",
+        BackgroundJob.Schedule($"scheduledjob-{emailLog.Id}",
             () => SendRepeatingEmail(emailLog),
             scheduledRepeatingEmailModel.NextSendingDate
         );
@@ -32,7 +32,7 @@ public class ScheduledMailHelper
     public async Task ScheduleScheduledEmail(EmailLog createdEmailLog, ScheduledEmailLogModel scheduledEmail)
     {
         // Hangfire'da işi planla
-        BackgroundJob.Schedule($"ScheduledEmailJob_{createdEmailLog.Id}",() => _emailSenderService.UpdateStatus(createdEmailLog)
+        BackgroundJob.Schedule($"scheduledjob-{createdEmailLog.Id}",() => _emailSenderService.UpdateStatus(createdEmailLog)
             ,scheduledEmail.SentDateTime);
     }
     public async Task SendRepeatingEmail(EmailLog emailLog)
@@ -49,14 +49,14 @@ public class ScheduledMailHelper
             int minutes = ConvertUserInputToMinutes(scheduledEmail.RepeatInterval);
 
             RecurringJob.AddOrUpdate(
-                $"ScheduledEmailJob_{emailLog.Id}",
+                $"scheduledjob-{emailLog.Id}",
                 () => SendRepeatingEmail(emailLog),
                 Cron.MinuteInterval(minutes)
             );
         }
         else
         {
-            RecurringJob.RemoveIfExists($"ScheduledEmailJob_{emailLog.Id}");
+            RecurringJob.RemoveIfExists($"scheduledjob-{emailLog.Id}");
         }
     }
     

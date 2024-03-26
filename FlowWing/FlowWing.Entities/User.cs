@@ -15,10 +15,12 @@ namespace FlowWing.Entities
         public string Username { get; set; }
         [Required]
         public string  Password { get; set; }
-        
+        [Required]
+        public int RoleId { get; set; }
         public bool IsApplicationUser { get; set; }
         public DateTime LastLoginDate { get; set; }
         public DateTime CreationDate { get; set; }
+        public DateTime? DeletionDate { get; set; }
         
     }
 

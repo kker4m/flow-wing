@@ -147,10 +147,8 @@ namespace FlowWing.API.Controllers
             else
             {
                 string email = sicil + "@arcelik.com";
-                string password = PasswordHasher.HashPassword(sicil);
 
-
-                if (email == user.Email && password == user.Password)
+                if (email == user.Email)
                 {
                     string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, _appSettings.SecretKey, 30);
                     UserResponseModel response = new UserResponseModel

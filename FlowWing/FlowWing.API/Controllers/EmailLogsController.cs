@@ -182,8 +182,7 @@ namespace FlowWing.API.Controllers
 
                 return Ok(result);
             }
-
-            return Unauthorized();
+            return Ok(new { EmailLog = emailLog, Attachments = emailAttachments, ForwardedEmailLog = forwardedEmailLog, Answers = answers });   
         }
 
 

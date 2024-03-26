@@ -21,6 +21,7 @@ namespace FlowWing.DataAccess
         public DbSet<User> Users { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<Roles> Roles { get; set; }
 
     }
 }

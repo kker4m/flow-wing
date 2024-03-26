@@ -136,6 +136,26 @@ namespace FlowWing.DataAccess.Migrations
                     b.ToTable("Logs");
                 });
 
+            modelBuilder.Entity("FlowWing.Entities.Roles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("FlowWing.Entities.ScheduledEmail", b =>
                 {
                     b.Property<int>("Id")
@@ -180,6 +200,9 @@ namespace FlowWing.DataAccess.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -193,6 +216,9 @@ namespace FlowWing.DataAccess.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Username")
                         .IsRequired()

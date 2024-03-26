@@ -1094,7 +1094,6 @@ C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.FlowWing.API.props
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\staticwebassets.pack.json
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\scopedcss\bundle\FlowWing.API.styles.css
-C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.3326281E.Up2Date
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.API.dll
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\refint\FlowWing.API.dll
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.API.xml
@@ -1378,3 +1377,4 @@ C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.API\obj\Deb
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.API.csproj.CopyComplete
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.API.genruntimeconfig.cache
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\ref\FlowWing.API.dll
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.API.csproj.CopyComplete

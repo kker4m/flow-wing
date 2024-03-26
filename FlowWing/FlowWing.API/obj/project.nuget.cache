@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "M/rXkR7vAYCYYnN3C+tR41tPxu1HGCRO6ek36WgoFDVMS5aFzxz84W6fokjCAjZzaN6rNrjPPP/rtmT3WTiPpA==",
+  "dgSpecHash": "nVKql0tg0fLcl2/fR9YSXWoiOQx5fsRPHuMt1h8EvwknRp77pLqVzopord/qDDQtp8YYdWBq5XKFj83aSuihmQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\linux\\OneDrive\\Documents\\GitHub\\flow-wing\\FlowWing\\FlowWing.API\\FlowWing.API.csproj",
+  "projectFilePath": "C:\\Users\\linux\\source\\repos\\kker4m\\flow-wing\\FlowWing\\FlowWing.API\\FlowWing.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\linux\\.nuget\\packages\\dapper\\2.0.123\\dapper.2.0.123.nupkg.sha512",
     "C:\\Users\\linux\\.nuget\\packages\\hangfire\\1.8.11\\hangfire.1.8.11.nupkg.sha512",

@@ -65,7 +65,6 @@ C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debu
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\FlowWing.Business.AssemblyInfo.cs
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\FlowWing.Business.csproj.CoreCompileInputs.cache
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\FlowWing.Business.sourcelink.json
-C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\FlowWing.6384868A.Up2Date
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\FlowWing.Business.dll
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\refint\FlowWing.Business.dll
 C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\FlowWing.Business.pdb
@@ -88,3 +87,4 @@ C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.Business\ob
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\refint\FlowWing.Business.dll
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\FlowWing.Business.pdb
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\ref\FlowWing.Business.dll
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.Business\obj\Debug\net8.0\FlowWing.Business.csproj.CopyComplete
