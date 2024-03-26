@@ -97,6 +97,7 @@ namespace FlowWing.API.Controllers
         {
             IEnumerable<Attachment>? emailAttachments;
             IEnumerable<Attachment>? answerAttachments;
+            IEnumerable<Attachment>? forwardedEmailAttacments = null;
             answerEmail createdAnswerEmail = null;
             EmailLog? forwardedEmailLog;
             EmailLog? emailLog;
@@ -111,6 +112,7 @@ namespace FlowWing.API.Controllers
             if (emailLog.ForwardedFrom != null)
             {
                 forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(emailLog.ForwardedFrom);
+                forwardedEmailAttacments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(forwardedEmailLog.Id);
             }
             else
             {
@@ -142,6 +144,7 @@ namespace FlowWing.API.Controllers
                     if (answer.ForwardedFrom != null)
                     {
                         forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(answer.ForwardedFrom);
+                        forwardedEmailAttacments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(forwardedEmailLog.Id);
                     }
                     else
                     {
@@ -177,12 +180,13 @@ namespace FlowWing.API.Controllers
                 {
                     return BadRequest("Email's answer not found");
                 }
-                var result = new { EmailLog = emailLog, Attachments = emailAttachments, ForwardedEmailLog = forwardedEmailLog, Answers = answers };
+                
+                var result = new { EmailLog = emailLog, Attachments = emailAttachments, ForwardedEmailLog = forwardedEmailLog, forwardedEmailAttacments = forwardedEmailAttacments ,Answers = answers };
 
 
                 return Ok(result);
             }
-            return Ok(new { EmailLog = emailLog, Attachments = emailAttachments, ForwardedEmailLog = forwardedEmailLog, Answers = answers });   
+            return Ok(new { EmailLog = emailLog, Attachments = emailAttachments, ForwardedEmailLog = forwardedEmailLog, forwardedEmailAttacments = forwardedEmailAttacments, Answers = answers });   
         }
 
 
