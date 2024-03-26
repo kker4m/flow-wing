@@ -14,7 +14,7 @@ namespace FlowWing.DataAccess
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder); 
-            optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=123;\r\n");
+            optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;\r\n");
         }
         public DbSet<EmailLog> EmailLogs { get; set; }
         public DbSet<ScheduledEmail> ScheduledEmails { get; set; }

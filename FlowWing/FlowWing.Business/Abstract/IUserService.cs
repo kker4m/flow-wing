@@ -9,6 +9,7 @@ namespace FlowWing.Business.Abstract
 {
     public interface IUserService
     {
+        User CreateUser(User user);
         Task<User> CreateUserAsync(User user);
         Task<User> UpdateUserAsync(User user);
         Task<User> DeleteUserAsync(User user);

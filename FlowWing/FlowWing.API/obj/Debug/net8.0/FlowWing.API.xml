@@ -18,6 +18,13 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:FlowWing.API.Controllers.AuthController.LoginWithArcelikID(System.String)">
+            <summary>
+            Arcelik sicili ile kullanici giriş işlemleri burada gerçekleştirilir
+            </summary>
+            <param name="sicil"></param>
+            <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.EmailLogsController.GetUserSentEmails">
             <summary>
               Get emails which is comes to the user

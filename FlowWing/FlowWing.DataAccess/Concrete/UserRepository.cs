@@ -25,6 +25,13 @@ namespace FlowWing.DataAccess.Concrete
             return user;
         }
 
+        public User CreateUser(User user)
+        {
+            _dbContext.Users.Add(user);
+            _dbContext.SaveChanges();
+            return user;
+        }
+
         public async Task<User> DeleteUserAsync(User user)
         {
             _dbContext.Users.Remove(user);

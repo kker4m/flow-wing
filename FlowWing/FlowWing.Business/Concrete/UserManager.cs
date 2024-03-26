@@ -24,10 +24,16 @@ namespace FlowWing.Business.Concrete
                 user.Password = hashedPassword;
                 user.CreationDate = user.CreationDate.ToUniversalTime();
                 user.LastLoginDate = user.LastLoginDate.ToUniversalTime();
-                _userRepository.CreateUserAsync(user);
+                await _userRepository.CreateUserAsync(user);
                 return user;
             }
+        }   
+        public User CreateUser(User user)
+        {
+            _userRepository.CreateUser(user);
+            return user;
         }
+
 
         public async Task<User> DeleteUserAsync(User user)
         {

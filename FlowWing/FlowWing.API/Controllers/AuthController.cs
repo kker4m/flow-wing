@@ -18,7 +18,7 @@ namespace FlowWing.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly AppSettings _appSettings;
-        public AuthController(IUserService userService,IOptions<AppSettings> appSettings)
+        public AuthController(IUserService userService, IOptions<AppSettings> appSettings)
         {
             _userService = userService;
             _appSettings = appSettings.Value;
@@ -46,12 +46,17 @@ namespace FlowWing.API.Controllers
                 };
 
 
-                await _userService.CreateUserAsync(newUser);
+                User user = await _userService.CreateUserAsync(newUser);
+                string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, _appSettings.SecretKey, 30);
+                UserResponseModel response = new UserResponseModel
+                {
+                    Message = "Kayit Basarili",
+                    Email = user.Email,
+                    Username = user.Username,
+                    Token = token
+                };
 
-                // Kullanıcı başarıyla kaydedildiğinde JWT oluşturulabilir
-                string token = JwtHelper.GenerateJwtToken(newUser.Id, model.Email, _appSettings.SecretKey, 15); // Örnek: 60 gun geçerli bir token oluşturuyoruz.
-
-                return Ok(new { Token = token });
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -77,7 +82,7 @@ namespace FlowWing.API.Controllers
 
             if (model.Email == user.Email && password == user.Password)
             {
-                string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, _appSettings.SecretKey, 1); // Örnek: 1 gun geçerli bir token oluşturuyoruz.
+                string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, _appSettings.SecretKey, 30);
                 UserResponseModel response = new UserResponseModel
                 {
                     Message = "Giris Basarili",
@@ -85,20 +90,92 @@ namespace FlowWing.API.Controllers
                     Username = user.Username,
                     Token = token
                 };
-                
+
                 Response.Cookies.Append("AuthToken", token, new CookieOptions
                 {
                     HttpOnly = false,
                     Secure = false,
                     SameSite = SameSiteMode.Strict
                 });
-                
+
                 return Ok(response);
 
             }
             else
             {
                 return BadRequest("Yanlis email veya sifre");
+            }
+        }
+
+
+        /// <summary>
+        /// Arcelik sicili ile kullanici giriş işlemleri burada gerçekleştirilir
+        /// </summary>
+        /// <param name="sicil"></param>
+        /// <returns></returns>
+        [HttpPost("loginWithArcelikID/{sicil}")]
+        public async Task<IActionResult> LoginWithArcelikID(string sicil)
+        {
+            // Kullanıcı giriş işlemleri burada gerçekleştirilir
+            User user = await _userService.GetUserByEmailAsync(sicil + "@arcelik.com");
+            if (user == null)
+            {
+                //create user with arcelik id
+                User newUser = new User
+                {
+                    Email = sicil + "@arcelik.com",
+                    Password = PasswordHasher.HashPassword(sicil),
+                    Username = sicil,
+                    IsApplicationUser = false,
+                    LastLoginDate = DateTime.UtcNow,
+                    CreationDate = DateTime.UtcNow
+                };
+
+                User createdUser = await _userService.CreateUserAsync(newUser);
+                string token = JwtHelper.GenerateJwtToken(createdUser.Id, createdUser.Email, _appSettings.SecretKey, 30);
+                UserResponseModel response = new UserResponseModel
+                {
+                    Message = "Giris Basarili",
+                    Email = createdUser.Email,
+                    Username = createdUser.Username,
+                    Token = token
+                };
+
+                return Ok(response);
+
+            }
+            else
+            {
+                string email = sicil + "@arcelik.com";
+                string password = PasswordHasher.HashPassword(sicil);
+
+
+                if (email == user.Email && password == user.Password)
+                {
+                    string token = JwtHelper.GenerateJwtToken(user.Id, user.Email, _appSettings.SecretKey, 30);
+                    UserResponseModel response = new UserResponseModel
+                    {
+                        Message = "Giris Basarili",
+                        Email = user.Email,
+                        Username = user.Username,
+                        Token = token
+                    };
+
+                    Response.Cookies.Append("AuthToken", token, new CookieOptions
+                    {
+                        HttpOnly = false,
+                        Secure = false,
+                        SameSite = SameSiteMode.Strict
+                    });
+
+                    return Ok(response);
+
+                }
+                else
+                {
+                    return BadRequest("Yanlis email veya sifre");
+                }
+
             }
         }
     }
