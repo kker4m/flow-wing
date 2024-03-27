@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Divider from "@mui/material/Divider"
 import "./sent.css"
 import { excerpt, getText } from "../../helpers"
-import { deleteSentEmail, getSentMails } from "../../services/emailService"
+import {  getSentMails } from "../../services/emailService"
 import EmptyPage from "../../components/EmptyPage"
+import { Avatar } from "antd"
 
 const Sent = () => {
   const [sentMails, setSentMails] = useState([])
   const [mailCount, setMailCount] = useState(0)
-  let navigate = useNavigate()
-  let { id } = useParams()
+
 
   // get sent emails
   useEffect(() => {
@@ -32,15 +32,6 @@ const Sent = () => {
   // COLOR ARRAY FOR HR ELEMENT
   const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"]
 
-  // delete email
-  const handleDelete = (id) => {
-    deleteSentEmail(id).then((res) => {
-      console.log(res)
-      // Update the sentMails state after deleting the email
-      setSentMails(sentMails.filter((mail) => mail.id !== id))
-      navigate("/sent")
-    })
-  }
 
   return (
     <div className="sent-mail-page-content">
@@ -78,10 +69,19 @@ const Sent = () => {
                     }}
                   />
                   <div key={index} className="inbox-mail-unopened">
-                    <div className="user-section">
+                    <div className="user-section-home">
                       <div className="user-icon-home">
-                        <Icon icon="ph:user-light" width="30" />{" "}
+                        <Avatar
+                          size={44}
+                          style={{
+                            backgroundColor: "#191970 ",
+                            color: "#add8e6 "
+                          }}
+                        >
+                          <span>{item.emailLog.senderEmail.charAt(0)}</span>
+                        </Avatar>
                       </div>
+
                       <div className="user-name">
                         {item.emailLog.recipientsEmail}{" "}
                       </div>
@@ -104,16 +104,7 @@ const Sent = () => {
                       {item.emailLog.isScheduled === true && (
                         <Icon icon="bi:repeat" />
                       )}
-                    </div>{" "}
-                    {/* <div className="delete-mail">
-                      {" "}
-                      <button
-                        className="delete-mail-btn"
-                        onClick={() => handleDelete(item.emailLog.id)}
-                      >
-                        <Icon icon="iconoir:trash" />
-                      </button>
-                    </div>{" "} */}
+                    </div>
                     <div className="inbox-sent-time">{timeToShow}</div>
                   </div>
                 </div>{" "}

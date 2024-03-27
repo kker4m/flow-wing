@@ -107,28 +107,18 @@
   display: flex;
   flex-direction: column;
 }
-/* .forwarded-from-section span{
-  font-weight: bold;
-  display: flex;
-  flex-direction: column;
-} */
+
 .user-icon-inbox {
   margin: 40px;
 }
-.user-icon-inbox span {
-  font-size: 30px;
-  padding: 6px;
-}
+
 .inbox-mail-attachment {
   display: flex;
   flex-direction: row;
   width: 700px;
 }
-.attachment-download-btn{
-  background-color: #3F6739; 
-  margin: 30px;
-  color: aliceblue;
-  border-radius: 20%;
+.attachment-download-btn {
   width: 60px;
   height: 35px;
+  margin-left: 20px;
 }

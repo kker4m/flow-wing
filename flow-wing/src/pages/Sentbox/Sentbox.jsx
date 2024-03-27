@@ -35,18 +35,11 @@ const Sentbox = () => {
   const [users, setUsers] = useState([])
   const [replyAttachment, setReplyAttachment] = useState("")
   const [answerArray, setAnswerArray] = useState([])
+  const [forwardedMailAttachments, setForwardedMailAttachments] = useState([])
   let navigate = useNavigate()
   let { id } = useParams()
 
-  // GET ANSWER INFOS
 
-  useEffect(() => {
-    return () => {}
-  }, [])
-  const options = users.map((user) => ({
-    value: user.email,
-    label: user.email
-  }))
   // MODAL
   const showModal = () => {
     setOpen(true)
@@ -105,13 +98,20 @@ const Sentbox = () => {
       setSender(res.data.sender)
       //console.log("mail sender", sender)
       setUser(res.data.emailLog.user.username)
-      //console.log("user", res.data.emailLog.user.username)
     })
 
     getEmailAndAnswersByEmailLogId(id).then((response) => {
       console.log("info endpoint :", response)
+
+
+      setForwardedMailAttachments(response.data.forwardedEmailAttacments)
+      console.log("forwrd atchmnts ",response.data.forwardedEmailAttacments )
+      console.log("forwrd atchmnts ",forwardedMailAttachments )
+
       console.log("info endpoint answers :", response.data.answers)
       setAnswerArray(response.data.answers)
+      console.log("setAnswerArray'e gönderilen ",response.data.answers)
+      console.log("answers attvchmrnt", answerArray.attachmentInfos)
       console.log("forwarded mail ", response.data.forwardedEmailLog)
       setForwardedFrom(response.data.forwardedEmailLog)
       console.log(" answer : ", response.data.answer)
@@ -152,7 +152,7 @@ const Sentbox = () => {
       recipientsEmail: mail.recipientsEmail,
       emailSubject: mail.emailSubject,
       emailBody: repliedMailBody,
-      RepliedEmailId: mail.answer ? mail.answer : mail.id,
+      RepliedEmailId: mail.answer ? answer : mail.id,
       file: replyAttachment
     }
     const formData = new FormData()
@@ -206,6 +206,7 @@ const Sentbox = () => {
                 icon="solar:multiple-forward-right-bold-duotone"
                 width="25"
                 height="25"
+                color="#feb019 "
               />
             </button>
           </div>
@@ -272,7 +273,7 @@ const Sentbox = () => {
         <Tooltip title="Yanıtla" arrow onClick={showModal}>
           <div className="icons">
             <button className="mail-action-btns">
-              <Icon icon="ic:round-reply" width="30" height="30" />
+              <Icon icon="ic:round-reply" width="30" height="30" color="#ffa07a "/>
             </button>
           </div>{" "}
         </Tooltip>
@@ -337,7 +338,7 @@ const Sentbox = () => {
         <Tooltip title="Sil" arrow>
           <div className="icons">
             <button className="mail-action-btns" onClick={handleDelete}>
-              <Icon icon="iconoir:trash-solid" width="25" height="25" />
+              <Icon icon="iconoir:trash-solid" width="25" height="25" color="#ff4560 "/>
             </button>
           </div>
         </Tooltip>
@@ -346,13 +347,9 @@ const Sentbox = () => {
       {/* MAIL SECTION */}
       <div className="mail-sender">
         <div className="user-icon-inbox">
-          <Avatar
-            style={{
-              backgroundColor: "#fde3cf",
-              color: "#f56a00",
-              width: 60,
-              height: 60
-            }}
+        <Avatar
+            size={64}
+            style={{ backgroundColor: "#191970 ", color: "#add8e6 " }}
           >
             <span>{user.charAt(0)}</span>
           </Avatar>
@@ -424,19 +421,22 @@ const Sentbox = () => {
                       {attachments.fileName}
                     </a>
                   </div>
-                )} {/* İndirme Düğmesi */}
-      <button className="attachment-download-btn"
-        onClick={() => {
-          const link = document.createElement("a");
-          link.href = `data:${attachments.contentType};base64,${attachments.data}`;
-          link.download = attachments.fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }}
-      >
-        İndir
-      </button>
+                )}{" "}
+                {/* İndirme Düğmesi */}
+                <button
+                  className="attachment-download-btn"
+                  onClick={() => {
+                    const link = document.createElement("a")
+                    link.href = `data:${attachments.contentType};base64,${attachments.data}`
+                    link.download = attachments.fileName
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                  }}
+                >
+                
+                <Icon icon="material-symbols:download" width="30" height="30"  style={{color:"#546e7a "}} />
+                </button>
               </div>
               {}{" "}
             </div>
@@ -459,6 +459,7 @@ const Sentbox = () => {
                       icon="solar:multiple-forward-right-bold-duotone"
                       width="25"
                       height="25"
+                      color="#feb019 "
                     />
                   </button>
                 </div>
@@ -527,7 +528,7 @@ const Sentbox = () => {
               <Tooltip title="Yanıtla" arrow onClick={showModal}>
                 <div className="icons">
                   <button className="mail-action-btns">
-                    <Icon icon="ic:round-reply" width="30" height="30" />
+                    <Icon icon="ic:round-reply" width="30" height="30" color="#ffa07a "/>
                   </button>
                 </div>{" "}
               </Tooltip>
@@ -589,43 +590,47 @@ const Sentbox = () => {
                 </form>
               </Modal>
               <Tooltip title="Sil" arrow>
-                <div className="icons">
-                  <button className="mail-action-btns" onClick={handleDelete}>
-                    <Icon icon="iconoir:trash-solid" width="25" height="25" />
-                  </button>
-                </div>
-              </Tooltip>
+          <div className="icons">
+            <button className="mail-action-btns" onClick={handleDelete}>
+              <Icon icon="iconoir:trash-solid" width="25" height="25" color="#ff4560 "/>
+            </button>
+          </div>
+        </Tooltip>
             </div>
 
             <div className="mail-sender">
-              <div className="user-icon-inbox">
-                <Avatar
-                  style={{
-                    backgroundColor: "#fde3cf",
-                    color: "#f56a00",
-                    width: 60,
-                    height: 60
-                  }}
-                >
+               <div className="user-icon-inbox">
+                  <Avatar
+            size={64}
+            style={{ backgroundColor: "#191970 ", color: "#add8e6 " }}
+          >
                   <span>{user.charAt(0)}</span>
                 </Avatar>
-              </div>
+              </div> 
               <div>
                 <div className="mail-sender-email">
-                  {answer?.emailLog.senderEmail}
+                 from: {answer?.emailLog.senderEmail}
                 </div>
+                <div className="mail-sender-email">
+                 to: {answer?.emailLog.recipientsEmail}
+                </div>
+                
+            <p className="mail-answer-sent-time">
+            {formatDate(answer?.emailLog.sentDateTime)}
+            </p>
               </div>
             </div>
 
-            <div className="mail-title">
+            <div className="mail-answer-title">
               <p>{answer?.emailLog.emailSubject}</p>
             </div>
 
-            <p
+            <p className="mail-answer-mail-body"
               dangerouslySetInnerHTML={{
                 __html: getText(answer?.emailLog.sentEmailBody)
               }}
             />
+
           </div>{" "}
           {/* MAIL ANSWERS ATTACHMENTS */}
           {answerArray?.attachmentInfos?.map((attachments) => (
@@ -682,43 +687,45 @@ const Sentbox = () => {
                       {attachments.fileName}
                     </a>
                   </div>
-                )} {/* İndirme Düğmesi */}
-      <button
-        onClick={() => {
-          const link = document.createElement("a");
-          link.href = `data:${attachments.contentType};base64,${attachments.data}`;
-          link.download = attachments.fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }}
-      >
-        İndir
-      </button>
+                )}{" "}
+                {/* İndirme Düğmesi */}
+                <button
+                className="attachment-download-btn"
+                  onClick={() => {
+                    const link = document.createElement("a")
+                    link.href = `data:${attachments.contentType};base64,${attachments.data}`
+                    link.download = attachments.fileName
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                  }}
+                >
+              
+              <Icon icon="material-symbols:download" width="30" height="30"  style={{color:"#546e7a "}} />
+                </button>
               </div>
               {}{" "}
             </div>
           ))}
-
+          <Divider/>
         </div>
-        
       ))}
 
       {/* IS FORWARDED SECTION */}
 
       {forwardedFrom ? (
         <div className="forwarded-from-section">
-          <span>----- Şu mesaj iletildi -----</span>
-          <span>Gönderen: </span> <p>{forwardedFrom.senderEmail}</p>
-          <span>Tarih:</span> <p> {formatDate(forwardedFrom.sentDateTime)}</p>
-          <span>Konu:</span> <p> {forwardedFrom.emailSubject}</p>
+         <div> <span>----- Şu mesaj iletildi -----</span></div>
+         <div><span>Gönderen:  </span><p>{forwardedFrom.senderEmail}</p> </div>
+         <div>  <span>Tarih: </span><p> {formatDate(forwardedFrom.sentDateTime)}</p></div> 
+         <div><span>Konu: </span><p> {forwardedFrom.emailSubject}</p></div>  
           <p
             dangerouslySetInnerHTML={{
               __html: getText(forwardedFrom.sentEmailBody)
             }}
           />
           {/* FORWARDED FROMS ATTACHMENT SECTION */}
-          {forwardedFrom.attachmentInfos?.map((attachments) => (
+          {forwardedMailAttachments?.map((attachments) => (
             <div className="inbox-mail-attachment">
               <div>
                 {" "}
@@ -772,7 +779,21 @@ const Sentbox = () => {
                       {attachments.fileName}
                     </a>
                   </div>
-                )}
+                )} {/* İndirme Düğmesi */}
+                <button
+                className="attachment-download-btn"
+                  onClick={() => {
+                    const link = document.createElement("a")
+                    link.href = `data:${attachments.contentType};base64,${attachments.data}`
+                    link.download = attachments.fileName
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                  }}
+                >
+              
+              <Icon icon="material-symbols:download" width="30" height="30"  style={{color:"#546e7a "}} />
+                </button>
               </div>
               {}{" "}
             </div>

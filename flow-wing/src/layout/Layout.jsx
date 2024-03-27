@@ -23,7 +23,7 @@ const Layout = ({ children }) => {
           ))}
         </div>
       </div>
-      <ScrollButton/>
+      <ScrollButton />
     </div>
   )
 }

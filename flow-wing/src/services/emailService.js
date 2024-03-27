@@ -58,7 +58,12 @@ const getAllUsers = () => {
 const deleteSentEmail = (id) => {
   return apiAxios.delete("EmailLogs/" + id)
 }
-
+const deleteScheduledEmail=(id)=>{
+  return apiAxios.delete("ScheduledEmails/ScheduledEmail/" + id)
+}
+const deleteRepeatingEmail=(id)=>{
+  return apiAxios.delete("ScheduledEmails/ScheduledRepeatingEmail/"+ id )
+}
 const getEmailById = (id) => {
   return apiAxios.get("EmailLogs/" + id)
 }
@@ -113,5 +118,7 @@ export {
   replyMail,
   forwardEmail,
   getForwardedMailById,
-  getEmailAndAnswersByEmailLogId
+  getEmailAndAnswersByEmailLogId,
+  deleteScheduledEmail,
+  deleteRepeatingEmail
 }

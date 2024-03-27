@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react"
 import "./home.css"
 import { Icon } from "@iconify/react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Divider from "@mui/material/Divider"
-import alertify from "alertifyjs"
 import EmptyPage from "../../components/EmptyPage"
-import { deleteSentEmail, getMails } from "../../services/emailService"
+import { getMails } from "../../services/emailService"
 import { excerpt, getText } from "../../helpers"
+import { Avatar } from "antd"
 
 const Home = () => {
   const [mails, setMails] = useState([])
   const [mailCount, setMailCount] = useState(0)
   const [sender, setSender] = useState([])
-
-  let navigate = useNavigate()
 
   // Get all e-mails
   useEffect(() => {
@@ -32,20 +30,25 @@ const Home = () => {
     })
   }, [mailCount])
 
-  // DELETE AN EMAIL
-  const handleDelete = (id) => {
-    deleteSentEmail(id).then((res) => {
-      console.log(res)
-      // Update the sentMails state after deleting the email
-      setMails(mails.filter((mail) => mail.id !== id))
-      alertify.success("Mail silindi.")
-      navigate("/home")
-    })
-  }
   // COLOR ARRAY FOR HR ELEMENT
-  const colors = ["#C0440E", "#3498db", "#27ae60", "#f39c12", "#8e44ad"]
+  const colors = [
+    "#d10ce8 ",
+    "#ff4560",
+    "#008ffb",
+    "#191970",
+    "#775dd0",
+    "#01e396 ",
+    "#ffa07a ",
+    "#feb019 ",
+    "#546e7a ",
+    "#add8e6 ",
+    "#34c38f ",
+    "#d98b49 ",
+    "#bf1ad2 ",
+    "#21b15a "
+  ]
 
-  if (!mails) {
+  if (mailCount === 0) {
     return <EmptyPage />
   }
   return (
@@ -84,9 +87,17 @@ const Home = () => {
                     }}
                   />
                   <div key={index} className="inbox-mail-unopened">
-                    <div className="user-section">
+                    <div className="user-section-home">
                       <div className="user-icon-home">
-                        <Icon icon="ph:user-light" width="30" />{" "}
+                        <Avatar
+                          size={44}
+                          style={{
+                            backgroundColor: "#191970 ",
+                            color: "#add8e6 "
+                          }}
+                        >
+                          <span>{item.emailLog.senderEmail.charAt(0)}</span>
+                        </Avatar>
                       </div>
 
                       <div className="user-name">

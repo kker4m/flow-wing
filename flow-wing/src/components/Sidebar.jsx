@@ -93,7 +93,7 @@ const Sidebar = () => {
           {" "}
           <Avatar
             size={64}
-            style={{ backgroundColor: "#fde3cf", color: "#f56a00" }}
+            style={{ backgroundColor: "#191970 ", color: "#add8e6 " }}
           >
             <div className="user-name-display">
               {user ? <>{user.username.charAt(0)}</> : <div>Kullanıcı yok</div>}
