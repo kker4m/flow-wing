@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FlowWing.Business")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b9677422899426a4f00c41ac741782416aba587")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+410f595364bc88b8e67ac99383de42ef283d344f")]
 [assembly: System.Reflection.AssemblyProductAttribute("FlowWing.Business")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FlowWing.Business")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -85,8 +85,9 @@ namespace FlowWing.API.Controllers
             public EmailLog emailLog { get; set; }
             public IEnumerable<Entities.Attachment>? attachmentInfos { get; set; }
             public EmailLog? forwardedEmailLog { get; set; }
-
+            public IEnumerable<Entities.Attachment>? forwardedEmailAttachments { get; set; } // İleri gönderilen e-mail eklerini tutmak için eklendi.
         }
+
 
         ///<summary>
         ///  Get email by id and the answers or forwarded emails of the email
@@ -109,16 +110,6 @@ namespace FlowWing.API.Controllers
                 return NotFound();
             }
 
-            if (emailLog.ForwardedFrom != null)
-            {
-                forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(emailLog.ForwardedFrom);
-                forwardedEmailAttacments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(forwardedEmailLog.Id);
-            }
-            else
-            {
-                forwardedEmailLog = null;
-            }
-
             emailAttachments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(emailLog.Id);
             if (emailAttachments != null)
             {
@@ -134,8 +125,6 @@ namespace FlowWing.API.Controllers
                 answer = await _emailLogService.GetEmailLogByIdAsync(emailLog.Answer);
                 if (answer != null)
                 {
-                        
-
                     if (answer.Status == false)
                     {
                         break;
@@ -144,7 +133,6 @@ namespace FlowWing.API.Controllers
                     if (answer.ForwardedFrom != null)
                     {
                         forwardedEmailLog = await _emailLogService.GetEmailLogByIdAsync(answer.ForwardedFrom);
-                        forwardedEmailAttacments = await _attachmentService.GetAttachmentsByEmailLogIdAsync(forwardedEmailLog.Id);
                     }
                     else
                     {
@@ -159,6 +147,7 @@ namespace FlowWing.API.Controllers
                             attachment.EmailLog = answer;
                         }
                     }
+
                     createdAnswerEmail = new answerEmail
                     {
                         emailLog = answer,
@@ -167,27 +156,17 @@ namespace FlowWing.API.Controllers
                     };
 
                     answers.Add(createdAnswerEmail);
-                        
-
                     emailLog = answer;
                 }
-                if(createdAnswerEmail != null)
-                {
-                    emailLog.Answer = createdAnswerEmail.emailLog.Id;
-                }
-                
-                else if (answer == null)
-                {
-                    return BadRequest("Email's answer not found");
-                }
-                
-                var result = new { EmailLog = emailLog, Attachments = emailAttachments, ForwardedEmailLog = forwardedEmailLog, forwardedEmailAttacments = forwardedEmailAttacments ,Answers = answers };
-
-
-                return Ok(result);
             }
-            return Ok(new { EmailLog = emailLog, Attachments = emailAttachments, ForwardedEmailLog = forwardedEmailLog, forwardedEmailAttacments = forwardedEmailAttacments, Answers = answers });   
+
+            if (createdAnswerEmail != null)
+            {
+                emailLog.Answer = createdAnswerEmail.emailLog.Id;
+            }
+            return Ok(new { EmailLog = emailLog, Attachments = emailAttachments,Answers = answers });
         }
+
 
 
 

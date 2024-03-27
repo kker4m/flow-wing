@@ -24,6 +24,7 @@ namespace FlowWing.Entities
         public DateTime? NextSendingDate { get; set; }
         public String? RepeatInterval { get; set; }
         public DateTime? RepeatEndDate { get; set; }
+        public DateTime? DeletionDate { get; set; }
 
         [ForeignKey("EmailLogId")] 
         public virtual EmailLog EmailLog { get; set; }
