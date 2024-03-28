@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FlowWing.Business.Abstract;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
@@ -67,7 +68,11 @@ public class LoggingMiddleware
 
     private async Task LogMessageAsync(string message)
     {
-        // Log işlemleri burada gerçekleştirilir, örneğin bir log dosyasına yazılabilir
-        Console.WriteLine(message);
+        //serviceProvider ile ILogger servisini al logu veritabanina kaydet
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var logger = scope.ServiceProvider.GetRequiredService<ILoggingService>();
+            await logger.CreateLogAsync(message);
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FlowWing.Entities
 {
-    public class Roles
+    public class Role
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

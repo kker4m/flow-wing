@@ -16,6 +16,7 @@ namespace FlowWing.Business.Abstract
         Task<ScheduledEmail> CreateScheduledEmailAsync(ScheduledEmail scheduledEmail);
         Task<ScheduledEmail> UpdateScheduledEmailAsync(ScheduledEmail scheduledEmail);
         Task<ScheduledEmail> DeleteScheduledEmailAsync(int id);
+        Task<ScheduledEmail> DeleteScheduledEmailByEmailLogIdAsync(int id);
         Task<ScheduledEmail> DeleteScheduledRepeatingEmailAsync(int id);
     }
 }

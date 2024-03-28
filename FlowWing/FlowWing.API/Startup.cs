@@ -35,7 +35,7 @@ namespace FlowWing.API
         {
             services.AddHangfire(config =>
                 config.UsePostgreSqlStorage(c =>c.UseNpgsqlConnection(
-                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=1234;\r\n")));
+                    "Server=localhost;Port=5432;Database=flowwing;User Id=postgres;Password=123;\r\n")));
             
             services.AddHangfireServer();
             
@@ -58,8 +58,12 @@ namespace FlowWing.API
             services.AddScoped<ScheduledMailHelper>();
             services.AddScoped<EmailSenderService>();
 
+
             services.AddScoped<IEmailLogRepository, EmailLogRepository>();
             services.AddScoped<IEmailLogService, EmailLogManager>();
+
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IRoleService, RoleManager>();
 
             services.AddScoped<IScheduledEmailRepository, ScheduledEmailRepository>();
             services.AddScoped<IScheduledEmailService, ScheduledEmailManager>();

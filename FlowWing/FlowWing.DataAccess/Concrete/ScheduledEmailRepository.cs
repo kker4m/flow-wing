@@ -37,6 +37,15 @@ namespace FlowWing.DataAccess.Concrete
             return scheduledEmail;
         }
 
+        public async Task<ScheduledEmail> DeleteScheduledEmailByEmailLogIdAsync(int id)
+        {
+            var scheduledEmail = await _dbContext.ScheduledEmails.FirstOrDefaultAsync(x => x.EmailLogId == id);
+            _dbContext.ScheduledEmails.Remove(scheduledEmail);
+            await _dbContext.SaveChangesAsync();
+            return scheduledEmail;
+        }
+
+
         public async Task<IEnumerable<ScheduledEmail>> GetAllScheduledEmailsAsync()
         {
             return await _dbContext.ScheduledEmails.AsNoTracking().ToListAsync();

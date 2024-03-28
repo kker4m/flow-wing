@@ -167,11 +167,11 @@ namespace FlowWing.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("EmailLogId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("HangfireJobId")
-                        .HasColumnType("text");
 
                     b.Property<bool>("IsRepeating")
                         .HasColumnType("boolean");

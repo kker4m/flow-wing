@@ -1377,4 +1377,4 @@ C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.API\obj\Deb
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.API.csproj.CopyComplete
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.API.genruntimeconfig.cache
 C:\Users\linux\OneDrive\Documents\GitHub\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\ref\FlowWing.API.dll
-C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.API.csproj.CopyComplete
+C:\Users\linux\source\repos\kker4m\flow-wing\FlowWing\FlowWing.API\obj\Debug\net8.0\FlowWing.3326281E.Up2Date

@@ -22,10 +22,10 @@ public class ScheduledMailHelper
         _emailLogService = emailLogService;
     }
     
-    public void ScheduleRepeatingEmail(EmailLog emailLog, ScheduledRepeatingEmailModel scheduledRepeatingEmailModel)
+    public void ScheduleRepeatingEmail(EmailLog emailLog, ScheduledRepeatingEmailModel scheduledRepeatingEmailModel, int HangfireJobId)
     {
         _emailSenderService.UpdateStatus(emailLog);
-        BackgroundJob.Schedule(() => SendRepeatingEmail(emailLog),scheduledRepeatingEmailModel.NextSendingDate);
+        BackgroundJob.Schedule(() => SendRepeatingEmail(emailLog,HangfireJobId),scheduledRepeatingEmailModel.NextSendingDate);
     }
     public async Task ScheduleScheduledEmail(EmailLog createdEmailLog, ScheduledEmailLogModel scheduledEmail)
     {
@@ -33,9 +33,9 @@ public class ScheduledMailHelper
         string jobId = BackgroundJob.Schedule(() => _emailSenderService.UpdateStatus(createdEmailLog),scheduledEmail.SentDateTime);
         
         createdEmailLog.HangfireJobId = jobId;
-        _emailLogService.UpdateEmailLog(createdEmailLog);
+        await _emailLogService.UpdateEmailLogAsync(createdEmailLog);
     }
-    public async Task SendRepeatingEmail(EmailLog emailLog)
+    public async Task SendRepeatingEmail(EmailLog emailLog, int HangfireJobId)
     {
         ScheduledEmail scheduledEmail = await _scheduledEmailService.GetScheduledEmailByEmailLogId(emailLog.Id);
         await _emailSenderService.CreateRepeatingEmailLog(emailLog,scheduledEmail.Id);
@@ -48,12 +48,12 @@ public class ScheduledMailHelper
             scheduledEmail.NextSendingDate = AddUserInputToUtcNow(scheduledEmail.RepeatInterval);
             int minutes = ConvertUserInputToMinutes(scheduledEmail.RepeatInterval);
 
-            RecurringJob.AddOrUpdate($"repeatingemailjob-{emailLog.Id}",() => SendRepeatingEmail(emailLog),Cron.MinuteInterval(minutes));
+            RecurringJob.AddOrUpdate($"repeatingemailjob-{HangfireJobId}",() => SendRepeatingEmail(emailLog, HangfireJobId),Cron.MinuteInterval(minutes));
 
         }
         else
         {
-            RecurringJob.RemoveIfExists($"repeatingemailjob-{emailLog.Id}");
+            RecurringJob.RemoveIfExists($"repeatingemailjob-{HangfireJobId}");
         }
     }
     

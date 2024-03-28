@@ -218,7 +218,7 @@ namespace FlowWing.API.Controllers
                 createdEmailLog.AttachmentIds = attachmentIds;
             }
 
-            _scheduledMailHelper.ScheduleRepeatingEmail(createdEmailLog, scheduledRepeatingEmailModel);
+            _scheduledMailHelper.ScheduleRepeatingEmail(createdEmailLog, scheduledRepeatingEmailModel, newScheduledRepeatingEmail.Id);
 
             return CreatedAtAction(nameof(CreateScheduledEmail), new { id = createdScheduledEmail.Id }, createdScheduledEmail);
         }
@@ -305,7 +305,7 @@ namespace FlowWing.API.Controllers
 
 
         /// <summary>
-        /// Delete an Scheduled Email
+        /// 1 an Scheduled Email
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

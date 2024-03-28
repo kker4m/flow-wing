@@ -84,6 +84,26 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:FlowWing.API.Controllers.RolesController.GetAllRoles">
+            <summary>
+            Get all roles
+            </summary>
+             <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.RolesController.AddRole(System.String)">
+            <summary>
+            Add a role
+            </summary>
+            <param name="roleName">Role name</param> 
+             <returns></returns>
+        </member>
+        <member name="M:FlowWing.API.Controllers.RolesController.DeleteRole(System.Int32)">
+            <summary>
+            Delete role by id
+            </summary>
+            <param name="id">Role id</param>
+            <returns></returns>
+        </member>
         <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.GetAllScheduledEmails">
             <summary>
             Get All Scheduled Emails
@@ -127,7 +147,7 @@
         </member>
         <member name="M:FlowWing.API.Controllers.ScheduledEmailsController.DeleteScheduledEmail(System.Int32)">
             <summary>
-            Delete an Scheduled Email
+            1 an Scheduled Email
             </summary>
             <param name="id"></param>
             <returns></returns>

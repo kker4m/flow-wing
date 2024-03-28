@@ -52,6 +52,8 @@ public class EmailSenderService
         };
 
         createdEmailLog = _emailLogService.CreateEmailLog(createdEmailLog);
+        createdEmailLog.HangfireJobId = $"repeatingemailjob-{createdEmailLog.Id}";
+
         attachmentIds = emailLog.AttachmentIds;
 
         if (attachmentIds != null)
@@ -60,8 +62,9 @@ public class EmailSenderService
             {
                 attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
                 createdEmailLog.AttachmentIds = attachmentIds;
-                _emailLogService.UpdateEmailLog(createdEmailLog);
             }
         }
+
+        await _emailLogService.UpdateEmailLogAsync(createdEmailLog);
     }
 }

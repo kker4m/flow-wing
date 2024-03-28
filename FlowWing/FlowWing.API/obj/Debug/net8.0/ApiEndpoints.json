@@ -17,6 +17,22 @@
   },
   {
     "ContainingType": "FlowWing.API.Controllers.AuthController",
+    "Method": "LoginWithArcelikID",
+    "RelativePath": "api/Auth/loginWithArcelikID/{sicil}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "sicil",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FlowWing.API.Controllers.AuthController",
     "Method": "SignUp",
     "RelativePath": "api/Auth/signup",
     "HttpMethod": "POST",
@@ -205,6 +221,48 @@
     "ContainingType": "FlowWing.API.Controllers.EmailLogsController",
     "Method": "DeleteEmailLog",
     "RelativePath": "api/EmailLogs/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FlowWing.API.Controllers.RolesController",
+    "Method": "GetAllRoles",
+    "RelativePath": "api/Roles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FlowWing.API.Controllers.RolesController",
+    "Method": "AddRole",
+    "RelativePath": "api/Roles",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roleName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FlowWing.API.Controllers.RolesController",
+    "Method": "DeleteRole",
+    "RelativePath": "api/Roles/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,

@@ -1,5 +1,6 @@
 ﻿using FlowWing.Business.Abstract;
 using FlowWing.DataAccess.Abstract;
+using FlowWing.DataAccess.Concrete;
 using FlowWing.Entities;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace FlowWing.Business.Concrete
     public class EmailLogManager : IEmailLogService
     {
         private IEmailLogRepository _emailLogRepository;
+        private IScheduledEmailRepository _scheduledEmailRepository;
 
-        public EmailLogManager(IEmailLogRepository emailLogRepository)
+        public EmailLogManager(IEmailLogRepository emailLogRepository, IScheduledEmailRepository scheduledEmailRepository)
         {
             _emailLogRepository = emailLogRepository;
+            _scheduledEmailRepository = scheduledEmailRepository;
         }
 
         public async Task<EmailLog> CreateEmailLogAsync(EmailLog emailLog)
@@ -47,9 +50,28 @@ namespace FlowWing.Business.Concrete
             else
             {
                 var emailLog = await _emailLogRepository.GetEmailLogByIdAsync(id);
-                emailLog.DeletionDate = DateTime.Now.AddDays(30);
+                emailLog.DeletionDate = DateTime.UtcNow.AddDays(30);
+                await _emailLogRepository.UpdateEmailLogAsync(emailLog);
                 BackgroundJob.Schedule(() => _emailLogRepository.DeleteEmailLogAsync(emailLog), TimeSpan.FromDays(30));
                 
+                if (emailLog.repeatingLogId == null && emailLog.IsScheduled && !emailLog.Status)
+                {
+                    RecurringJob.RemoveIfExists($"#{emailLog.HangfireJobId}");
+                    ScheduledEmail scheduledEmail = await _scheduledEmailRepository.GetScheduledEmailByEmailLogId(id);
+                    if (scheduledEmail != null)
+                    {
+                        scheduledEmail.DeletionDate = DateTime.UtcNow.AddDays(30);
+                        await _scheduledEmailRepository.UpdateScheduledEmailAsync(scheduledEmail);
+
+                        BackgroundJob.Schedule(() => _scheduledEmailRepository.DeleteScheduledEmailAsync(scheduledEmail), TimeSpan.FromDays(30));
+                    }
+                }
+                else if (emailLog.repeatingLogId != null)
+                {
+                    //later
+                }
+
+
                 return emailLog;
             }
         }
